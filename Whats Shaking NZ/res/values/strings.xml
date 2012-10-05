@@ -1,0 +1,50 @@
+<resources>
+
+    <string name="app_name">What\'s Shaking, NZ?</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="menu_about">About</string>
+    <string name="title_activity_main">What\'s Shaking, NZ?</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_about">About</string>
+    <string name="title_activity_quake">Quake</string>
+    <string name="magnitude_text">Magnitude</string>
+    <string name="depth_text">Depth</string>
+    <string name="date_text">Date</string>
+    <string name="no_quakes">No quakes found!</string>
+    
+    <!-- Notification Items -->
+    <string name="notifications_tickerSingleQuake">New quake - magnitude %s</string>
+    <string name="notifications_titleSingleQuake">%s magnitude quake found</string>
+    <string name="notifications_tickerMultiQuake">%s new quakes</string>
+    <string name="notifications_titleMultiQuake">%s new quakes found</string>
+    
+    <!-- Preference Page Items -->
+    <string name="pref_minDisplayMagnitude">Display Threshold</string>
+    <string name="pref_minDisplayMagnitude_summ">Displaying quakes above magnitude: %s</string>
+    <string name="pref_minHighlightMagnitude">Notification Threshold</string>
+    <string name="pref_minHighlightMagnitude_summ">Notifications and highlighting for quakes above magnitude: %s</string>
+    <string name="pref_maxNumQuakesToShow">Max Number of Quakes</string>
+    <string name="pref_maxNumQuakesToShow_summ">Showing up to %s quakes</string>
+    <string name="pref_allowBackgroundNotifications">Background notifications</string>
+    <string name="pref_allowBackgroundNotifications_summ">Enables background notifications for quakes.</string>
+    <string name="pref_backgroundNotificationsFrequency">Update Frequency</string>
+    <string name="pref_backgroundNotificationsFrequency_default">60</string>
+    <string name="pref_backgroundNotificationsFrequency_summ_mins">Checking for new quakes every %s minutes</string>
+    <string name="pref_backgroundNotificationsFrequency_summ_hours">Checking for new quakes every %s hours</string>
+    <string name="pref_backgroundNotificationsEnabled">Background checks enabled.</string>
+    <string name="pref_backgroundNotificationsDisabled">Background checks disabled.</string>
+    <string name="pref_backgroundNotificationsSound">Notification Sound</string>
+    <string name="pref_backgroundNotificationsVibrate">Notification Vibration</string>
+    <string name="pref_backgroundNotificationsLight">Notification Light</string>
+    
+    <!-- About Page Items -->
+    <string name="about_app_detail">What\'s Shaking, NZ? uses the Geonet.org.nz data feed 
+        to provide you with up to date information about the latest earthquakes around New Zealand.
+        \n\nPlease tweet (@WhatsShakingNZ) or email (android-support@speakman.net.nz) me with any problems 
+        you find or suggestions for features you\'d like to see in the next version.
+        \n\nWhat\'s Shaking, NZ? is an open source application. You can find the source code on Github
+        at:\nhttps://github.com/adamsp/wsnz-android
+        \n\nFor news and more information, check out the What\'s Shaking, NZ? website:\nwww.whatsshaking.co.nz</string>
+    <string name="about_app_heading">The App</string>
+
+</resources>

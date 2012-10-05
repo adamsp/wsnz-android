@@ -1,2 +1,2 @@
-wsnz-android
+What's Shaking, NZ?
 ============

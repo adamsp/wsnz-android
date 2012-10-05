@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="speakman.whatsshakingnz">
+        <attr name="seekBarMin" format="integer"/>
+        <attr name="seekBarUseDecimal" format="boolean"/>
+    </declare-styleable>
+
+</resources>

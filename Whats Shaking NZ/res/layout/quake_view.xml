@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2" >
+
+        <TextView
+            style="@style/QuakeActivityFont.Heading.Weighted"
+            android:text="@string/magnitude_text" />
+
+        <TextView
+            style="@style/QuakeActivityFont.Heading.Weighted"
+            android:text="@string/depth_text" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2" >
+
+        <TextView
+            android:id="@+id/magnitude_field"
+            style="@style/QuakeActivityFont.Detail.Weighted" />
+
+        <TextView
+            android:id="@+id/depth_field"
+            style="@style/QuakeActivityFont.Detail.Weighted" />
+    </LinearLayout>
+
+    <TextView
+        style="@style/QuakeActivityFont.Heading"
+        android:text="@string/date_text" />
+    
+    <TextView
+        android:id="@+id/date_field"
+        style="@style/QuakeActivityFont.Detail" />
+
+    <fragment
+        android:id="@+id/quake_map"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        class="speakman.whatsshakingnz.fragments.MapFragment" />
+
+</LinearLayout>
