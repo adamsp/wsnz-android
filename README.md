@@ -2,6 +2,8 @@ What's Shaking, NZ? for Android
 ============
 This is an app for monitoring quakes all around New Zealand. For more details see the website at http://www.whatsshaking.co.nz
 
+You can download the app from Google Play here: https://play.google.com/store/apps/details?id=speakman.whatsshakingnz
+
 You will need a Google Maps API key to run this app, you can get that here: https://developers.google.com/android/maps-api-signup
 
 ## Acquiring the code
