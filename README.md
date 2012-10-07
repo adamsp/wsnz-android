@@ -8,9 +8,9 @@ You will need a Google Maps API key to run this app, you can get that here: http
 
 ## Acquiring the code
 
-This project uses Git Submodules. You can clone the code using whatever method you normally do (either using the Github application, or by running `git clone git://github.com/adamsp/wsnz-android.git`.
+This project uses Git Submodules. Clone the code using whatever method you normally do - if you used the Github application, you should not need to do anything further, it should have pulled all the required code for you, including the ActionBarSherlock submodule.
 
-If you cloned using the `git clone` command, you also need to do the following:
+If you cloned by running `git clone git://github.com/adamsp/wsnz-android.git` command, you also need to do the following:
 
 ```
 cd wsnz-android/
