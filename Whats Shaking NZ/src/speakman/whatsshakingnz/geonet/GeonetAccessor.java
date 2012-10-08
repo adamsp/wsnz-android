@@ -37,7 +37,7 @@ public class GeonetAccessor {
 
 	/**
 	 * Returns a list of Earthquakes, such that quakes.size() is less
-	 * than or equale to maxNumQuakes, and such that Earthquake.getRoundedMagnitude()
+	 * than or equal to maxNumQuakes, and such that Earthquake.getRoundedMagnitude()
 	 * is greater than or equal to minimumMagnitude. <br>
 	 * The list is ordered such that the latest quake is first in
 	 * the list.<br>

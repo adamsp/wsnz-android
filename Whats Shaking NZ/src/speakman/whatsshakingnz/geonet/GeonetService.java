@@ -39,8 +39,13 @@ public class GeonetService extends WakefulIntentService {
 		Log.d("WSNZ", "Checking with Geonet for new quakes above magnitude "
 				+ minMagnitude);
 		// Get the last-notified-quake
-		ArrayList<Earthquake> quakes = EarthquakeFilter.filterQuakes(
-				GeonetAccessor.getQuakes(), ((float) minMagnitude) / 10.0f, 30);
+		ArrayList<Earthquake> quakes = GeonetAccessor.getQuakes();
+		if(null == quakes) {
+			Log.d("WSNZ", "No internet connection.");
+			return;
+		}
+		quakes = EarthquakeFilter.filterQuakes(quakes
+				, ((float) minMagnitude) / 10.0f, 30);
 		
 		String lastChecked = prefs.getString(KEY_PREFS_LAST_CHECKED_ID,
 				"0000p000000");
