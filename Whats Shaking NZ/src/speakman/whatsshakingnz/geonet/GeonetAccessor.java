@@ -41,7 +41,7 @@ public class GeonetAccessor {
 	 * is greater than or equal to minimumMagnitude. <br>
 	 * The list is ordered such that the latest quake is first in
 	 * the list.<br>
-	 * Returns null if there is a problem with the internet connection.
+	 * Returns null if there is a problem with the internet connection or Geonet.
 	 * @param maxNumQuakes
 	 * @param minimumMagnitude
 	 * @return
@@ -55,7 +55,11 @@ public class GeonetAccessor {
 		JSONObject o;
 		JSONArray features;
 		try {
-			o = (JSONObject) new JSONTokener(json).nextValue();
+			// Can sometimes receive incorrect JSON from Geonet, apparently.
+			Object nextVal = new JSONTokener(json).nextValue();
+			if(JSONObject.NULL == nextVal) return null;
+			
+			o = (JSONObject) nextVal;
 			features = o.getJSONArray("features");
 			for (int i = features.length() - 1; i >= 0; i--) {
 				o = (JSONObject) features.get(i);
@@ -64,6 +68,9 @@ public class GeonetAccessor {
 			}
 		} catch (JSONException e) {
 			Log.e("WSNZ", "Error parsing JSON", e);
+			return null;
+		} catch (ClassCastException e) {
+			Log.e("WSNZ", "Unexpected data from Geonet", e);
 			return null;
 		}
 		Collections.reverse(quakes);
