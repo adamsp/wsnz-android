@@ -66,7 +66,7 @@ public class Earthquake extends OverlayItem implements Parcelable {
 
 	private void setMagnitude(double m) {
 		this.mMagnitude = m;
-		this.mRoundedMagnitude = Double.parseDouble(magnitudeFormat.format(m));
+		this.mRoundedMagnitude = (double)Math.round(m * 10) / 10;
 	}
 	
 	private void setAgency(String a){
