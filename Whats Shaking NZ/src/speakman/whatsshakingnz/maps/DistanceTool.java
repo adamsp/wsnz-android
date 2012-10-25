@@ -103,28 +103,68 @@ public class DistanceTool {
 		return angle * RADIO;
 	}
 
-	public static String getClosestTown(GeoPoint point) {
+	public static String getClosestTown(GeoPoint quakeEpicenter) {
+		// Find the distance from the closest town
 		double closestTownDistance = -1;
 		String closestTownName = null;
+		GeoPoint closestTown = null;
 		for(String location : locations.keySet())
 		{
 			if(closestTownDistance < 0)
 			{
-				closestTownDistance = distanceBetweenPlaces(point, locations.get(location));
+				closestTownDistance = distanceBetweenPlaces(quakeEpicenter, locations.get(location));
 				closestTownName = location;
+				closestTown = locations.get(location);
 			}
 			else
 			{
-				double distance = distanceBetweenPlaces(point, locations.get(location));
+				double distance = distanceBetweenPlaces(quakeEpicenter, locations.get(location));
 				if(distance < closestTownDistance)
 				{
 					closestTownDistance = distance;
 					closestTownName = location;
+					closestTown = locations.get(location);
 				}
 			}
 		}
+		
+		// Find direction from the closest town
+		String direction = getDirectionFromTown(closestTown, quakeEpicenter);
+		
 		// TODO Figure out how to localise this/extract it into strings.xml.
 		// The problem is, we don't have access to getString() to fetch from strings.xml
-		return "" + distanceFormat.format(closestTownDistance) + " km from " + closestTownName;
+		String location = "%1$s km %2$s of %3$s";
+		return String.format(location, distanceFormat.format(closestTownDistance), direction, closestTownName);
+	}
+
+	private static String getDirectionFromTown(GeoPoint closestTown,
+			GeoPoint quakeEpicenter) {
+		double dLon = Math.abs(quakeEpicenter.getLongitudeE6() - closestTown.getLongitudeE6());
+		double dLat = Math.abs(quakeEpicenter.getLatitudeE6() - closestTown.getLatitudeE6());
+		double brng = Math.atan(dLat / dLon);
+		
+		String direction;
+		String eastOrWest;
+		String northOrSouth;
+		// Quake is West of town
+		if(quakeEpicenter.getLongitudeE6() < closestTown.getLongitudeE6())
+			eastOrWest = "West";
+		else // Quake is East of town
+			eastOrWest = "East";
+		
+		// Quake is North of town
+		if(quakeEpicenter.getLatitudeE6() > closestTown.getLatitudeE6()) 
+			northOrSouth = "North";
+		else // Quake is South of town
+			northOrSouth = "South";
+		
+		if(brng < Math.PI / 8)
+			direction = eastOrWest;
+		else if (brng < 3 * Math.PI / 8)
+			direction = northOrSouth + " " + eastOrWest;
+		else
+			direction = northOrSouth;
+		
+		return direction;
 	}
 }
