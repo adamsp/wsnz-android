@@ -26,24 +26,28 @@ public class QuakeActivity extends WhatsShakingActivity {
 		MapFragment map = (MapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.quake_map);
 		map.updateQuakes(quakes);
-		TextView v = (TextView) findViewById(R.id.magnitude_field);
+		TextView v = (TextView) findViewById(R.id.magnitude_detail_field);
 		if (null != v)
 			v.setText(quake.getFormattedMagnitude());
-		
-		v = (TextView) findViewById(R.id.depth_field);
+
+		v = (TextView) findViewById(R.id.depth_detail_field);
 		if (null != v)
 			v.setText(quake.getFormattedDepth() + " km");
-		
-		v = (TextView) findViewById(R.id.date_field);
+
+		v = (TextView) findViewById(R.id.date_detail_field);
 		if (null != v) {
 			Date date = quake.getDate();
 			if (null != date) {
 				java.text.DateFormat tf = DateFormat.getTimeFormat(this);
-				java.text.DateFormat df = DateFormat.getMediumDateFormat(this);
+				java.text.DateFormat df = DateFormat.getDateFormat(this);
 				String dateString = String.format("%s, %s", df.format(date),
 						tf.format(date));
 				v.setText(dateString);
 			}
 		}
+
+		v = (TextView) findViewById(R.id.status_detail_field);
+		if (null != v)
+			v.setText(quake.getStatus());
 	}
 }
