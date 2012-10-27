@@ -912,6 +912,8 @@ containing a value of this type.
          */
         public static final int about_app_detail=0x7f0a002b;
         public static final int about_app_heading=0x7f0a002c;
+        public static final int about_app_update_1_1_detail=0x7f0a002e;
+        public static final int about_app_update_1_1_heading=0x7f0a002d;
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
          */
         public static final int abs__action_bar_home_description=0x7f0a0000;

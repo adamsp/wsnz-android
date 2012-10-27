@@ -49,5 +49,14 @@
         at:\nhttps://github.com/adamsp/wsnz-android
         \n\nFor news and more information, check out the What\'s Shaking, NZ? website:\nwww.whatsshaking.co.nz</string>
     <string name="about_app_heading">The App</string>
+    <string name="about_app_update_1_1_heading">Update 1.1</string>
+    <string name="about_app_update_1_1_detail">- Fixed the background check service crashing when no
+        internet connection is available\n
+         - Fixed application crashing if it receives data from Geonet in an unexpected format\n
+         - Fixed possible crash for alternate locale number formats\n
+         - Changed default map zoom level for devices with high resolution screens\n
+         - Added a \'status\' value to quakes - this indicates whether the quake has been reviewed
+          by a human, or has been automatically calculated by the computer. Reviewed quakes are
+           reliable, automatic ones are not. </string>
 
 </resources>
