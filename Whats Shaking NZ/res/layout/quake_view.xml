@@ -12,11 +12,11 @@
 
         <TextView
             style="@style/QuakeActivityFont.Heading.Weighted"
-            android:text="@string/magnitude_text" />
+            android:text="@string/magnitude_heading_text" />
 
         <TextView
             style="@style/QuakeActivityFont.Heading.Weighted"
-            android:text="@string/depth_text" />
+            android:text="@string/depth_heading_text" />
     </LinearLayout>
 
     <LinearLayout
@@ -26,20 +26,28 @@
         android:weightSum="2" >
 
         <TextView
-            android:id="@+id/magnitude_field"
+            android:id="@+id/magnitude_detail_field"
             style="@style/QuakeActivityFont.Detail.Weighted" />
 
         <TextView
-            android:id="@+id/depth_field"
+            android:id="@+id/depth_detail_field"
             style="@style/QuakeActivityFont.Detail.Weighted" />
     </LinearLayout>
 
     <TextView
         style="@style/QuakeActivityFont.Heading"
-        android:text="@string/date_text" />
-    
+        android:text="@string/date_heading_text" />
+
     <TextView
-        android:id="@+id/date_field"
+        android:id="@+id/date_detail_field"
+        style="@style/QuakeActivityFont.Detail" />
+
+    <TextView
+        style="@style/QuakeActivityFont.Heading"
+        android:text="@string/status_heading_text" />
+
+    <TextView
+        android:id="@+id/status_detail_field"
         style="@style/QuakeActivityFont.Detail" />
 
     <fragment

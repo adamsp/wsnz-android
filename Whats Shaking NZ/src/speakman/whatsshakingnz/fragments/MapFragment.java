@@ -9,13 +9,16 @@ import speakman.whatsshakingnz.activities.QuakeActivity;
 import speakman.whatsshakingnz.earthquake.Earthquake;
 import speakman.whatsshakingnz.maps.MapOverlay;
 import speakman.whatsshakingnz.preferences.DefaultPrefs;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.google.android.maps.GeoPoint;
@@ -27,6 +30,8 @@ public class MapFragment extends SherlockFragment {
 	private MapView mView;
 	private ArrayList<Earthquake> mQuakes;
 	private Drawable regularDrawable, warningDrawable;
+	private static final int NZ_CENTRE_LATITUDE = (int) (-41 * 1E6);
+	private static final int NZ_CENTRE_LONGITUDE = (int) (173 * 1E6);
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -56,11 +61,11 @@ public class MapFragment extends SherlockFragment {
 		super.onActivityCreated(savedInstanceState);
 		mView.setBuiltInZoomControls(true);
 		MapController mc = mView.getController();
-		int latitude = (int) (-41 * 1E6);
-		int longitude = (int) (173 * 1E6);
-		GeoPoint center = new GeoPoint(latitude, longitude);
+		
+		GeoPoint center = new GeoPoint(NZ_CENTRE_LATITUDE, NZ_CENTRE_LONGITUDE);
 		mc.setCenter(center);
 		mc.setZoom(getDefaultZoomForDevice());
+//		mc.zoomToSpan(NZ_SPAN_LATITUDE, NZ_SPAN_LONGITUDE);
 		updateOverlayItems();
 	}
 
@@ -110,7 +115,15 @@ public class MapFragment extends SherlockFragment {
 	 *         device.
 	 */
 	private int getDefaultZoomForDevice() {
-		// TODO Different zoom level for different device screen size/pixels?
-		return 6;
+		WindowManager wm = (WindowManager) getActivity().getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+		Display display = wm.getDefaultDisplay();
+		int width = display.getWidth();
+
+		if(width < 480)
+			return 5;
+		else if (width < 720)
+			return 6;
+		else
+			return 7;
 	}
 }
