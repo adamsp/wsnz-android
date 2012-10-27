@@ -14,9 +14,19 @@
             android:text="@string/about_app_heading" />
 
         <TextView
+            style="@style/AboutActivityFont.Detail"
             android:autoLink="all"
             android:text="@string/about_app_detail"
+            tools:context=".AboutActivity" />
+
+        <TextView
+            style="@style/AboutActivityFont.Heading"
+            android:text="@string/about_app_update_1_1_heading" />
+
+        <TextView
             style="@style/AboutActivityFont.Detail"
+            android:autoLink="all"
+            android:text="@string/about_app_update_1_1_detail"
             tools:context=".AboutActivity" />
     </LinearLayout>
 
