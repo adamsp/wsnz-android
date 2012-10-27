@@ -848,25 +848,26 @@ containing a value of this type.
         public static final int abs__title=0x7f05001b;
         public static final int abs__titleDivider=0x7f05001c;
         public static final int abs__up=0x7f05000b;
-        public static final int date=0x7f05002f;
-        public static final int date_field=0x7f05002b;
-        public static final int depth_field=0x7f05002a;
+        public static final int date=0x7f050030;
+        public static final int date_detail_field=0x7f05002b;
+        public static final int depth_detail_field=0x7f05002a;
         public static final int disableHome=0x7f050009;
         public static final int homeAsUp=0x7f050006;
         public static final int listMode=0x7f050002;
-        public static final int location=0x7f05002e;
-        public static final int magnitude=0x7f05002d;
-        public static final int magnitude_field=0x7f050029;
+        public static final int location=0x7f05002f;
+        public static final int magnitude=0x7f05002e;
+        public static final int magnitude_detail_field=0x7f050029;
         public static final int mainView=0x7f050027;
         public static final int mapview=0x7f050028;
-        public static final int menu_about=0x7f050032;
-        public static final int menu_preferences=0x7f050031;
-        public static final int menu_refresh=0x7f050030;
+        public static final int menu_about=0x7f050033;
+        public static final int menu_preferences=0x7f050032;
+        public static final int menu_refresh=0x7f050031;
         public static final int normal=0x7f050001;
-        public static final int quake_map=0x7f05002c;
+        public static final int quake_map=0x7f05002d;
         public static final int showCustom=0x7f050008;
         public static final int showHome=0x7f050005;
         public static final int showTitle=0x7f050007;
+        public static final int status_detail_field=0x7f05002c;
         public static final int tabMode=0x7f050003;
         public static final int useLogo=0x7f050004;
         public static final int wrap_content=0x7f050000;
@@ -909,8 +910,8 @@ containing a value of this type.
     public static final class string {
         /**  About Page Items 
          */
-        public static final int about_app_detail=0x7f0a002a;
-        public static final int about_app_heading=0x7f0a002b;
+        public static final int about_app_detail=0x7f0a002b;
+        public static final int about_app_heading=0x7f0a002c;
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
          */
         public static final int abs__action_bar_home_description=0x7f0a0000;
@@ -942,38 +943,41 @@ containing a value of this type.
          */
         public static final int abs__shareactionprovider_share_with_application=0x7f0a0009;
         public static final int app_name=0x7f0a000a;
-        public static final int date_text=0x7f0a0013;
-        public static final int depth_text=0x7f0a0012;
-        public static final int magnitude_text=0x7f0a0011;
+        public static final int date_heading_text=0x7f0a0014;
+        public static final int depth_heading_text=0x7f0a0013;
+        /**  Quake Detail Page Items 
+         */
+        public static final int magnitude_heading_text=0x7f0a0012;
         public static final int menu_about=0x7f0a000c;
         public static final int menu_refresh=0x7f0a000b;
         public static final int menu_settings=0x7f0a000e;
-        public static final int no_quakes=0x7f0a0014;
-        public static final int notifications_tickerMultiQuake=0x7f0a0017;
+        public static final int no_quakes=0x7f0a0011;
+        public static final int notifications_tickerMultiQuake=0x7f0a0018;
         /**  Notification Items 
          */
-        public static final int notifications_tickerSingleQuake=0x7f0a0015;
-        public static final int notifications_titleMultiQuake=0x7f0a0018;
-        public static final int notifications_titleSingleQuake=0x7f0a0016;
-        public static final int pref_allowBackgroundNotifications=0x7f0a001f;
-        public static final int pref_allowBackgroundNotifications_summ=0x7f0a0020;
-        public static final int pref_backgroundNotificationsDisabled=0x7f0a0026;
-        public static final int pref_backgroundNotificationsEnabled=0x7f0a0025;
-        public static final int pref_backgroundNotificationsFrequency=0x7f0a0021;
-        public static final int pref_backgroundNotificationsFrequency_default=0x7f0a0022;
-        public static final int pref_backgroundNotificationsFrequency_summ_hours=0x7f0a0024;
-        public static final int pref_backgroundNotificationsFrequency_summ_mins=0x7f0a0023;
-        public static final int pref_backgroundNotificationsLight=0x7f0a0029;
-        public static final int pref_backgroundNotificationsSound=0x7f0a0027;
-        public static final int pref_backgroundNotificationsVibrate=0x7f0a0028;
-        public static final int pref_maxNumQuakesToShow=0x7f0a001d;
-        public static final int pref_maxNumQuakesToShow_summ=0x7f0a001e;
+        public static final int notifications_tickerSingleQuake=0x7f0a0016;
+        public static final int notifications_titleMultiQuake=0x7f0a0019;
+        public static final int notifications_titleSingleQuake=0x7f0a0017;
+        public static final int pref_allowBackgroundNotifications=0x7f0a0020;
+        public static final int pref_allowBackgroundNotifications_summ=0x7f0a0021;
+        public static final int pref_backgroundNotificationsDisabled=0x7f0a0027;
+        public static final int pref_backgroundNotificationsEnabled=0x7f0a0026;
+        public static final int pref_backgroundNotificationsFrequency=0x7f0a0022;
+        public static final int pref_backgroundNotificationsFrequency_default=0x7f0a0023;
+        public static final int pref_backgroundNotificationsFrequency_summ_hours=0x7f0a0025;
+        public static final int pref_backgroundNotificationsFrequency_summ_mins=0x7f0a0024;
+        public static final int pref_backgroundNotificationsLight=0x7f0a002a;
+        public static final int pref_backgroundNotificationsSound=0x7f0a0028;
+        public static final int pref_backgroundNotificationsVibrate=0x7f0a0029;
+        public static final int pref_maxNumQuakesToShow=0x7f0a001e;
+        public static final int pref_maxNumQuakesToShow_summ=0x7f0a001f;
         /**  Preference Page Items 
          */
-        public static final int pref_minDisplayMagnitude=0x7f0a0019;
-        public static final int pref_minDisplayMagnitude_summ=0x7f0a001a;
-        public static final int pref_minHighlightMagnitude=0x7f0a001b;
-        public static final int pref_minHighlightMagnitude_summ=0x7f0a001c;
+        public static final int pref_minDisplayMagnitude=0x7f0a001a;
+        public static final int pref_minDisplayMagnitude_summ=0x7f0a001b;
+        public static final int pref_minHighlightMagnitude=0x7f0a001c;
+        public static final int pref_minHighlightMagnitude_summ=0x7f0a001d;
+        public static final int status_heading_text=0x7f0a0015;
         public static final int title_activity_about=0x7f0a000f;
         public static final int title_activity_main=0x7f0a000d;
         public static final int title_activity_quake=0x7f0a0010;

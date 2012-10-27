@@ -116,9 +116,11 @@ public class GeonetAccessor {
 		} catch (ParseException e) {
 			Log.e("WSNZ", "Error parsing date", e);
 		}
+		String status = properties.getString("status");
+		
 		return new Earthquake(magnitude, depth, new GeoPoint(
 				(int) (latitude * 1E6), (int) (longitude * 1E6)), reference,
-				date, agency);
+				date, agency, status);
 	}
 
 	private static InputStream retrieveStream(String url) {

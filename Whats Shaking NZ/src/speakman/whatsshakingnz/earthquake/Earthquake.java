@@ -17,13 +17,14 @@ public class Earthquake extends OverlayItem implements Parcelable {
 	private GeoPoint mPoint;
 	private String mReference, mLocation, mAgency;
 	private Date mDate;
-	public static final DecimalFormat magnitudeFormat = new DecimalFormat(
-			"#.0");
+	private String mStatus;
+	public static final DecimalFormat magnitudeFormat = new DecimalFormat("#.0");
 	private static final DecimalFormat depthFormat = new DecimalFormat("#");
 
 	public Earthquake(double magnitude, double depth, GeoPoint point,
-			String reference, Date date, String agency) {
-		super(point, magnitudeFormat.format(magnitude), depthFormat.format(depth));
+			String reference, Date date, String agency, String status) {
+		super(point, magnitudeFormat.format(magnitude), depthFormat
+				.format(depth));
 		setGeoPoint(point);
 		setMagnitude(magnitude);
 		setDepth(depth);
@@ -32,16 +33,13 @@ public class Earthquake extends OverlayItem implements Parcelable {
 		setDate(date);
 		setLocation();
 		setAgency(agency);
+		setStatus(status);
 	}
-	
-	private Earthquake(Parcel in)
-	{
-		this(in.readDouble(),
-				in.readDouble(),
-				new GeoPoint(in.readInt(), in.readInt()),
-				in.readString(),
-				(Date)in.readSerializable(),
-				in.readString());
+
+	private Earthquake(Parcel in) {
+		this(in.readDouble(), in.readDouble(), new GeoPoint(in.readInt(),
+				in.readInt()), in.readString(), (Date) in.readSerializable(),
+				in.readString(), in.readString());
 	}
 
 	private void setGeoPoint(GeoPoint point) {
@@ -66,11 +64,15 @@ public class Earthquake extends OverlayItem implements Parcelable {
 
 	private void setMagnitude(double m) {
 		this.mMagnitude = m;
-		this.mRoundedMagnitude = (double)Math.round(m * 10) / 10;
+		this.mRoundedMagnitude = (double) Math.round(m * 10) / 10;
 	}
-	
-	private void setAgency(String a){
+
+	private void setAgency(String a) {
 		this.mAgency = a;
+	}
+
+	private void setStatus(String s) {
+		this.mStatus = s;
 	}
 
 	@Override
@@ -81,20 +83,20 @@ public class Earthquake extends OverlayItem implements Parcelable {
 	public double getMagnitude() {
 		return mMagnitude;
 	}
-	
-	public double getRoundedMagnitude(){
+
+	public double getRoundedMagnitude() {
 		return mRoundedMagnitude;
 	}
-	
-	public String getFormattedMagnitude(){
+
+	public String getFormattedMagnitude() {
 		return magnitudeFormat.format(mMagnitude);
 	}
 
 	public double getDepth() {
 		return mDepth;
 	}
-	
-	public String getFormattedDepth(){
+
+	public String getFormattedDepth() {
 		return depthFormat.format(mDepth);
 	}
 
@@ -109,21 +111,26 @@ public class Earthquake extends OverlayItem implements Parcelable {
 	public Date getDate() {
 		return mDate;
 	}
-	
-	public String getAgency(){
+
+	public String getAgency() {
 		return mAgency;
 	}
 
-	// this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
-    public static final Parcelable.Creator<Earthquake> CREATOR = new Parcelable.Creator<Earthquake>() {
-        public Earthquake createFromParcel(Parcel in) {
-            return new Earthquake(in);
-        }
+	public String getStatus() {
+		return mStatus;
+	}
 
-        public Earthquake[] newArray(int size) {
-            return new Earthquake[size];
-        }
-    };
+	// this is used to regenerate your object. All Parcelables must have a
+	// CREATOR that implements these two methods
+	public static final Parcelable.Creator<Earthquake> CREATOR = new Parcelable.Creator<Earthquake>() {
+		public Earthquake createFromParcel(Parcel in) {
+			return new Earthquake(in);
+		}
+
+		public Earthquake[] newArray(int size) {
+			return new Earthquake[size];
+		}
+	};
 
 	@Override
 	public int describeContents() {
@@ -140,5 +147,6 @@ public class Earthquake extends OverlayItem implements Parcelable {
 		dest.writeString(mReference);
 		dest.writeSerializable(mDate);
 		dest.writeString(mAgency);
+		dest.writeString(mStatus);
 	}
 }
