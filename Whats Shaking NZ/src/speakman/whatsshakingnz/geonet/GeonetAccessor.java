@@ -57,7 +57,7 @@ public class GeonetAccessor {
 		try {
 			// Can sometimes receive incorrect JSON from Geonet, apparently.
 			Object nextVal = new JSONTokener(json).nextValue();
-			if(JSONObject.NULL == nextVal) return null;
+			if(JSONObject.NULL.equals(nextVal)) return null;
 			
 			o = (JSONObject) nextVal;
 			features = o.getJSONArray("features");
