@@ -27,7 +27,7 @@ import android.util.Log;
 import com.google.android.maps.GeoPoint;
 
 public class GeonetAccessor {
-	private static final String url = "http://beta.geonet.org.nz/quakes/services/felt.json";//"http://magma.geonet.org.nz/services/quake/geojson/quake?numberDays=";
+	private static final String url = "http://geonet.org.nz/quakes/services/felt.json";
 	private static SimpleDateFormat format;
 
 	static {
