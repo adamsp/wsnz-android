@@ -148,20 +148,20 @@ public class DistanceTool {
 		String northOrSouth;
 		// Quake is West of town
 		if(quakeEpicenter.getLongitudeE6() < closestTown.getLongitudeE6())
-			eastOrWest = "West";
+			eastOrWest = "west";
 		else // Quake is East of town
-			eastOrWest = "East";
+			eastOrWest = "east";
 		
 		// Quake is North of town
 		if(quakeEpicenter.getLatitudeE6() > closestTown.getLatitudeE6()) 
-			northOrSouth = "North";
+			northOrSouth = "north";
 		else // Quake is South of town
-			northOrSouth = "South";
+			northOrSouth = "south";
 		
 		if(brng < Math.PI / 8)
 			direction = eastOrWest;
 		else if (brng < 3 * Math.PI / 8)
-			direction = northOrSouth + " " + eastOrWest;
+			direction = northOrSouth + "-" + eastOrWest;
 		else
 			direction = northOrSouth;
 		
