@@ -28,6 +28,13 @@ local.properties
 # PDT-specific
 .buildpath
 
+#################
+## Android Studio
+#################
+
+*.iml
+out/
+.idea/
 
 #################
 ## Visual Studio
@@ -165,3 +172,4 @@ pip-log.txt
 # Android
 *.apk
 proguard/
+gen/
