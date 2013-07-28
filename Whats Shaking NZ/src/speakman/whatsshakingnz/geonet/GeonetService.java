@@ -1,6 +1,7 @@
 package speakman.whatsshakingnz.geonet;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.activities.MainActivity;
@@ -49,7 +50,9 @@ public class GeonetService extends WakefulIntentService {
 		
 		String lastChecked = prefs.getString(KEY_PREFS_LAST_CHECKED_ID,
 				"0000p000000");
-		ArrayList<Earthquake> newQuakes = getNewQuakes(lastChecked, quakes);
+        boolean reviewedOnly = prefs.getBoolean(PreferenceActivity.KEY_PREF_BG_NOTIFICATIONS_REVIEWED_ONLY,
+                false);
+		ArrayList<Earthquake> newQuakes = getNewQuakes(lastChecked, quakes, reviewedOnly);
 		if (newQuakes.size() > 0) {
 			Log.d("WSNZ", newQuakes.size() + " new quakes.");
 			notifyUser(newQuakes, prefs);
@@ -116,15 +119,20 @@ public class GeonetService extends WakefulIntentService {
 	}
 
 	private ArrayList<Earthquake> getNewQuakes(String lastChecked,
-			ArrayList<Earthquake> quakes) {
+			ArrayList<Earthquake> quakes, boolean reviewedOnly) {
 		ArrayList<Earthquake> newQuakes = new ArrayList<Earthquake>();
 		if (quakes == null)
 			return newQuakes;
 		for (Earthquake quake : quakes) {
-			if (isNewer(quake.getReference(), lastChecked))
-				newQuakes.add(quake);
-			else
-				break;
+			if (isNewer(quake.getReference(), lastChecked)) {
+                if(reviewedOnly) {
+                    if (quake.getStatus().toLowerCase(Locale.ENGLISH).equals("reviewed")) {
+                        newQuakes.add(quake);
+                    }
+                } else {
+                    newQuakes.add(quake);
+                }
+            }
 		}
 		return newQuakes;
 	}

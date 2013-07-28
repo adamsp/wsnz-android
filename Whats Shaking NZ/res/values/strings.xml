@@ -39,6 +39,10 @@
     <string name="pref_backgroundNotificationsSound">Notification Sound</string>
     <string name="pref_backgroundNotificationsVibrate">Notification Vibration</string>
     <string name="pref_backgroundNotificationsLight">Notification Light</string>
+    <string name="pref_backgroundNotificationsReviewed">Reviewed Quakes Only?</string>
+    <string name="pref_backgroundNotificationsReviewed_summ">Will only notify you about quakes that
+        have been reviewed by a Geonet staff member.
+    </string>
     
     <!-- About Page Items -->
     <string name="about_app_detail">What\'s Shaking, NZ? uses the Geonet.org.nz data feed 

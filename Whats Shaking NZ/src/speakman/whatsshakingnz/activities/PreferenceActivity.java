@@ -25,6 +25,7 @@ public class PreferenceActivity extends SherlockPreferenceActivity implements
 	public static final String KEY_PREF_BG_NOTIFICATIONS_SOUND = "pref_backgroundNotificationsSound";
 	public static final String KEY_PREF_BG_NOTIFICATIONS_VIBRATE = "pref_backgroundNotificationsVibrate";
 	public static final String KEY_PREF_BG_NOTIFICATIONS_LIGHT = "pref_backgroundNotificationsLight";
+    public static final String KEY_PREF_BG_NOTIFICATIONS_REVIEWED_ONLY = "pref_backgroundNotificationsReviewed";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

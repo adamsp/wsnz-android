@@ -1,64 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res/speakman.whatsshakingnz" >
-
-	<speakman.whatsshakingnz.preferences.SeekBarPreference
-        android:defaultValue="30"
-        android:key="pref_minDisplayMagnitude"
-        custom:seekBarMin="20"
-        android:max="40"
-        android:text=" magnitude"
-        android:title="@string/pref_minDisplayMagnitude"
-        custom:seekBarUseDecimal="true" />
+                  xmlns:custom="http://schemas.android.com/apk/res/speakman.whatsshakingnz">
 
     <speakman.whatsshakingnz.preferences.SeekBarPreference
-        android:defaultValue="45"
-        android:key="pref_minHighlightMagnitude"
-        custom:seekBarMin="30"
-        android:max="50"
-        android:text=" magnitude"
-        android:title="@string/pref_minHighlightMagnitude"
-        custom:seekBarUseDecimal="true" />
+            android:defaultValue="30"
+            android:key="pref_minDisplayMagnitude"
+            custom:seekBarMin="20"
+            android:max="40"
+            android:text=" magnitude"
+            android:title="@string/pref_minDisplayMagnitude"
+            custom:seekBarUseDecimal="true"/>
 
     <speakman.whatsshakingnz.preferences.SeekBarPreference
-        android:defaultValue="10"
-        android:key="pref_numQuakesToShow"
-        android:max="30"
-        android:text=" quakes"
-        android:title="@string/pref_maxNumQuakesToShow"
-        custom:seekBarMin="10" />
-    
+            android:defaultValue="45"
+            android:key="pref_minHighlightMagnitude"
+            custom:seekBarMin="30"
+            android:max="50"
+            android:text=" magnitude"
+            android:title="@string/pref_minHighlightMagnitude"
+            custom:seekBarUseDecimal="true"/>
+
+    <speakman.whatsshakingnz.preferences.SeekBarPreference
+            android:defaultValue="10"
+            android:key="pref_numQuakesToShow"
+            android:max="30"
+            android:text=" quakes"
+            android:title="@string/pref_maxNumQuakesToShow"
+            custom:seekBarMin="10"/>
+
     <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="pref_allowBackgroundNotifications"
-        android:summary="@string/pref_allowBackgroundNotifications_summ"
-        android:title="@string/pref_allowBackgroundNotifications" />
-    
+            android:defaultValue="false"
+            android:key="pref_allowBackgroundNotifications"
+            android:summary="@string/pref_allowBackgroundNotifications_summ"
+            android:title="@string/pref_allowBackgroundNotifications"/>
+
     <ListPreference
-        android:defaultValue="@string/pref_backgroundNotificationsFrequency_default"
-        android:dialogTitle="@string/pref_backgroundNotificationsFrequency"
-        android:entries="@array/pref_backgroundNotificationsFrequency_entries"
-        android:entryValues="@array/pref_backgroundNotificationsFrequency_values"
-        android:key="pref_backgroundNotificationsFrequency"
-        android:dependency="pref_allowBackgroundNotifications"
-        android:title="@string/pref_backgroundNotificationsFrequency" />
-    
+            android:defaultValue="@string/pref_backgroundNotificationsFrequency_default"
+            android:dialogTitle="@string/pref_backgroundNotificationsFrequency"
+            android:entries="@array/pref_backgroundNotificationsFrequency_entries"
+            android:entryValues="@array/pref_backgroundNotificationsFrequency_values"
+            android:key="pref_backgroundNotificationsFrequency"
+            android:dependency="pref_allowBackgroundNotifications"
+            android:title="@string/pref_backgroundNotificationsFrequency"/>
+
     <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="pref_backgroundNotificationsSound"
-        android:title="@string/pref_backgroundNotificationsSound"
-        android:dependency="pref_allowBackgroundNotifications" />
-    
+            android:defaultValue="false"
+            android:key="pref_backgroundNotificationsReviewed"
+            android:title="@string/pref_backgroundNotificationsReviewed"
+            android:summary="@string/pref_backgroundNotificationsReviewed_summ"
+            android:dependency="pref_allowBackgroundNotifications"/>
+
     <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="pref_backgroundNotificationsVibrate"
-        android:title="@string/pref_backgroundNotificationsVibrate"
-        android:dependency="pref_allowBackgroundNotifications" />
-    
+            android:defaultValue="true"
+            android:key="pref_backgroundNotificationsSound"
+            android:title="@string/pref_backgroundNotificationsSound"
+            android:dependency="pref_allowBackgroundNotifications"/>
+
     <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="pref_backgroundNotificationsLED"
-        android:title="@string/pref_backgroundNotificationsLight"
-        android:dependency="pref_allowBackgroundNotifications" />
+            android:defaultValue="true"
+            android:key="pref_backgroundNotificationsVibrate"
+            android:title="@string/pref_backgroundNotificationsVibrate"
+            android:dependency="pref_allowBackgroundNotifications"/>
+
+    <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_backgroundNotificationsLED"
+            android:title="@string/pref_backgroundNotificationsLight"
+            android:dependency="pref_allowBackgroundNotifications"/>
 
 </PreferenceScreen>
