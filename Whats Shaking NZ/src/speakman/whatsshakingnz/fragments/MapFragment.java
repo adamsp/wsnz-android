@@ -3,6 +3,11 @@ package speakman.whatsshakingnz.fragments;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.activities.PreferenceActivity;
 import speakman.whatsshakingnz.activities.QuakeActivity;
@@ -26,12 +31,11 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
-public class MapFragment extends SherlockFragment {
-    private MapView mView;
+public class MapFragment extends SupportMapFragment {
     private ArrayList<Earthquake> mQuakes;
     private Drawable regularDrawable, warningDrawable;
-    private static final int NZ_CENTRE_LATITUDE = (int) (-41 * 1E6);
-    private static final int NZ_CENTRE_LONGITUDE = (int) (173 * 1E6);
+    private static final int NZ_CENTRE_LATITUDE = (int) (-41 );//* 1E6);
+    private static final int NZ_CENTRE_LONGITUDE = (int) (173 );//* 1E6);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,31 +46,19 @@ public class MapFragment extends SherlockFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        if (mView == null)
-            mView = (MapView) inflater.inflate(R.layout.map_view, null, false);
-        return mView;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        // http://stackoverflow.com/questions/6526874/call-removeview-on-the-childs-parent-first
-        ((ViewGroup) mView.getParent()).removeView(mView);
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mView.setBuiltInZoomControls(true);
-        MapController mc = mView.getController();
+//        mView.setBuiltInZoomControls(true);
+//        MapController mc = mView.getController();
 
-        GeoPoint center = new GeoPoint(NZ_CENTRE_LATITUDE, NZ_CENTRE_LONGITUDE);
-        mc.setCenter(center);
-        mc.setZoom(getDefaultZoomForDevice());
+//        GeoPoint center = new GeoPoint(NZ_CENTRE_LATITUDE, NZ_CENTRE_LONGITUDE);
+//        mc.setCenter(center);
+//        mc.setZoom(getDefaultZoomForDevice());
 //		mc.zoomToSpan(NZ_SPAN_LATITUDE, NZ_SPAN_LONGITUDE);
         updateOverlayItems();
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(NZ_CENTRE_LATITUDE, NZ_CENTRE_LONGITUDE), getDefaultZoomForDevice());
+        GoogleMap map = getMap();
+        map.moveCamera(update);
     }
 
     public void updateQuakes(ArrayList<Earthquake> quakes) {
@@ -75,36 +67,36 @@ public class MapFragment extends SherlockFragment {
     }
 
     private void updateOverlayItems() {
-        if (null == mView || null == mQuakes)
-            return;
-        // Move the map view if this is a QuakeActivity, will
-        // only have one quake in this instance.
-        if (getActivity() instanceof QuakeActivity) {
-            MapController mc = mView.getController();
-            mc.setCenter(mQuakes.get(0).getPoint());
-            mc.setZoom(getDefaultZoomForDevice() + 2);
-        }
-        List<Overlay> mapOverlays = mView.getOverlays();
-        mapOverlays.clear();
-        SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(getActivity());
-        float warnMagnitude = ((float) prefs.getInt(
-                PreferenceActivity.KEY_PREF_MIN_HIGHLIGHT_MAGNITUDE,
-                DefaultPrefs.MIN_HIGHLIGHT_MAGNITUDE)) / 10.0f;
-        // Doing this this way (a new MapOverlay for every earthquake)
-        // is very inefficient. However, it solves the problem of the
-        // title text for all quakes having the same z-index (and
-        // therefore overlapping each other).
-        for (Earthquake q : mQuakes) {
-            MapOverlay overlay;
-            if (q.getRoundedMagnitude() >= warnMagnitude)
-                overlay = new MapOverlay(warningDrawable, this.getActivity());
-            else
-                overlay = new MapOverlay(regularDrawable, this.getActivity());
-            overlay.addOverlay(q);
-            mapOverlays.add(overlay);
-        }
-        mView.invalidate();
+//        if (null == mView || null == mQuakes)
+//            return;
+//        // Move the map view if this is a QuakeActivity, will
+//        // only have one quake in this instance.
+//        if (getActivity() instanceof QuakeActivity) {
+//            MapController mc = mView.getController();
+//            mc.setCenter(mQuakes.get(0).getPoint());
+//            mc.setZoom(getDefaultZoomForDevice() + 2);
+//        }
+//        List<Overlay> mapOverlays = mView.getOverlays();
+//        mapOverlays.clear();
+//        SharedPreferences prefs = PreferenceManager
+//                .getDefaultSharedPreferences(getActivity());
+//        float warnMagnitude = ((float) prefs.getInt(
+//                PreferenceActivity.KEY_PREF_MIN_HIGHLIGHT_MAGNITUDE,
+//                DefaultPrefs.MIN_HIGHLIGHT_MAGNITUDE)) / 10.0f;
+//        // Doing this this way (a new MapOverlay for every earthquake)
+//        // is very inefficient. However, it solves the problem of the
+//        // title text for all quakes having the same z-index (and
+//        // therefore overlapping each other).
+//        for (Earthquake q : mQuakes) {
+//            MapOverlay overlay;
+//            if (q.getRoundedMagnitude() >= warnMagnitude)
+//                overlay = new MapOverlay(warningDrawable, this.getActivity());
+//            else
+//                overlay = new MapOverlay(regularDrawable, this.getActivity());
+//            overlay.addOverlay(q);
+//            mapOverlays.add(overlay);
+//        }
+//        mView.invalidate();
     }
 
     /**
