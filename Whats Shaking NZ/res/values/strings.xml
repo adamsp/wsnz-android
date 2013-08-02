@@ -8,24 +8,25 @@
     <string name="title_activity_about">About</string>
     <string name="title_activity_quake">Quake</string>
     <string name="no_quakes">No quakes found!</string>
-    
+
     <!-- Quake Detail Page Items -->
     <string name="magnitude_heading_text">Magnitude</string>
     <string name="depth_heading_text">Depth</string>
     <string name="date_heading_text">Date</string>
     <string name="status_heading_text">Status</string>
-    
+
     <!-- Notification Items -->
     <string name="notifications_tickerSingleQuake">New quake - magnitude %s</string>
     <string name="notifications_titleSingleQuake">%s magnitude quake found</string>
     <string name="notifications_tickerMultiQuake">%s new quakes</string>
     <string name="notifications_titleMultiQuake">%s new quakes found</string>
-    
+
     <!-- Preference Page Items -->
     <string name="pref_minDisplayMagnitude">Display Threshold</string>
     <string name="pref_minDisplayMagnitude_summ">Displaying quakes above magnitude: %s</string>
     <string name="pref_minHighlightMagnitude">Notification Threshold</string>
-    <string name="pref_minHighlightMagnitude_summ">Notifications and highlighting for quakes above magnitude: %s</string>
+    <string name="pref_minHighlightMagnitude_summ">Notifications and highlighting for quakes above magnitude: %s
+    </string>
     <string name="pref_maxNumQuakesToShow">Max Number of Quakes</string>
     <string name="pref_maxNumQuakesToShow_summ">Showing up to %s quakes</string>
     <string name="pref_allowBackgroundNotifications">Background notifications</string>
@@ -43,24 +44,26 @@
     <string name="pref_backgroundNotificationsReviewed_summ">Will only notify you about quakes that
         have been reviewed by a Geonet staff member.
     </string>
-    
+
     <!-- About Page Items -->
-    <string name="about_app_detail">What\'s Shaking, NZ? uses the Geonet.org.nz data feed 
+    <string name="about_app_detail">What\'s Shaking, NZ? uses the Geonet.org.nz data feed
         to provide you with up to date information about the latest earthquakes around New Zealand.
-        \n\nPlease tweet (@WhatsShakingNZ) or email (android-support@speakman.net.nz) me with any problems 
+        \n\nPlease tweet (@WhatsShakingNZ) or email (android-support@speakman.net.nz) me with any problems
         you find or suggestions for features you\'d like to see in the next version.
         \n\nWhat\'s Shaking, NZ? is an open source application. You can find the source code on Github
         at:\nhttps://github.com/adamsp/wsnz-android
-        \n\nFor news and more information, check out the What\'s Shaking, NZ? website:\nwww.whatsshaking.co.nz</string>
+        \n\nFor news and more information, check out the What\'s Shaking, NZ? website:\nwww.whatsshaking.co.nz
+    </string>
     <string name="about_app_heading">The App</string>
     <string name="about_app_update_1_1_heading">Update 1.1</string>
     <string name="about_app_update_1_1_detail">- Fixed the background check service crashing when no
         internet connection is available\n
-         - Fixed application crashing if it receives data from Geonet in an unexpected format\n
-         - Fixed possible crash for alternate locale number formats\n
-         - Changed default map zoom level for devices with high resolution screens\n
-         - Added a \'status\' value to quakes - this indicates whether the quake has been reviewed
-          by a human, or has been automatically calculated by the computer. Reviewed quakes are
-           reliable, automatic ones are not. </string>
+        - Fixed application crashing if it receives data from Geonet in an unexpected format\n
+        - Fixed possible crash for alternate locale number formats\n
+        - Changed default map zoom level for devices with high resolution screens\n
+        - Added a \'status\' value to quakes - this indicates whether the quake has been reviewed
+        by a human, or has been automatically calculated by the computer. Reviewed quakes are
+        reliable, automatic ones are not.
+    </string>
 
 </resources>
