@@ -1,5 +1,18 @@
 package speakman.whatsshakingnz.geonet;
 
+import android.util.Log;
+import com.google.android.gms.maps.model.LatLng;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import speakman.whatsshakingnz.earthquake.Earthquake;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,21 +24,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import speakman.whatsshakingnz.earthquake.Earthquake;
-import android.util.Log;
-
-import com.google.android.maps.GeoPoint;
-
 public class GeonetAccessor {
     private static final String url = "http://geonet.org.nz/quakes/services/felt.json";
     private static SimpleDateFormat format;
@@ -36,16 +34,10 @@ public class GeonetAccessor {
     }
 
     /**
-     * Returns a list of Earthquakes, such that quakes.size() is less
-     * than or equal to maxNumQuakes, and such that Earthquake.getRoundedMagnitude()
-     * is greater than or equal to minimumMagnitude. <br>
+     * Returns a list of Earthquakes.
      * The list is ordered such that the latest quake is first in
      * the list.<br>
      * Returns null if there is a problem with the internet connection or Geonet.
-     *
-     * @param maxNumQuakes
-     * @param minimumMagnitude
-     * @return
      */
     public static ArrayList<Earthquake> getQuakes() {
         InputStream source = retrieveStream(url);
@@ -119,8 +111,8 @@ public class GeonetAccessor {
         }
         String status = properties.getString("status");
 
-        return new Earthquake(magnitude, depth, new GeoPoint(
-                (int) (latitude * 1E6), (int) (longitude * 1E6)), reference,
+        return new Earthquake(magnitude, depth, new LatLng(
+                latitude, longitude), reference,
                 date, agency, status);
     }
 

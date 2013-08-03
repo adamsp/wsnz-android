@@ -1,21 +1,20 @@
 package speakman.whatsshakingnz.test;
 
+import android.os.Parcel;
+import android.test.AndroidTestCase;
+import com.google.android.gms.maps.model.LatLng;
+import speakman.whatsshakingnz.earthquake.Earthquake;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import speakman.whatsshakingnz.earthquake.Earthquake;
-import android.os.Parcel;
-import android.test.AndroidTestCase;
-
-import com.google.android.maps.GeoPoint;
-
 public class EarthquakeTest extends AndroidTestCase {
     private SimpleDateFormat df;
     double mag;
     double depth;
-    GeoPoint point;
+    LatLng point;
     String reference;
     Date date;
     String agency;
@@ -32,7 +31,7 @@ public class EarthquakeTest extends AndroidTestCase {
 
         mag = 3.13;
         depth = 102.73;
-        point = new GeoPoint(-36848457, 174763351);
+        point = new LatLng(-36.848457, 174.763351);
         reference = "2013p123456";
         date = df.parse("2012-08-25 05:47:05.133000");
         agency = "WEL(GNS_Primary)";

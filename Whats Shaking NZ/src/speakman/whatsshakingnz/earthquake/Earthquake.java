@@ -1,34 +1,28 @@
 package speakman.whatsshakingnz.earthquake;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import com.google.android.gms.maps.model.LatLng;
+import speakman.whatsshakingnz.maps.DistanceTool;
+
 import java.text.DecimalFormat;
 import java.util.Date;
 
-import speakman.whatsshakingnz.maps.DistanceTool;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.OverlayItem;
-
-public class Earthquake extends OverlayItem implements Parcelable {
+public class Earthquake implements Parcelable {
 
     private double mMagnitude, mDepth, mRoundedMagnitude;
-    private GeoPoint mPoint;
+    private LatLng mLatLng;
     private String mReference, mLocation, mAgency;
     private Date mDate;
     private String mStatus;
     public static final DecimalFormat magnitudeFormat = new DecimalFormat("#.0");
     private static final DecimalFormat depthFormat = new DecimalFormat("#");
 
-    public Earthquake(double magnitude, double depth, GeoPoint point,
+    public Earthquake(double magnitude, double depth, LatLng latLng,
                       String reference, Date date, String agency, String status) {
-        super(point, magnitudeFormat.format(magnitude), depthFormat
-                .format(depth));
-        setGeoPoint(point);
         setMagnitude(magnitude);
         setDepth(depth);
-        setGeoPoint(point);
+        setLatLng(latLng);
         setReference(reference);
         setDate(date);
         setLocation();
@@ -37,13 +31,13 @@ public class Earthquake extends OverlayItem implements Parcelable {
     }
 
     private Earthquake(Parcel in) {
-        this(in.readDouble(), in.readDouble(), new GeoPoint(in.readInt(),
-                in.readInt()), in.readString(), (Date) in.readSerializable(),
+        this(in.readDouble(), in.readDouble(), new LatLng(in.readDouble(),
+                in.readDouble()), in.readString(), (Date) in.readSerializable(),
                 in.readString(), in.readString());
     }
 
-    private void setGeoPoint(GeoPoint point) {
-        mPoint = point;
+    private void setLatLng(LatLng latLng) {
+        mLatLng = latLng;
     }
 
     private void setReference(String reference) {
@@ -55,7 +49,7 @@ public class Earthquake extends OverlayItem implements Parcelable {
     }
 
     private void setLocation() {
-        mLocation = DistanceTool.getClosestTown(mPoint);
+        mLocation = DistanceTool.getClosestTown(mLatLng);
     }
 
     private void setDepth(double depth) {
@@ -75,9 +69,8 @@ public class Earthquake extends OverlayItem implements Parcelable {
         this.mStatus = s;
     }
 
-    @Override
-    public GeoPoint getPoint() {
-        return mPoint;
+    public LatLng getLatLng() {
+        return mLatLng;
     }
 
     public double getMagnitude() {
@@ -142,8 +135,8 @@ public class Earthquake extends OverlayItem implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeDouble(mMagnitude);
         dest.writeDouble(mDepth);
-        dest.writeInt(mPoint.getLatitudeE6());
-        dest.writeInt(mPoint.getLongitudeE6());
+        dest.writeDouble(mLatLng.latitude);
+        dest.writeDouble(mLatLng.longitude);
         dest.writeString(mReference);
         dest.writeSerializable(mDate);
         dest.writeString(mAgency);
@@ -163,7 +156,7 @@ public class Earthquake extends OverlayItem implements Parcelable {
                 + ((mLocation == null) ? 0 : mLocation.hashCode());
         temp = Double.doubleToLongBits(mMagnitude);
         result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + ((mPoint == null) ? 0 : mPoint.hashCode());
+        result = prime * result + ((mLatLng == null) ? 0 : mLatLng.hashCode());
         result = prime * result
                 + ((mReference == null) ? 0 : mReference.hashCode());
         temp = Double.doubleToLongBits(mRoundedMagnitude);
@@ -202,10 +195,10 @@ public class Earthquake extends OverlayItem implements Parcelable {
         if (Double.doubleToLongBits(mMagnitude) != Double
                 .doubleToLongBits(other.mMagnitude))
             return false;
-        if (mPoint == null) {
-            if (other.mPoint != null)
+        if (mLatLng == null) {
+            if (other.mLatLng != null)
                 return false;
-        } else if (!mPoint.equals(other.mPoint))
+        } else if (!mLatLng.equals(other.mLatLng))
             return false;
         if (mReference == null) {
             if (other.mReference != null)

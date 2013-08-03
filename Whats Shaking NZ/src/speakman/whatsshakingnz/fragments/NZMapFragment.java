@@ -1,15 +1,11 @@
 package speakman.whatsshakingnz.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.TextView;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
-import com.google.android.maps.GeoPoint;
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.activities.QuakeActivity;
 import speakman.whatsshakingnz.earthquake.Earthquake;
@@ -65,8 +61,7 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
         // only have one quake in this instance.
         if (getActivity() instanceof QuakeActivity) {
             Earthquake singleQuake = mQuakes.get(0);
-            LatLng latlng = getLatLngForQuake(singleQuake);
-            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(latlng,
+            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(singleQuake.getLatLng(),
                     getDefaultZoomForDevice() + 2);
             map.moveCamera(update);
             map.addMarker(getMarkerForQuake(singleQuake));
@@ -84,7 +79,7 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
 
     private MarkerOptions getMarkerForQuake(Earthquake q) {
         MarkerOptions m = new MarkerOptions()
-                .position(getLatLngForQuake(q))
+                .position(q.getLatLng())
                 .icon(BitmapDescriptorFactory.defaultMarker(getHueForQuake(q)));
         return m;
     }
@@ -106,12 +101,6 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
         else if (hue > 90)
             hue = 90;
         return hue;
-    }
-
-    private LatLng getLatLngForQuake(Earthquake quake) {
-        GeoPoint quakeLocation = quake.getPoint();
-        LatLng latlng = new LatLng(quakeLocation.getLatitudeE6() / 1E6, quakeLocation.getLongitudeE6() / 1E6);
-        return latlng;
     }
 
     /**

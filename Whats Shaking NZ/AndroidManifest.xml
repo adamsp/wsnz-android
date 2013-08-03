@@ -37,8 +37,6 @@
             </intent-filter>
         </activity>
 
-        <uses-library android:name="com.google.android.maps" />
-
         <receiver android:name="com.commonsware.cwac.wakeful.AlarmReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
