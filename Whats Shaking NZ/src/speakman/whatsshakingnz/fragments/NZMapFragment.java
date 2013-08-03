@@ -1,28 +1,22 @@
 package speakman.whatsshakingnz.fragments;
 
-import java.util.ArrayList;
-
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.Display;
+import android.view.WindowManager;
 import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.maps.GeoPoint;
-import speakman.whatsshakingnz.R;
-import speakman.whatsshakingnz.activities.PreferenceActivity;
 import speakman.whatsshakingnz.activities.QuakeActivity;
 import speakman.whatsshakingnz.earthquake.Earthquake;
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.view.Display;
-import android.view.WindowManager;
-import speakman.whatsshakingnz.preferences.DefaultPrefs;
+
+import java.util.ArrayList;
 
 public class NZMapFragment extends SupportMapFragment {
     private ArrayList<Earthquake> mQuakes;
-    private Drawable regularDrawable, warningDrawable;
     private static final double NZ_CENTRE_LATITUDE = -41;
     private static final double NZ_CENTRE_LONGITUDE = 173;
 
@@ -48,20 +42,6 @@ public class NZMapFragment extends SupportMapFragment {
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        regularDrawable = this.getResources().getDrawable(R.drawable.mapmarker);
-        warningDrawable = this.getResources().getDrawable(
-                R.drawable.mapmarker_warn);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        updateOverlayItems();
-    }
-
     public void updateQuakes(ArrayList<Earthquake> quakes) {
         mQuakes = quakes;
         updateOverlayItems();
@@ -79,29 +59,38 @@ public class NZMapFragment extends SupportMapFragment {
                     getDefaultZoomForDevice() + 2);
             map.moveCamera(update);
         }
-//        List<Overlay> mapOverlays = mView.getOverlays();
-//        mapOverlays.clear();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        float warnMagnitude = ((float) prefs.getInt(
-                PreferenceActivity.KEY_PREF_MIN_HIGHLIGHT_MAGNITUDE,
-                DefaultPrefs.MIN_HIGHLIGHT_MAGNITUDE)) / 10.0f;
-        // Doing this this way (a new MapOverlay for every earthquake)
-        // is very inefficient. However, it solves the problem of the
-        // title text for all quakes having the same z-index (and
-        // therefore overlapping each other).
         for (Earthquake q : mQuakes) {
-            map.addMarker(new MarkerOptions()
-                .position(getLatLngForQuake(q))
-                .title(q.getFormattedMagnitude()));
-//            MapOverlay overlay;
-//            if (q.getRoundedMagnitude() >= warnMagnitude)
-//                overlay = new MapOverlay(warningDrawable, this.getActivity());
-//            else
-//                overlay = new MapOverlay(regularDrawable, this.getActivity());
-//            overlay.addOverlay(q);
-//            mapOverlays.add(overlay);
+            MarkerOptions marker = getMarkerForQuake(q);
+            map.addMarker(marker);
         }
-//        mView.invalidate();
+    }
+
+    private MarkerOptions getMarkerForQuake(Earthquake q) {
+        MarkerOptions m = new MarkerOptions()
+                .position(getLatLngForQuake(q))
+                .title(q.getFormattedMagnitude())
+                .snippet(q.getFormattedDepth())
+                .icon(BitmapDescriptorFactory.defaultMarker(getHueForQuake(q)));
+        return m;
+    }
+
+    private float getHueForQuake(Earthquake q) {
+        // https://developers.google.com/maps/documentation/android/reference/com/google/android/gms/maps/model/BitmapDescriptorFactory
+        // Red is 0
+        // Orange is 30
+        // Yellow is 60
+        // Green is 120
+
+        // TODO Apply an appropriate non-linear scale to these - 4.0 not much redder than a 3.0, currently.
+        float mostSignificantQuake = 6;
+        float percentage = (float) (q.getMagnitude() / mostSignificantQuake);
+        float hue = 90 - (percentage * 90);
+
+        if (hue < 0)
+            hue = 0;
+        else if (hue > 90)
+            hue = 90;
+        return hue;
     }
 
     private LatLng getLatLngForQuake(Earthquake quake) {
