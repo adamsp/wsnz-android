@@ -28,7 +28,7 @@
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/title_activity_main"
-            android:screenOrientation="portrait" 
+            android:screenOrientation="portrait"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -68,9 +68,10 @@
             android:exported="false"
             android:label="WSNZ Geonet Background Notifications" />
 
+        <!-- See https://developers.google.com/maps/documentation/android/start for details on acquiring an API key. -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="[Your API Key]"/>
+            android:value="AIzaSyBmfpr8MHUrpQxjnqVXA-T4tdhyJB0Izig"/>
     </application>
 
 </manifest>

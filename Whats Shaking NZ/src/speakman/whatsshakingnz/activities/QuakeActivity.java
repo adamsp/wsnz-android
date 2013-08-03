@@ -5,7 +5,7 @@ import java.util.Date;
 
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.earthquake.Earthquake;
-import speakman.whatsshakingnz.fragments.MapFragment;
+import speakman.whatsshakingnz.fragments.NZMapFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -23,7 +23,7 @@ public class QuakeActivity extends WhatsShakingActivity {
         Earthquake quake = (Earthquake) sender.getParcelableExtra(QUAKE_KEY);
         ArrayList<Earthquake> quakes = new ArrayList<Earthquake>();
         quakes.add(quake);
-        MapFragment map = (MapFragment) getSupportFragmentManager()
+        NZMapFragment map = (NZMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.quake_map);
         map.updateQuakes(quakes);
         TextView v = (TextView) findViewById(R.id.magnitude_detail_field);

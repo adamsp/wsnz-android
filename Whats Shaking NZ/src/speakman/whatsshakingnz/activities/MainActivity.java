@@ -6,7 +6,7 @@ import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.earthquake.Earthquake;
 import speakman.whatsshakingnz.earthquake.EarthquakeFilter;
 import speakman.whatsshakingnz.fragments.ListFragment;
-import speakman.whatsshakingnz.fragments.MapFragment;
+import speakman.whatsshakingnz.fragments.NZMapFragment;
 import speakman.whatsshakingnz.geonet.GeonetAccessor;
 import speakman.whatsshakingnz.geonet.GeonetService;
 import speakman.whatsshakingnz.preferences.DefaultPrefs;
@@ -37,7 +37,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 
     private AsyncTask mDownloadTask;
 
-    private MapFragment mMapFragment;
+    private NZMapFragment mMapFragment;
     private ListFragment mListFragment;
 
     private boolean mPreferencesUpdated;
@@ -78,7 +78,7 @@ public class MainActivity extends SherlockFragmentActivity implements
         if (null == savedInstanceState) {
             // Create fragments
             mListFragment = new ListFragment();
-            mMapFragment = new MapFragment();
+            mMapFragment = NZMapFragment.newInstance();
             FragmentTransaction ft = getSupportFragmentManager()
                     .beginTransaction();
             ft.add(R.id.mainView, mListFragment, TabTitles.List.toString());
@@ -90,7 +90,7 @@ public class MainActivity extends SherlockFragmentActivity implements
         else {
             mListFragment = (ListFragment) getSupportFragmentManager()
                     .findFragmentByTag(TabTitles.List.toString());
-            mMapFragment = (MapFragment) getSupportFragmentManager()
+            mMapFragment = (NZMapFragment) getSupportFragmentManager()
                     .findFragmentByTag(TabTitles.Map.toString());
         }
 
