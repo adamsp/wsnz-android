@@ -2,7 +2,10 @@ package speakman.whatsshakingnz.activities;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
+import android.view.View;
+import android.widget.Toast;
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.earthquake.Earthquake;
 import speakman.whatsshakingnz.fragments.NZMapFragment;
@@ -20,7 +23,7 @@ public class QuakeActivity extends WhatsShakingActivity {
         setContentView(R.layout.quake_view);
 
         Intent sender = getIntent();
-        Earthquake quake = (Earthquake) sender.getParcelableExtra(QUAKE_KEY);
+        final Earthquake quake = sender.getParcelableExtra(QUAKE_KEY);
         ArrayList<Earthquake> quakes = new ArrayList<Earthquake>();
         quakes.add(quake);
         NZMapFragment map = (NZMapFragment) getSupportFragmentManager()
@@ -47,7 +50,31 @@ public class QuakeActivity extends WhatsShakingActivity {
         }
 
         v = (TextView) findViewById(R.id.status_detail_field);
-        if (null != v)
+        if (null != v) {
             v.setText(quake.getStatus());
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showEarthquakeStatusMessage(quake);
+                }
+            });
+        }
+    }
+
+    private void showEarthquakeStatusMessage(Earthquake quake) {
+        int resourceId;
+        String status = quake.getStatus().toLowerCase(Locale.US);
+        if (status.equals("automatic")) {
+            resourceId = R.string.earthquake_status_automatic;
+        } else if(status.equals("deleted")) {
+            resourceId = R.string.earthquake_status_deleted;
+        } else if (status.equals("duplicate")) {
+            resourceId = R.string.earthquake_status_duplicate;
+        } else if (status.equals("reviewed")) {
+            resourceId = R.string.earthquake_status_reviewed;
+        } else {
+            resourceId = R.string.earthquake_status_unknown;
+        }
+        Toast.makeText(QuakeActivity.this, resourceId, Toast.LENGTH_SHORT).show();
     }
 }

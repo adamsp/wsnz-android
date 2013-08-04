@@ -15,6 +15,12 @@
     <string name="date_heading_text">Date</string>
     <string name="status_heading_text">Status</string>
 
+    <string name="earthquake_status_automatic">An automatic earthquake location that has not been reviewed by a duty officer or analyst.</string>
+    <string name="earthquake_status_deleted">Oops! This was not a real earthquake and has been deleted.</string>
+    <string name="earthquake_status_duplicate">This earthquake location is a duplicate of another one.</string>
+    <string name="earthquake_status_reviewed">This earthquake has been reviewed and confirmed by a duty officer or analyst.</string>
+    <string name="earthquake_status_unknown">We don\'t know what this status means! :(</string>
+
     <!-- Notification Items -->
     <string name="notifications_tickerSingleQuake">New quake - magnitude %s</string>
     <string name="notifications_titleSingleQuake">%s magnitude quake found</string>
