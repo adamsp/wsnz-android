@@ -1,8 +1,6 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="AppTheme" parent="android:Theme.Light"/>
-
-    <style name="Theme.Styled" parent="Theme.Sherlock.Light.DarkActionBar"></style>
+    <style name="AppTheme" parent="Theme.Sherlock.Light"/>
 
     <!-- http://developer.android.com/design/style/metrics-grids.html -->
     <!-- http://developer.android.com/design/style/typography.html -->
@@ -12,34 +10,34 @@
     </style>
 
     <style name="ListFont.Magnitude">
-        <item name="android:textSize">22sp</item>
+        <item name="android:textSize">@dimen/list_row_item_magnitude_text_size</item>
         <item name="android:gravity">center</item>
-        <item name="android:layout_width">32dp</item>
-        <item name="android:layout_height">32dp</item>
-        <item name="android:layout_margin">8dp</item>
+        <item name="android:layout_width">@dimen/list_row_item_magnitude_layout_width</item>
+        <item name="android:layout_height">@dimen/list_row_item_magnitude_layout_height</item>
+        <item name="android:layout_margin">@dimen/list_row_item_magnitude_layout_margin</item>
         <item name="android:textColor">?android:textColorPrimaryInverse</item>
     </style>
 
     <style name="ListFont.Primary">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">@dimen/list_row_item_primary_text_size</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">22dp</item>
-        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_height">@dimen/list_row_item_primary_layout_height</item>
+        <item name="android:layout_marginTop">@dimen/list_row_item_primary_layout_margin_top</item>
         <item name="android:textColor">?android:textColorPrimaryInverse</item>
     </style>
 
     <style name="ListFont.Secondary">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/list_row_item_secondary_text_size</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">18dp</item>
-        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:layout_height">@dimen/list_row_item_secondary_layout_height</item>
+        <item name="android:layout_marginBottom">@dimen/list_row_item_secondary_layout_margin_bottom</item>
         <item name="android:textColor">?android:textColorSecondaryInverse</item>
     </style>
 
     <style name="AboutActivityFont">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">@dimen/padding_medium</item>
+        <item name="android:padding">@dimen/about_page_text_padding</item>
     </style>
 
     <style name="AboutActivityFont.Heading">
