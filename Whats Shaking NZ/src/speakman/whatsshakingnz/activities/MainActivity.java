@@ -94,6 +94,11 @@ public class MainActivity extends SherlockFragmentActivity implements
                 mMapFragment = (NZMapFragment) getSupportFragmentManager()
                         .findFragmentByTag(FRAGMENT_TAG_MAP);
             }
+            /**
+             * Set this to true, so that quakes are downloaded and preference items
+             * are updated in the onResume call.
+             */
+            mPreferencesUpdated = true;
         }
         // App was killed by the OS
         else {
@@ -101,18 +106,22 @@ public class MainActivity extends SherlockFragmentActivity implements
                     .findFragmentByTag(FRAGMENT_TAG_LIST);
             mMapFragment = (NZMapFragment) getSupportFragmentManager()
                     .findFragmentByTag(FRAGMENT_TAG_MAP);
+            mQuakes = savedInstanceState.getParcelableArrayList("mQuakes");
             if(host != null) { // tabbed layout
                 mSelectedTab = savedInstanceState.getString("mSelectedTab");
                 if(mSelectedTab != null)
                     host.setCurrentTabByTag(mSelectedTab);
             }
+            updateItemsFromPreferences();
+            updateQuakesDisplay();
         }
+    }
 
-        /**
-         * Set this to true, so that quakes are downloaded and preference items
-         * are updated in the onResume call.
-         */
-        mPreferencesUpdated = true;
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("mSelectedTab", mSelectedTab);
+        outState.putParcelableArrayList("mQuakes", mQuakes);
     }
 
     @Override
@@ -122,20 +131,18 @@ public class MainActivity extends SherlockFragmentActivity implements
                 .registerOnSharedPreferenceChangeListener(this);
         if (mPreferencesUpdated) {
             mPreferencesUpdated = false;
-            SharedPreferences prefs = PreferenceManager
-                    .getDefaultSharedPreferences(this);
-            mMaxNumberOfQuakes = prefs.getInt(
-                    PreferenceActivity.KEY_PREF_NUM_QUAKES_TO_SHOW, 10);
-            mMinDisplay = prefs.getInt(PreferenceActivity.KEY_PREF_MIN_DISPLAY_MAGNITUDE,
-                    DefaultPrefs.MIN_DISPLAY_MAGNITUDE);
+            updateItemsFromPreferences();
             downloadQuakes();
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("mSelectedTab", mSelectedTab);
+    private void updateItemsFromPreferences() {
+        SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        mMaxNumberOfQuakes = prefs.getInt(
+                PreferenceActivity.KEY_PREF_NUM_QUAKES_TO_SHOW, 10);
+        mMinDisplay = prefs.getInt(PreferenceActivity.KEY_PREF_MIN_DISPLAY_MAGNITUDE,
+                DefaultPrefs.MIN_DISPLAY_MAGNITUDE);
     }
 
     @Override
