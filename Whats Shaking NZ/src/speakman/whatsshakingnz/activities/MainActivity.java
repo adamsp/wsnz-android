@@ -1,15 +1,5 @@
 package speakman.whatsshakingnz.activities;
 
-import java.util.ArrayList;
-
-import speakman.whatsshakingnz.R;
-import speakman.whatsshakingnz.earthquake.Earthquake;
-import speakman.whatsshakingnz.earthquake.EarthquakeFilter;
-import speakman.whatsshakingnz.fragments.ListFragment;
-import speakman.whatsshakingnz.fragments.NZMapFragment;
-import speakman.whatsshakingnz.geonet.GeonetAccessor;
-import speakman.whatsshakingnz.geonet.GeonetService;
-import speakman.whatsshakingnz.preferences.DefaultPrefs;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,22 +8,32 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
 import android.util.Log;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
+import android.widget.TabHost;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
+import speakman.whatsshakingnz.R;
+import speakman.whatsshakingnz.earthquake.Earthquake;
+import speakman.whatsshakingnz.earthquake.EarthquakeFilter;
+import speakman.whatsshakingnz.fragments.ListFragment;
+import speakman.whatsshakingnz.fragments.NZMapFragment;
+import speakman.whatsshakingnz.geonet.GeonetAccessor;
+import speakman.whatsshakingnz.geonet.GeonetService;
+import speakman.whatsshakingnz.preferences.DefaultPrefs;
+
+import java.util.ArrayList;
 
 public class MainActivity extends SherlockFragmentActivity implements
-        OnSharedPreferenceChangeListener, ActionBar.TabListener {
+        OnSharedPreferenceChangeListener, TabHost.OnTabChangeListener {
 
-    private enum TabTitles {
-        List, Map
-    }
+    private static final String TAB_TAG_LIST = "tab_list";
+    private static final String TAB_TAG_MAP = "tab_map";
+
+    private static final String FRAGMENT_TAG_LIST = "fragment_list";
+    private static final String FRAGMENT_TAG_MAP = "fragment_map";
 
     private AsyncTask mDownloadTask;
 
@@ -62,7 +62,7 @@ public class MainActivity extends SherlockFragmentActivity implements
     /**
      * The currently selected tab.
      */
-    private TabTitles mSelectedTab;
+    private String mSelectedTab;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,31 +72,38 @@ public class MainActivity extends SherlockFragmentActivity implements
         // Request Feature must be called before adding content.
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_view);
+        setContentView(R.layout.activity_main);
+
+        TabHost host = (TabHost)findViewById(android.R.id.tabhost);
 
         // First start-up
         if (null == savedInstanceState) {
-            // Create fragments
-            mListFragment = new ListFragment();
-            mMapFragment = NZMapFragment.newInstance();
-            FragmentTransaction ft = getSupportFragmentManager()
-                    .beginTransaction();
-            ft.add(R.id.mainView, mListFragment, TabTitles.List.toString());
-            ft.add(R.id.mainView, mMapFragment, TabTitles.Map.toString());
-            ft.commit();
-            mSelectedTab = TabTitles.List;
+            if(host != null) { // tabbed layout
+                host.setup();
+                host.setOnTabChangedListener(this);
+                host.addTab(host.newTabSpec(TAB_TAG_LIST)
+                        .setIndicator(getString(R.string.tab_title_list))
+                        .setContent(R.id.list_view_placeholder));
+                host.addTab(host.newTabSpec(TAB_TAG_MAP)
+                        .setIndicator(getString(R.string.tab_title_map))
+                        .setContent(R.id.map_view_placeholder));
+                mSelectedTab = TAB_TAG_LIST;
+            } else { // 2-pane layout
+                // TODO
+            }
         }
         // App was killed by the OS
         else {
             mListFragment = (ListFragment) getSupportFragmentManager()
-                    .findFragmentByTag(TabTitles.List.toString());
+                    .findFragmentByTag(FRAGMENT_TAG_LIST);
             mMapFragment = (NZMapFragment) getSupportFragmentManager()
-                    .findFragmentByTag(TabTitles.Map.toString());
+                    .findFragmentByTag(FRAGMENT_TAG_MAP);
+            if(host != null) { // tabbed layout
+                mSelectedTab = savedInstanceState.getString("mSelectedTab");
+                if(mSelectedTab != null)
+                    host.setCurrentTabByTag(mSelectedTab);
+            }
         }
-
-        getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        addTab(TabTitles.List);
-        addTab(TabTitles.Map);
 
         /**
          * Set this to true, so that quakes are downloaded and preference items
@@ -123,26 +130,18 @@ public class MainActivity extends SherlockFragmentActivity implements
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("mSelectedTab", mSelectedTab);
+    }
+
+    @Override
     protected void onDestroy() {
         if (null != mDownloadTask) {
             Log.d("WSNZ", "Killing background download task as onDestroy() was called before it returned.");
             mDownloadTask.cancel(true);
         }
         super.onDestroy();
-    }
-
-    /**
-     * Will add a new tab to the action bar, with the supplied TabTitles member
-     * as the title of the tab.
-     *
-     * @param title The title of the tab.
-     */
-    private void addTab(TabTitles title) {
-        ActionBar.Tab tab = getSupportActionBar().newTab();
-        tab.setText(title.toString());
-        tab.setTag(title);
-        tab.setTabListener(this);
-        getSupportActionBar().addTab(tab);
     }
 
     @Override
@@ -180,28 +179,28 @@ public class MainActivity extends SherlockFragmentActivity implements
     }
 
     @Override
-    public void onTabSelected(Tab tab, FragmentTransaction ft) {
-        switch ((TabTitles) tab.getTag()) {
-            case List:
-                ft.detach(mMapFragment);
-                ft.attach(mListFragment);
-                mSelectedTab = TabTitles.List;
-                break;
-            case Map:
-                ft.detach(mListFragment);
-                ft.attach(mMapFragment);
-                mSelectedTab = TabTitles.Map;
-                break;
+    public void onTabChanged(String tabId) {
+        mSelectedTab = tabId;
+        if(TAB_TAG_LIST.equals(tabId)) {
+            if (mListFragment == null) {
+                mListFragment = new ListFragment();
+                replaceFragment(R.id.list_view_placeholder, mListFragment, FRAGMENT_TAG_LIST);
+            }
+        } else {
+            if (mMapFragment == null) {
+                mMapFragment = NZMapFragment.newInstance();
+                replaceFragment(R.id.map_view_placeholder, mMapFragment, FRAGMENT_TAG_MAP);
+            }
         }
         updateQuakesDisplay();
+
     }
 
-    @Override
-    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-    }
-
-    @Override
-    public void onTabReselected(Tab tab, FragmentTransaction ft) {
+    private void replaceFragment(int placeholderId, Fragment replacementFragment, String tag) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(placeholderId, replacementFragment, tag)
+                .commit();
     }
 
     /**
@@ -210,14 +209,8 @@ public class MainActivity extends SherlockFragmentActivity implements
      * {@link #mQuakes} first, then call this method.
      */
     private void updateQuakesDisplay() {
-        switch (mSelectedTab) {
-            case List:
-                updateQuakesList();
-                break;
-            case Map:
-                updateQuakesMap();
-                break;
-        }
+        updateQuakesList();
+        updateQuakesMap();
     }
 
     /**
@@ -309,7 +302,7 @@ public class MainActivity extends SherlockFragmentActivity implements
             mQuakes = results;
             // Update our "last checked" key in the prefs.
             if (results.size() > 0) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                 Editor editor = prefs.edit();
                 editor.putString(GeonetService.KEY_PREFS_LAST_CHECKED_ID, results
                         .get(0).getReference());
