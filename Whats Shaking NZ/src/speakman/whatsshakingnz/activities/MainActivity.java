@@ -89,7 +89,10 @@ public class MainActivity extends SherlockFragmentActivity implements
                         .setContent(R.id.map_view_placeholder));
                 mSelectedTab = TAB_TAG_LIST;
             } else { // 2-pane layout
-                // TODO
+                mListFragment = (ListFragment) getSupportFragmentManager()
+                        .findFragmentByTag(FRAGMENT_TAG_LIST);
+                mMapFragment = (NZMapFragment) getSupportFragmentManager()
+                        .findFragmentByTag(FRAGMENT_TAG_MAP);
             }
         }
         // App was killed by the OS
