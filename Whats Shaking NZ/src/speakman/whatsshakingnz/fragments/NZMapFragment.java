@@ -19,36 +19,71 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
     private static final double NZ_CENTRE_LONGITUDE = 173;
     private HashMap<String, Earthquake> mMarkerIdToQuake;
 
+    private static CameraPosition defaultCameraPosition;
+
+    static {
+        defaultCameraPosition = new CameraPosition(new LatLng(NZ_CENTRE_LATITUDE, NZ_CENTRE_LONGITUDE), // target
+                // TODO Zoom should probably change by device...
+                5, // zoom
+                0, // tilt
+                0); // bearing
+    }
+
+    /**
+     * For some reason, calling setArguments in the empty constructor doesn't work to specify an initial camera
+     * position, where as when we call it from the static methods it does. The empty constructor is the one called when
+     * inflating from XML.
+     *
+     * For this reason, we always manually set the camera to the location specified in the getArguments() Bundle, or if
+     * this does not exist then to the default location. We do this when we expect the Map to be ready - in the
+     * onActivityCreated call.
+     */
+
     public NZMapFragment() {
         mMarkerIdToQuake = new HashMap<String, Earthquake>();
     }
 
     public static NZMapFragment newInstance() {
-        GoogleMapOptions defaultOptions = new GoogleMapOptions();
-        CameraPosition pos = new CameraPosition(new LatLng(NZ_CENTRE_LATITUDE, NZ_CENTRE_LONGITUDE), // target
-                // TODO Zoom should probably change by device...
-                5, // zoom
-                0, // tilt
-                0); // bearing
-        defaultOptions.camera(pos);
-        return NZMapFragment.newInstance(defaultOptions);
+        return new NZMapFragment();
     }
 
     public static NZMapFragment newInstance(GoogleMapOptions options) {
         NZMapFragment fragment = new NZMapFragment();
 
-        Bundle args = new Bundle();
         // See http://stackoverflow.com/a/13783463/1217087
+        Bundle args = new Bundle();
         args.putParcelable("MapOptions", options); //obtained by decompiling google-play-services.jar
         fragment.setArguments(args);
-
         return fragment;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setInitialCameraPosition();
         updateOverlayItems();
+    }
+
+    private void setInitialCameraPosition() {
+        GoogleMap map = getMap();
+        if (map == null) return;
+
+        Bundle args;
+        GoogleMapOptions googleMapOptions = null;
+        CameraPosition camPosition;
+
+        args = getArguments();
+
+        if(args != null)
+            googleMapOptions = (GoogleMapOptions)getArguments().get("MapOptions");
+
+        if (googleMapOptions != null) {
+            camPosition = googleMapOptions.getCamera();
+        } else {
+            camPosition = defaultCameraPosition;
+        }
+
+        map.moveCamera(CameraUpdateFactory.newCameraPosition(camPosition));
     }
 
     public void updateQuakes(ArrayList<Earthquake> quakes) {
@@ -58,7 +93,7 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
 
     private void updateOverlayItems() {
         GoogleMap map = getMap();
-        if (map == null || null == mQuakes)
+        if (map == null || mQuakes == null)
             return;
 
         map.setOnInfoWindowClickListener(this);
@@ -67,10 +102,10 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
         // only have one quake in this instance.
         if (getActivity() instanceof QuakeActivity) {
             Earthquake singleQuake = mQuakes.get(0);
+            map.addMarker(getMarkerForQuake(singleQuake));
             CameraUpdate update = CameraUpdateFactory.newLatLngZoom(singleQuake.getLatLng(),
                     getDefaultZoomForDevice() + 2);
             map.moveCamera(update);
-            map.addMarker(getMarkerForQuake(singleQuake));
         } else {
             for (Earthquake q : mQuakes) {
                 MarkerOptions markerOptions = getMarkerForQuake(q);
@@ -81,6 +116,7 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
                 mMarkerIdToQuake.put(marker.getId(), q);
             }
         }
+
     }
 
     private MarkerOptions getMarkerForQuake(Earthquake q) {
@@ -98,6 +134,7 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
         // Green is 120
 
         // TODO Apply an appropriate non-linear scale to these - 4.0 not much redder than a 3.0, currently.
+        // TODO Move this to the Earthquake class, as this will be used in the list as well.
         float mostSignificantQuake = 6;
         float percentage = (float) (q.getMagnitude() / mostSignificantQuake);
         float hue = 90 - (percentage * 90);
@@ -117,6 +154,7 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
      * device.
      */
     private int getDefaultZoomForDevice() {
+        // TODO Broken with new maps.
         int defaultZoom = 5;
         View v = getView();
         if (v != null) {
