@@ -15,7 +15,7 @@
         <item name="android:layout_width">@dimen/list_row_item_magnitude_layout_width</item>
         <item name="android:layout_height">@dimen/list_row_item_magnitude_layout_height</item>
         <item name="android:layout_margin">@dimen/list_row_item_magnitude_layout_margin</item>
-        <item name="android:textColor">?android:textColorPrimaryInverse</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
     </style>
 
     <style name="ListFont.Primary">
@@ -23,7 +23,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/list_row_item_primary_layout_height</item>
         <item name="android:layout_marginTop">@dimen/list_row_item_primary_layout_margin_top</item>
-        <item name="android:textColor">?android:textColorPrimaryInverse</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
     </style>
 
     <style name="ListFont.Secondary">
@@ -31,7 +31,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/list_row_item_secondary_layout_height</item>
         <item name="android:layout_marginBottom">@dimen/list_row_item_secondary_layout_margin_bottom</item>
-        <item name="android:textColor">?android:textColorSecondaryInverse</item>
+        <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
     <style name="AboutActivityFont">

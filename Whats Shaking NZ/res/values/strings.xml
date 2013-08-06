@@ -71,5 +71,7 @@
         by a human, or has been automatically calculated by the computer. Reviewed quakes are
         reliable, automatic ones are not.
     </string>
+    <string name="tab_title_list">List</string>
+    <string name="tab_title_map">Map</string>
 
 </resources>

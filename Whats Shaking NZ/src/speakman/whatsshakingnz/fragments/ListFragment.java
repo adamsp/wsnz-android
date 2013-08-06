@@ -36,7 +36,7 @@ public class ListFragment extends SherlockListFragment {
             firstTime = false;
         }
         EarthquakeArrayAdapter adapter = new EarthquakeArrayAdapter(this
-                .getActivity().getApplicationContext(), R.layout.row, quakes);
+                .getActivity(), R.layout.row, quakes);
         setListAdapter(adapter);
     }
 

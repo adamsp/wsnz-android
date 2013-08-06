@@ -20,7 +20,7 @@ public class QuakeActivity extends WhatsShakingActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.quake_view);
+        setContentView(R.layout.activity_quake);
 
         Intent sender = getIntent();
         final Earthquake quake = sender.getParcelableExtra(QUAKE_KEY);

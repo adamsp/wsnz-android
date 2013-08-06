@@ -45,6 +45,12 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
         return fragment;
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        updateOverlayItems();
+    }
+
     public void updateQuakes(ArrayList<Earthquake> quakes) {
         mQuakes = quakes;
         updateOverlayItems();
@@ -128,7 +134,7 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
 
     @Override
     public View getInfoWindow(Marker marker) {
-        View v = getLayoutInflater(null).inflate(R.layout.quake_marker_view, null);
+        View v = getLayoutInflater(null).inflate(R.layout.quake_marker, null);
         final Earthquake quake = mMarkerIdToQuake.get(marker.getId());
         if(quake != null) {
             // TODO Improve this info window layout etc.
