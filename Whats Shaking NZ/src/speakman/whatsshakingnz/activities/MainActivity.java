@@ -74,19 +74,11 @@ public class MainActivity extends SherlockFragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TabHost host = (TabHost)findViewById(android.R.id.tabhost);
+        TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);
 
         // First start-up
         if (null == savedInstanceState) {
-            if(host != null) { // tabbed layout
-                host.setup();
-                host.setOnTabChangedListener(this);
-                host.addTab(host.newTabSpec(TAB_TAG_LIST)
-                        .setIndicator(getString(R.string.tab_title_list))
-                        .setContent(R.id.list_view_placeholder));
-                host.addTab(host.newTabSpec(TAB_TAG_MAP)
-                        .setIndicator(getString(R.string.tab_title_map))
-                        .setContent(R.id.map_view_placeholder));
+            if (tabHost != null) { // tabbed layout
                 mSelectedTab = TAB_TAG_LIST;
             } else { // 2-pane layout
                 mListFragment = (ListFragment) getSupportFragmentManager()
@@ -107,14 +99,36 @@ public class MainActivity extends SherlockFragmentActivity implements
             mMapFragment = (NZMapFragment) getSupportFragmentManager()
                     .findFragmentByTag(FRAGMENT_TAG_MAP);
             mQuakes = savedInstanceState.getParcelableArrayList("mQuakes");
-            if(host != null) { // tabbed layout
+            if(tabHost != null) { // tabbed layout
                 mSelectedTab = savedInstanceState.getString("mSelectedTab");
-                if(mSelectedTab != null)
-                    host.setCurrentTabByTag(mSelectedTab);
             }
-            updateItemsFromPreferences();
-            updateQuakesDisplay();
         }
+
+        /**
+         * This has to come after we've acquired our fragments and list of quakes from saved state, or we get NPEs with
+         * fragments not being attached to the activity etc.
+         */
+        if(tabHost != null) {
+            tabHost.setup();
+            tabHost.addTab(tabHost.newTabSpec(TAB_TAG_LIST)
+                    .setIndicator(getString(R.string.tab_title_list))
+                    .setContent(R.id.list_view_placeholder));
+            tabHost.addTab(tabHost.newTabSpec(TAB_TAG_MAP)
+                    .setIndicator(getString(R.string.tab_title_map))
+                    .setContent(R.id.map_view_placeholder));
+            // Set the listener after adding tabs, because we don't want to know about adding them.
+            tabHost.setOnTabChangedListener(this);
+            /**
+             * Have to call both setCurrentTabByTag (because if we've just been restored on map tab, then we have to
+             * tell the tab host to show the map tab) and onTabChanged (because if we've just been restored on list tab,
+             * then we have to tell the data to update).
+             */
+            tabHost.setCurrentTabByTag(mSelectedTab);
+            onTabChanged(mSelectedTab);
+        }
+
+        updateItemsFromPreferences();
+        updateQuakesDisplay();
     }
 
     @Override
