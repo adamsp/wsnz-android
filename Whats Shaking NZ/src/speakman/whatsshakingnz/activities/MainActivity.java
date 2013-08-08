@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.View;
 import android.widget.TabHost;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -18,11 +19,13 @@ import com.actionbarsherlock.view.Window;
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.earthquake.Earthquake;
 import speakman.whatsshakingnz.earthquake.EarthquakeFilter;
+import speakman.whatsshakingnz.fragments.EarthquakeDetailFragment;
 import speakman.whatsshakingnz.fragments.ListFragment;
 import speakman.whatsshakingnz.fragments.NZMapFragment;
 import speakman.whatsshakingnz.geonet.GeonetAccessor;
 import speakman.whatsshakingnz.geonet.GeonetService;
 import speakman.whatsshakingnz.preferences.DefaultPrefs;
+import speakman.whatsshakingnz.views.AnimatingLinearLayout;
 
 import java.util.ArrayList;
 
@@ -34,6 +37,7 @@ public class MainActivity extends SherlockFragmentActivity implements
 
     private static final String FRAGMENT_TAG_LIST = "fragment_list";
     private static final String FRAGMENT_TAG_MAP = "fragment_map";
+    private static final String FRAGMENT_TAG_DETAIL = "fragment_detail";
 
     private AsyncTask mDownloadTask;
 
@@ -63,6 +67,7 @@ public class MainActivity extends SherlockFragmentActivity implements
      * The currently selected tab.
      */
     private String mSelectedTab;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -268,6 +273,31 @@ public class MainActivity extends SherlockFragmentActivity implements
     protected void updateRefreshButtonVisibility() {
         if (null != mRefreshMenuItem)
             mRefreshMenuItem.setVisible(!mDownloading);
+    }
+
+    // TODO Make these an interface
+    // TODO Figure out a better way of the marker losing focus?
+    public void mapMarkerClicked(Earthquake quake) {
+        if (findViewById(android.R.id.tabhost) != null) {
+            Intent intent = new Intent(this, QuakeActivity.class);
+            intent.putExtra(QuakeActivity.QUAKE_KEY, quake);
+            startActivity(intent);
+        } else {
+            EarthquakeDetailFragment detailFragment = (EarthquakeDetailFragment) getSupportFragmentManager()
+                    .findFragmentByTag(FRAGMENT_TAG_DETAIL);
+            if (detailFragment == null)  return;
+            detailFragment.setQuake(quake);
+            View v = findViewById(R.id.earthquake_details_animating_overlay);
+            // TODO Animating out like this doesn't seem to work...
+            ((AnimatingLinearLayout)v).show(true);
+        }
+    }
+
+    public void mapMarkerFocusLost() {
+        View v = findViewById(R.id.earthquake_details_animating_overlay);
+        if (v != null) {
+            ((AnimatingLinearLayout)v).hide(true);
+        }
     }
 
     /**

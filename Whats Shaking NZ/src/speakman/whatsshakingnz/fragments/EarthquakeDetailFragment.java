@@ -28,6 +28,7 @@ public class EarthquakeDetailFragment extends SherlockFragment {
 
     public void setQuake(Earthquake quake) {
         mQuake = quake;
+        displayQuakeDetails();
     }
 
     @Override

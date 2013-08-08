@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import speakman.whatsshakingnz.R;
+import speakman.whatsshakingnz.activities.MainActivity;
 import speakman.whatsshakingnz.activities.QuakeActivity;
 import speakman.whatsshakingnz.earthquake.Earthquake;
 
@@ -97,6 +98,14 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
             return;
 
         map.setOnInfoWindowClickListener(this);
+        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                if(getActivity() instanceof MainActivity) {
+                    ((MainActivity)getActivity()).mapMarkerFocusLost();
+                }
+            }
+        });
 
         // Move the map view if this is a QuakeActivity, will
         // only have one quake in this instance.
@@ -194,9 +203,9 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
     public void onInfoWindowClick(Marker marker) {
         Earthquake quake = mMarkerIdToQuake.get(marker.getId());
         if(quake != null) {
-            Intent intent = new Intent(getActivity(), QuakeActivity.class);
-            intent.putExtra(QuakeActivity.QUAKE_KEY, quake);
-            getActivity().startActivity(intent);
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity)getActivity()).mapMarkerClicked(quake);
+            }
         }
     }
 }
