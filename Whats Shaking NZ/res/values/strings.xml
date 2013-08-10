@@ -10,10 +10,10 @@
     <string name="no_quakes">No quakes found!</string>
 
     <!-- Quake Detail Page Items -->
-    <string name="magnitude_heading_text">Magnitude</string>
-    <string name="depth_heading_text">Depth</string>
-    <string name="date_heading_text">Date</string>
-    <string name="status_heading_text">Status</string>
+    <string name="magnitude_heading_text">MAGNITUDE</string>
+    <string name="depth_heading_text">DEPTH</string>
+    <string name="date_heading_text">DATE</string>
+    <string name="status_heading_text">STATUS</string>
 
     <string name="earthquake_status_automatic">An automatic earthquake location that has not been reviewed by a duty officer or analyst.</string>
     <string name="earthquake_status_deleted">Oops! This was not a real earthquake and has been deleted.</string>

@@ -29,11 +29,14 @@
 
         <fragment
             android:id="@+id/earthquake_detail_fragment"
-            android:layout_width="fill_parent"
+            android:layout_width="@dimen/detail_overlay_width"
             android:layout_height="wrap_content"
             android:tag="fragment_detail"
             class="speakman.whatsshakingnz.fragments.EarthquakeDetailFragment"
-            android:layout_alignParentTop="true" />
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/detail_overlay_margin"/>
+
     </RelativeLayout>
 
 </LinearLayout>

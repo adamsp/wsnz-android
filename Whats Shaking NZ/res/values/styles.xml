@@ -72,4 +72,31 @@
         <item name="android:layout_weight">1</item>
     </style>
 
+    <!-- Earthquake Detail Overlay -->
+    <style name="DetailOverlayFont">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="DetailOverlayFont.Heading">
+        <item name="android:textColor">#7F7F7F</item>
+        <item name="android:textSize">@dimen/detail_overlay_heading_text_size</item>
+        <item name="android:paddingLeft">@dimen/detail_overlay_heading_padding_left</item>
+    </style>
+
+    <style name="DetailOverlayFont.Heading.Weighted">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="DetailOverlayFont.Detail">
+        <item name="android:textSize">@dimen/detail_overlay_detail_text_size</item>
+        <item name="android:paddingLeft">@dimen/detail_overlay_detail_padding_left</item>
+    </style>
+
+    <style name="DetailOverlayFont.Detail.Weighted">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
 </resources>
