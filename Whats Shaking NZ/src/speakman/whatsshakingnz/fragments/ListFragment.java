@@ -3,6 +3,7 @@ package speakman.whatsshakingnz.fragments;
 import java.util.ArrayList;
 
 import speakman.whatsshakingnz.R;
+import speakman.whatsshakingnz.activities.MainActivity;
 import speakman.whatsshakingnz.activities.QuakeActivity;
 import speakman.whatsshakingnz.earthquake.Earthquake;
 import speakman.whatsshakingnz.earthquake.EarthquakeArrayAdapter;
@@ -12,10 +13,12 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockListFragment;
+import speakman.whatsshakingnz.earthquake.EarthquakeTapListener;
 
 public class ListFragment extends SherlockListFragment {
 
     private boolean firstTime = true;
+    private EarthquakeTapListener mTapListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,15 +39,20 @@ public class ListFragment extends SherlockListFragment {
             firstTime = false;
         }
         EarthquakeArrayAdapter adapter = new EarthquakeArrayAdapter(this
-                .getActivity().getApplicationContext(), R.layout.row, quakes);
+                .getActivity(), R.layout.row, quakes);
         setListAdapter(adapter);
     }
 
     @Override
     public void onListItemClick(ListView lv, View v, int position, long id) {
-        Intent intent = new Intent(getSherlockActivity(), QuakeActivity.class);
-        Earthquake quake = (Earthquake) getListView().getItemAtPosition(position);
-        intent.putExtra(QuakeActivity.QUAKE_KEY, quake);
-        startActivity(intent);
+        if (mTapListener != null) {
+            Earthquake quake = (Earthquake) getListView().getItemAtPosition(position);
+            mTapListener.onEarthquakeTap(quake);
+        }
+    }
+
+
+    public void setOnEarthquakeTapListener(EarthquakeTapListener listener) {
+        mTapListener = listener;
     }
 }
