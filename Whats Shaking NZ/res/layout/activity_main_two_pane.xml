@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:weightSum="5">
+
+    <fragment
+        android:id="@+id/list"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:tag="fragment_list"
+        android:name="speakman.whatsshakingnz.fragments.ListFragment"/>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:id="@+id/map_pane_layout_parent">
+
+        <fragment
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:tag="fragment_map"
+            android:name="speakman.whatsshakingnz.fragments.NZMapFragment" />
+
+        <fragment
+            android:id="@+id/earthquake_detail_fragment"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:tag="fragment_detail"
+            class="speakman.whatsshakingnz.fragments.EarthquakeDetailFragment"
+            android:layout_alignParentTop="true" />
+    </RelativeLayout>
+
+</LinearLayout>
