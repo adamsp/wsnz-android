@@ -16,12 +16,12 @@ public class AnimatingLinearLayout extends LinearLayout {
     Context context;
     Animation inAnimation;
     Animation outAnimation;
+    Animation.AnimationListener outAnimationFinishedListener;
 
     public AnimatingLinearLayout(Context context) {
         super(context);
         this.context = context;
         initAnimations();
-
     }
 
     public AnimatingLinearLayout(Context context, AttributeSet attrs) {
@@ -33,6 +33,22 @@ public class AnimatingLinearLayout extends LinearLayout {
     private void initAnimations() {
         inAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_in);
         outAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+        outAnimationFinishedListener = new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                AnimatingLinearLayout.this.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        };
     }
 
     public void show() {
@@ -51,8 +67,13 @@ public class AnimatingLinearLayout extends LinearLayout {
     }
 
     public void hide(boolean withAnimation) {
-        if (withAnimation) this.startAnimation(outAnimation);
-        this.setVisibility(View.GONE);
+        if (withAnimation) {
+            outAnimation.setAnimationListener(outAnimationFinishedListener);
+            this.startAnimation(outAnimation);
+        }
+        else {
+            this.setVisibility(View.GONE);
+        }
     }
 
     public boolean isVisible() {

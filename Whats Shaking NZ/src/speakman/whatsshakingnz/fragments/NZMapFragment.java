@@ -10,6 +10,7 @@ import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.activities.MainActivity;
 import speakman.whatsshakingnz.activities.QuakeActivity;
 import speakman.whatsshakingnz.earthquake.Earthquake;
+import speakman.whatsshakingnz.earthquake.EarthquakeTapListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +30,8 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
                 0, // tilt
                 0); // bearing
     }
+
+    private EarthquakeTapListener mListener;
 
     /**
      * For some reason, calling setArguments in the empty constructor doesn't work to specify an initial camera
@@ -101,9 +104,7 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                if(getActivity() instanceof MainActivity) {
-                    ((MainActivity)getActivity()).mapMarkerFocusLost();
-                }
+                if(mListener != null) mListener.onEarthquakeLostFocus(null);
             }
         });
 
@@ -202,10 +203,12 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
     @Override
     public void onInfoWindowClick(Marker marker) {
         Earthquake quake = mMarkerIdToQuake.get(marker.getId());
-        if(quake != null) {
-            if (getActivity() instanceof MainActivity) {
-                ((MainActivity)getActivity()).mapMarkerClicked(quake);
-            }
+        if(quake != null && mListener != null) {
+           mListener.onEarthquakeTap(quake);
         }
+    }
+
+    public void setOnEarthquakeTapListener(EarthquakeTapListener listener) {
+        mListener = listener;
     }
 }

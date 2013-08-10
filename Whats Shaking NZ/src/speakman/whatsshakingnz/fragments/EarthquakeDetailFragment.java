@@ -91,4 +91,8 @@ public class EarthquakeDetailFragment extends SherlockFragment {
         }
         Toast.makeText(getActivity(), resourceId, Toast.LENGTH_SHORT).show();
     }
+
+    public Earthquake getQuake() {
+        return mQuake;
+    }
 }

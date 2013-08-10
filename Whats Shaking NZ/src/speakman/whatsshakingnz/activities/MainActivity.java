@@ -19,6 +19,7 @@ import com.actionbarsherlock.view.Window;
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.earthquake.Earthquake;
 import speakman.whatsshakingnz.earthquake.EarthquakeFilter;
+import speakman.whatsshakingnz.earthquake.EarthquakeTapListener;
 import speakman.whatsshakingnz.fragments.EarthquakeDetailFragment;
 import speakman.whatsshakingnz.fragments.ListFragment;
 import speakman.whatsshakingnz.fragments.NZMapFragment;
@@ -30,7 +31,7 @@ import speakman.whatsshakingnz.views.AnimatingLinearLayout;
 import java.util.ArrayList;
 
 public class MainActivity extends SherlockFragmentActivity implements
-        OnSharedPreferenceChangeListener, TabHost.OnTabChangeListener {
+        OnSharedPreferenceChangeListener, TabHost.OnTabChangeListener, EarthquakeTapListener {
 
     private static final String TAB_TAG_LIST = "tab_list";
     private static final String TAB_TAG_MAP = "tab_map";
@@ -67,6 +68,7 @@ public class MainActivity extends SherlockFragmentActivity implements
      * The currently selected tab.
      */
     private String mSelectedTab;
+    private boolean mTabletMode;
 
 
     @Override
@@ -80,6 +82,10 @@ public class MainActivity extends SherlockFragmentActivity implements
         setContentView(R.layout.activity_main);
 
         TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);
+        if (tabHost == null)
+            mTabletMode = true;
+        else
+            mTabletMode = false;
 
         // First start-up
         if (null == savedInstanceState) {
@@ -108,6 +114,8 @@ public class MainActivity extends SherlockFragmentActivity implements
                 mSelectedTab = savedInstanceState.getString("mSelectedTab");
             }
         }
+        if (mListFragment != null) mListFragment.setOnEarthquakeTapListener(this);
+        if (mMapFragment != null) mMapFragment.setOnEarthquakeTapListener(this);
 
         /**
          * This has to come after we've acquired our fragments and list of quakes from saved state, or we get NPEs with
@@ -213,11 +221,13 @@ public class MainActivity extends SherlockFragmentActivity implements
         if(TAB_TAG_LIST.equals(tabId)) {
             if (mListFragment == null) {
                 mListFragment = new ListFragment();
+                mListFragment.setOnEarthquakeTapListener(this);
                 replaceFragment(R.id.list_view_placeholder, mListFragment, FRAGMENT_TAG_LIST);
             }
         } else {
             if (mMapFragment == null) {
                 mMapFragment = NZMapFragment.newInstance();
+                mMapFragment.setOnEarthquakeTapListener(this);
                 replaceFragment(R.id.map_view_placeholder, mMapFragment, FRAGMENT_TAG_MAP);
             }
         }
@@ -275,10 +285,11 @@ public class MainActivity extends SherlockFragmentActivity implements
             mRefreshMenuItem.setVisible(!mDownloading);
     }
 
-    // TODO Make these an interface
-    // TODO Figure out a better way of the marker losing focus?
-    public void mapMarkerClicked(Earthquake quake) {
-        if (findViewById(android.R.id.tabhost) != null) {
+    @Override
+    public void onEarthquakeTap(Earthquake quake) {
+        if (quake == null) return;
+
+        if (!mTabletMode) {
             Intent intent = new Intent(this, QuakeActivity.class);
             intent.putExtra(QuakeActivity.QUAKE_KEY, quake);
             startActivity(intent);
@@ -286,17 +297,25 @@ public class MainActivity extends SherlockFragmentActivity implements
             EarthquakeDetailFragment detailFragment = (EarthquakeDetailFragment) getSupportFragmentManager()
                     .findFragmentByTag(FRAGMENT_TAG_DETAIL);
             if (detailFragment == null)  return;
-            detailFragment.setQuake(quake);
-            View v = findViewById(R.id.earthquake_details_animating_overlay);
-            // TODO Animating out like this doesn't seem to work...
-            ((AnimatingLinearLayout)v).show(true);
+
+            AnimatingLinearLayout v = (AnimatingLinearLayout)findViewById(R.id.earthquake_details_animating_overlay);
+            if (v == null) return;
+
+            if (quake.equals(detailFragment.getQuake()) && v.isVisible()) {
+                detailFragment.setQuake(null);
+                v.hide(true);
+            } else {
+                detailFragment.setQuake(quake);
+                v.show(true);
+            }
         }
     }
 
-    public void mapMarkerFocusLost() {
-        View v = findViewById(R.id.earthquake_details_animating_overlay);
+    @Override
+    public void onEarthquakeLostFocus(Earthquake quake) {
+        AnimatingLinearLayout v = (AnimatingLinearLayout)findViewById(R.id.earthquake_details_animating_overlay);
         if (v != null) {
-            ((AnimatingLinearLayout)v).hide(true);
+            v.hide(true);
         }
     }
 
