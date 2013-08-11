@@ -5,6 +5,7 @@
     <!-- http://developer.android.com/design/style/metrics-grids.html -->
     <!-- http://developer.android.com/design/style/typography.html -->
     <style name="ListFont">
+        <item name="typeface">Roboto-Light.ttf</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
     </style>
@@ -47,6 +48,7 @@
     <style name="AboutActivityFont.Detail"></style>
 
     <style name="QuakeActivityFont">
+        <item name="typeface">Roboto-Light.ttf</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
@@ -74,6 +76,7 @@
 
     <!-- Earthquake Detail Overlay -->
     <style name="DetailOverlayFont">
+        <item name="typeface">Roboto-Light.ttf</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>

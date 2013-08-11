@@ -15,11 +15,11 @@
         android:orientation="horizontal"
         android:weightSum="2">
 
-        <TextView
+        <speakman.whatsshakingnz.views.TypefacedTextView
             style="@style/DetailOverlayFont.Heading.Weighted"
             android:text="@string/magnitude_heading_text"/>
 
-        <TextView
+        <speakman.whatsshakingnz.views.TypefacedTextView
             style="@style/DetailOverlayFont.Heading.Weighted"
             android:text="@string/depth_heading_text"/>
     </LinearLayout>
@@ -30,28 +30,28 @@
         android:orientation="horizontal"
         android:weightSum="2">
 
-        <TextView
+        <speakman.whatsshakingnz.views.TypefacedTextView
             android:id="@+id/magnitude_detail_field"
             style="@style/DetailOverlayFont.Detail.Weighted"/>
 
-        <TextView
+        <speakman.whatsshakingnz.views.TypefacedTextView
             android:id="@+id/depth_detail_field"
             style="@style/DetailOverlayFont.Detail.Weighted"/>
     </LinearLayout>
 
-    <TextView
+    <speakman.whatsshakingnz.views.TypefacedTextView
         style="@style/DetailOverlayFont.Heading"
         android:text="@string/date_heading_text"/>
 
-    <TextView
+    <speakman.whatsshakingnz.views.TypefacedTextView
         android:id="@+id/date_detail_field"
         style="@style/DetailOverlayFont.Detail"/>
 
-    <TextView
+    <speakman.whatsshakingnz.views.TypefacedTextView
         style="@style/DetailOverlayFont.Heading"
         android:text="@string/status_heading_text"/>
 
-    <TextView
+    <speakman.whatsshakingnz.views.TypefacedTextView
         android:id="@+id/status_detail_field"
         style="@style/DetailOverlayFont.Detail"/>
 
