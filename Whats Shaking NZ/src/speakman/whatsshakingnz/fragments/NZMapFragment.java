@@ -132,28 +132,8 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
     private MarkerOptions getMarkerForQuake(Earthquake q) {
         MarkerOptions m = new MarkerOptions()
                 .position(q.getLatLng())
-                .icon(BitmapDescriptorFactory.defaultMarker(getHueForQuake(q)));
+                .icon(BitmapDescriptorFactory.defaultMarker(q.getHue()));
         return m;
-    }
-
-    private float getHueForQuake(Earthquake q) {
-        // https://developers.google.com/maps/documentation/android/reference/com/google/android/gms/maps/model/BitmapDescriptorFactory
-        // Red is 0
-        // Orange is 30
-        // Yellow is 60
-        // Green is 120
-
-        // TODO Apply an appropriate non-linear scale to these - 4.0 not much redder than a 3.0, currently.
-        // TODO Move this to the Earthquake class, as this will be used in the list as well.
-        float mostSignificantQuake = 6;
-        float percentage = (float) (q.getMagnitude() / mostSignificantQuake);
-        float hue = 90 - (percentage * 90);
-
-        if (hue < 0)
-            hue = 0;
-        else if (hue > 90)
-            hue = 90;
-        return hue;
     }
 
     /**

@@ -215,4 +215,23 @@ public class Earthquake implements Parcelable {
             return false;
         return true;
     }
+
+    public float getHue() {
+            // https://developers.google.com/maps/documentation/android/reference/com/google/android/gms/maps/model/BitmapDescriptorFactory
+            // Red is 0
+            // Orange is 30
+            // Yellow is 60
+            // Green is 120
+
+            // TODO Apply an appropriate non-linear scale to these - 4.0 not much redder than a 3.0, currently.
+            float mostSignificantQuake = 6;
+            float percentage = (float) (getMagnitude() / mostSignificantQuake);
+            float hue = 90 - (percentage * 90);
+
+            if (hue < 0)
+                hue = 0;
+            else if (hue > 90)
+                hue = 90;
+            return hue;
+    }
 }
