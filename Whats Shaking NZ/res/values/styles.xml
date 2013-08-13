@@ -49,57 +49,30 @@
 
     <style name="AboutActivityFont.Detail"></style>
 
-    <style name="QuakeActivityFont">
-        <item name="typeface">Roboto-Light.ttf</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
-    <style name="QuakeActivityFont.Heading">
-        <item name="android:textColor">#7F7F7F</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:paddingLeft">2dp</item>
-    </style>
-
-    <style name="QuakeActivityFont.Heading.Weighted">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">1</item>
-    </style>
-
-    <style name="QuakeActivityFont.Detail">
-        <item name="android:textSize">24sp</item>
-        <item name="android:paddingLeft">8dp</item>
-    </style>
-
-    <style name="QuakeActivityFont.Detail.Weighted">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">1</item>
-    </style>
-
     <!-- Earthquake Detail Overlay -->
-    <style name="DetailOverlayFont">
+    <style name="EarthquakeDetailFragmentFont">
         <item name="typeface">Roboto-Light.ttf</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="DetailOverlayFont.Heading">
+    <style name="EarthquakeDetailFragmentFont.Heading">
         <item name="android:textColor">#7F7F7F</item>
-        <item name="android:textSize">@dimen/detail_overlay_heading_text_size</item>
-        <item name="android:paddingLeft">@dimen/detail_overlay_heading_padding_left</item>
+        <item name="android:textSize">@dimen/detail_fragment_heading_text_size</item>
+        <item name="android:paddingLeft">@dimen/detail_fragment_heading_padding_left</item>
     </style>
 
-    <style name="DetailOverlayFont.Heading.Weighted">
+    <style name="EarthquakeDetailFragmentFont.Heading.Weighted">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
     </style>
 
-    <style name="DetailOverlayFont.Detail">
-        <item name="android:textSize">@dimen/detail_overlay_detail_text_size</item>
-        <item name="android:paddingLeft">@dimen/detail_overlay_detail_padding_left</item>
+    <style name="EarthquakeDetailFragmentFont.Detail">
+        <item name="android:textSize">@dimen/detail_fragment_detail_text_size</item>
+        <item name="android:paddingLeft">@dimen/detail_fragment_detail_padding_left</item>
     </style>
 
-    <style name="DetailOverlayFont.Detail.Weighted">
+    <style name="EarthquakeDetailFragmentFont.Detail.Weighted">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
     </style>

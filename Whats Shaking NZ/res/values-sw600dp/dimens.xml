@@ -20,10 +20,8 @@
 
     <dimen name="about_page_text_padding">16dp</dimen>
 
-    <dimen name="detail_overlay_width">240dp</dimen>
-    <dimen name="detail_overlay_margin">8dp</dimen>
-    <dimen name="detail_overlay_heading_text_size">12sp</dimen>
-    <dimen name="detail_overlay_detail_text_size">18sp</dimen>
-    <dimen name="detail_overlay_detail_padding_left">8dp</dimen>
-    <dimen name="detail_overlay_heading_padding_left">4dp</dimen>
+    <dimen name="detail_fragment_heading_text_size">12sp</dimen>
+    <dimen name="detail_fragment_detail_text_size">18sp</dimen>
+    <dimen name="detail_fragment_detail_padding_left">8dp</dimen>
+    <dimen name="detail_fragment_heading_padding_left">4dp</dimen>
 </resources>

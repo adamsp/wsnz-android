@@ -27,15 +27,24 @@
             android:tag="fragment_map"
             android:name="speakman.whatsshakingnz.fragments.NZMapFragment" />
 
-        <fragment
-            android:id="@+id/earthquake_detail_fragment"
+        <speakman.whatsshakingnz.views.AnimatingLinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="vertical"
             android:layout_width="@dimen/detail_overlay_width"
             android:layout_height="wrap_content"
-            android:tag="fragment_detail"
-            class="speakman.whatsshakingnz.fragments.EarthquakeDetailFragment"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:layout_margin="@dimen/detail_overlay_margin"/>
+            android:layout_margin="@dimen/detail_overlay_margin"
+            android:visibility="invisible"
+            android:id="@+id/earthquake_details_animating_overlay"
+            android:background="@drawable/card_background">
+            <fragment
+                android:id="@+id/earthquake_detail_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:tag="fragment_detail"
+                class="speakman.whatsshakingnz.fragments.EarthquakeDetailFragment"/>
+        </speakman.whatsshakingnz.views.AnimatingLinearLayout>
 
     </RelativeLayout>
 
