@@ -1,19 +1,13 @@
 package speakman.whatsshakingnz.activities;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
-import android.view.View;
-import android.widget.Toast;
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.earthquake.Earthquake;
 import speakman.whatsshakingnz.fragments.EarthquakeDetailFragment;
 import speakman.whatsshakingnz.fragments.NZMapFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.format.DateFormat;
-import android.widget.TextView;
 
 public class QuakeActivity extends WhatsShakingActivity {
     public static String QUAKE_KEY = "speakman.whatsshakingnz.SingleQuake";
@@ -25,11 +19,12 @@ public class QuakeActivity extends WhatsShakingActivity {
 
         Intent sender = getIntent();
         final Earthquake quake = sender.getParcelableExtra(QUAKE_KEY);
-        ArrayList<Earthquake> quakes = new ArrayList<Earthquake>();
-        quakes.add(quake);
         NZMapFragment map = (NZMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.quake_map);
-        map.updateQuakes(quakes);
+        // If we have a saved state, we're being restored or rotated.
+        // In this case, we don't want to overwrite the saved map zoom/center location.
+        boolean centerOnQuake = savedInstanceState == null;
+        map.setQuake(quake, centerOnQuake);
         EarthquakeDetailFragment detail = (EarthquakeDetailFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.quake_detail);
         detail.setQuake(quake);

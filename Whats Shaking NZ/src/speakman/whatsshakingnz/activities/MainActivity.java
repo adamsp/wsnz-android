@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.View;
 import android.widget.TabHost;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -258,7 +257,7 @@ public class MainActivity extends SherlockFragmentActivity implements
     private void updateQuakesMap() {
         if (null == mQuakes || null == mMapFragment)
             return;
-        mMapFragment.updateQuakes(EarthquakeFilter.filterQuakes(mQuakes, ((float) mMinDisplay) / 10.0f, mMaxNumberOfQuakes));
+        mMapFragment.setQuakes(EarthquakeFilter.filterQuakes(mQuakes, ((float) mMinDisplay) / 10.0f, mMaxNumberOfQuakes));
     }
 
     /**

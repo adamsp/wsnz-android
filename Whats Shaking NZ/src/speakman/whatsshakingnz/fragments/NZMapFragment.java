@@ -6,15 +6,12 @@ import android.os.Bundle;
 import android.text.TextPaint;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.TextView;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import speakman.whatsshakingnz.R;
-import speakman.whatsshakingnz.activities.QuakeActivity;
 import speakman.whatsshakingnz.earthquake.Earthquake;
 import speakman.whatsshakingnz.earthquake.EarthquakeTapListener;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,15 +23,7 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.OnMar
     private HashMap<String, Earthquake> mMarkerIdToQuake;
     private HashMap<String, Marker> mQuakeReferenceToMarker;
 
-    private static CameraPosition defaultCameraPosition;
-
-    static {
-        defaultCameraPosition = new CameraPosition(new LatLng(NZ_CENTRE_LATITUDE, NZ_CENTRE_LONGITUDE), // target
-                // TODO Zoom should probably change by device...
-                5, // zoom
-                0, // tilt
-                0); // bearing
-    }
+    private CameraPosition mDefaultCameraPosition;
 
     private EarthquakeTapListener mListener;
     private HashMap<String, BitmapDescriptor> mMarkerImageContainer;
@@ -53,6 +42,11 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.OnMar
         mMarkerIdToQuake = new HashMap<String, Earthquake>();
         mQuakeReferenceToMarker = new HashMap<String, Marker>();
         mMarkerImageContainer = new HashMap<String, BitmapDescriptor>();
+        mDefaultCameraPosition = new CameraPosition(new LatLng(NZ_CENTRE_LATITUDE, NZ_CENTRE_LONGITUDE), // target
+                // TODO Zoom should probably change by device...
+                5, // zoom
+                0, // tilt
+                0); // bearing
     }
 
     public static NZMapFragment newInstance() {
@@ -72,33 +66,58 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.OnMar
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setInitialCameraPosition();
+        setInitialCameraPosition(savedInstanceState);
         updateOverlayItems();
     }
 
-    private void setInitialCameraPosition() {
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        GoogleMap map = getMap();
+        CameraPosition position = map.getCameraPosition();
+        outState.putParcelable("mapPosition", position);
+    }
+
+    private void setInitialCameraPosition(Bundle savedInstanceState) {
         GoogleMap map = getMap();
         if (map == null) return;
 
-        Bundle args;
-        GoogleMapOptions googleMapOptions = null;
-        CameraPosition camPosition;
+        CameraPosition camPosition = null;
+        if (savedInstanceState != null) {
+            camPosition = savedInstanceState.getParcelable("mapPosition");
+        }
 
-        args = getArguments();
+        if (camPosition == null) {
+            Bundle args = getArguments();
+            GoogleMapOptions googleMapOptions = null;
 
-        if(args != null)
-            googleMapOptions = (GoogleMapOptions)getArguments().get("MapOptions");
+            if(args != null)
+                googleMapOptions = (GoogleMapOptions)getArguments().get("MapOptions");
 
-        if (googleMapOptions != null) {
-            camPosition = googleMapOptions.getCamera();
-        } else {
-            camPosition = defaultCameraPosition;
+            if (googleMapOptions != null) {
+                camPosition = googleMapOptions.getCamera();
+            } else {
+                camPosition = mDefaultCameraPosition;
+            }
         }
 
         map.moveCamera(CameraUpdateFactory.newCameraPosition(camPosition));
     }
 
-    public void updateQuakes(ArrayList<Earthquake> quakes) {
+    public void setQuake(Earthquake quake, boolean centerOnQuake) {
+        ArrayList<Earthquake> quakes = new ArrayList<Earthquake>();
+        quakes.add(quake);
+        setQuakes(quakes);
+        if (centerOnQuake) {
+            mDefaultCameraPosition = new CameraPosition(quake.getLatLng(), // target
+                    getDefaultZoomForDevice() + 2, // zoom
+                    0, // tilt
+                    0); // bearing
+            setInitialCameraPosition(null);
+        }
+    }
+
+    public void setQuakes(ArrayList<Earthquake> quakes) {
         mQuakes = quakes;
         updateOverlayItems();
     }
@@ -116,24 +135,14 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.OnMar
             }
         });
 
-        // Move the map view if this is a QuakeActivity, will
-        // only have one quake in this instance.
-        if (getActivity() instanceof QuakeActivity) {
-            Earthquake singleQuake = mQuakes.get(0);
-            map.addMarker(getMarkerForQuake(singleQuake));
-            CameraUpdate update = CameraUpdateFactory.newLatLngZoom(singleQuake.getLatLng(),
-                    getDefaultZoomForDevice() + 2);
-            map.moveCamera(update);
-        } else {
-            for (Earthquake q : mQuakes) {
-                MarkerOptions markerOptions = getMarkerForQuake(q);
-                // Specify a title so we get an info window when tapped.
-                markerOptions.title(q.getFormattedMagnitude())
-                        .snippet(q.getFormattedDepth());
-                Marker marker = map.addMarker(markerOptions);
-                mMarkerIdToQuake.put(marker.getId(), q);
-                mQuakeReferenceToMarker.put(q.getReference(), marker);
-            }
+        for (Earthquake q : mQuakes) {
+            MarkerOptions markerOptions = getMarkerForQuake(q);
+            // Specify a title so we get an info window when tapped.
+            markerOptions.title(q.getFormattedMagnitude())
+                    .snippet(q.getFormattedDepth());
+            Marker marker = map.addMarker(markerOptions);
+            mMarkerIdToQuake.put(marker.getId(), q);
+            mQuakeReferenceToMarker.put(q.getReference(), marker);
         }
 
     }
