@@ -1,25 +1,30 @@
 package speakman.whatsshakingnz.fragments;
 
-import android.content.Intent;
+import android.graphics.*;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextPaint;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import speakman.whatsshakingnz.R;
-import speakman.whatsshakingnz.activities.MainActivity;
 import speakman.whatsshakingnz.activities.QuakeActivity;
 import speakman.whatsshakingnz.earthquake.Earthquake;
 import speakman.whatsshakingnz.earthquake.EarthquakeTapListener;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
-public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoWindowAdapter, GoogleMap.OnInfoWindowClickListener {
+public class NZMapFragment extends SupportMapFragment implements GoogleMap.OnMarkerClickListener {
     private ArrayList<Earthquake> mQuakes;
     private static final double NZ_CENTRE_LATITUDE = -41;
     private static final double NZ_CENTRE_LONGITUDE = 173;
     private HashMap<String, Earthquake> mMarkerIdToQuake;
+    private HashMap<String, Marker> mQuakeReferenceToMarker;
 
     private static CameraPosition defaultCameraPosition;
 
@@ -32,6 +37,7 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
     }
 
     private EarthquakeTapListener mListener;
+    private HashMap<String, BitmapDescriptor> mMarkerImageContainer;
 
     /**
      * For some reason, calling setArguments in the empty constructor doesn't work to specify an initial camera
@@ -45,6 +51,8 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
 
     public NZMapFragment() {
         mMarkerIdToQuake = new HashMap<String, Earthquake>();
+        mQuakeReferenceToMarker = new HashMap<String, Marker>();
+        mMarkerImageContainer = new HashMap<String, BitmapDescriptor>();
     }
 
     public static NZMapFragment newInstance() {
@@ -100,7 +108,7 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
         if (map == null || mQuakes == null)
             return;
 
-        map.setOnInfoWindowClickListener(this);
+        map.setOnMarkerClickListener(this);
         map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -124,6 +132,7 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
                         .snippet(q.getFormattedDepth());
                 Marker marker = map.addMarker(markerOptions);
                 mMarkerIdToQuake.put(marker.getId(), q);
+                mQuakeReferenceToMarker.put(q.getReference(), marker);
             }
         }
 
@@ -132,8 +141,46 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
     private MarkerOptions getMarkerForQuake(Earthquake q) {
         MarkerOptions m = new MarkerOptions()
                 .position(q.getLatLng())
-                .icon(BitmapDescriptorFactory.defaultMarker(q.getHue()));
+                .icon(getIconForQuake(q));
         return m;
+    }
+
+    private BitmapDescriptor getIconForQuake(Earthquake q) {
+        if(mMarkerImageContainer.containsKey(q.getFormattedMagnitude())) {
+            return mMarkerImageContainer.get(q.getFormattedMagnitude());
+        }
+        // Set up the colour for our marker image
+        Drawable marker = getResources().getDrawable(R.drawable.mapmarker);
+        int markerWidth = marker.getIntrinsicWidth();
+        int markerHeight = marker.getIntrinsicHeight();
+        int markerColor = Color.HSVToColor(0xC8, new float[]{q.getHue(), 1, 1});
+        PorterDuffColorFilter filter = new PorterDuffColorFilter(markerColor, PorterDuff.Mode.MULTIPLY);
+        Paint markerPaint = new Paint();
+        markerPaint.setColorFilter(filter);
+
+        // Set up the text paint & location (bounds) for painting onto our marker
+        TextPaint textPaint = new TextPaint();
+        Rect textBounds = new Rect();
+        float fontSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14, getResources().getDisplayMetrics());
+        float textMargin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
+        textPaint.setTextSize(fontSize);
+        textPaint.getTextBounds(q.getFormattedMagnitude(), 0, q.getFormattedMagnitude().length(), textBounds);
+        textBounds.inset((int) -textMargin, (int) -textMargin);
+        textBounds.offsetTo(markerWidth / 2 - textBounds.width() / 2, // text will be centered horizontally
+                markerHeight - markerHeight / 2 - textBounds.height()); // this aligns it in top 1/3 of our marker
+        textPaint.setARGB(255, 0, 0, 0);
+
+        // Now lets paint our marker image & text
+        Bitmap bmp = Bitmap.createBitmap(markerWidth, markerHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bmp);
+        canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.mapmarker), 0, 0, markerPaint);
+        canvas.drawText(q.getFormattedMagnitude(), textBounds.left,
+                textBounds.bottom - textMargin, textPaint);
+
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(bmp);
+        // Cache our marker image so we don't have to create new ones that are the same.
+        mMarkerImageContainer.put(q.getFormattedMagnitude(), icon);
+        return icon;
     }
 
     /**
@@ -160,35 +207,38 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.InfoW
         return defaultZoom;
     }
 
-    @Override
-    public View getInfoWindow(Marker marker) {
-        View v = getLayoutInflater(null).inflate(R.layout.quake_marker, null);
-        final Earthquake quake = mMarkerIdToQuake.get(marker.getId());
-        if(quake != null) {
-            // TODO Improve this info window layout etc.
-            TextView tv = (TextView)v.findViewById(R.id.quake_marker_magnitude);
-            tv.setText(quake.getFormattedMagnitude());
-
-            tv = (TextView)v.findViewById(R.id.quake_marker_depth);
-            tv.setText(quake.getFormattedDepth());
+    public void highlightQuake(Earthquake q) {
+        String quakeRef = q.getReference();
+        for(Map.Entry<String, Marker> entry : mQuakeReferenceToMarker.entrySet()) {
+            Marker marker = entry.getValue();
+            if(entry.getKey().equals(quakeRef)) {
+                // Highlight marker.
+                //marker.setIcon(bigIcon...);
+            } else {
+                //marker.setIcon(grayIcon...);
+            }
         }
-        return v;
     }
 
-    @Override
-    public View getInfoContents(Marker marker) {
-        return null;
-    }
-
-    @Override
-    public void onInfoWindowClick(Marker marker) {
-        Earthquake quake = mMarkerIdToQuake.get(marker.getId());
-        if(quake != null && mListener != null) {
-           mListener.onEarthquakeTap(quake);
+    public void clearHighlight() {
+        for(Marker marker : mQuakeReferenceToMarker.values()) {
+            marker.setIcon(BitmapDescriptorFactory.defaultMarker(mMarkerIdToQuake.get(marker.getId()).getHue()));
         }
     }
 
     public void setOnEarthquakeTapListener(EarthquakeTapListener listener) {
         mListener = listener;
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        if (mQuakes.size() > 1) {
+            Earthquake quake = mMarkerIdToQuake.get(marker.getId());
+            if(quake != null && mListener != null) {
+                mListener.onEarthquakeTap(quake);
+                return true;
+            }
+        }
+        return false;
     }
 }
