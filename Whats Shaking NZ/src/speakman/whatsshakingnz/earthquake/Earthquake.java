@@ -171,7 +171,7 @@ public class Earthquake implements Parcelable {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof  Earthquake))
             return false;
         Earthquake other = (Earthquake) obj;
         if (mAgency == null) {

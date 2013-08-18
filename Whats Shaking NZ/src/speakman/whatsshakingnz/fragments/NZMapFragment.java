@@ -14,19 +14,17 @@ import speakman.whatsshakingnz.earthquake.EarthquakeTapListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class NZMapFragment extends SupportMapFragment implements GoogleMap.OnMarkerClickListener {
     private ArrayList<Earthquake> mQuakes;
     private static final double NZ_CENTRE_LATITUDE = -41;
     private static final double NZ_CENTRE_LONGITUDE = 173;
-    private HashMap<String, Earthquake> mMarkerIdToQuake;
-    private HashMap<String, Marker> mQuakeReferenceToMarker;
-
     private CameraPosition mDefaultCameraPosition;
 
     private EarthquakeTapListener mListener;
     private HashMap<String, BitmapDescriptor> mMarkerImageContainer;
+    private ArrayList<Marker> mMarkers;
+    private HashMap<String, Earthquake> mMarkerIdToQuake;
 
     /**
      * For some reason, calling setArguments in the empty constructor doesn't work to specify an initial camera
@@ -40,7 +38,7 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.OnMar
 
     public NZMapFragment() {
         mMarkerIdToQuake = new HashMap<String, Earthquake>();
-        mQuakeReferenceToMarker = new HashMap<String, Marker>();
+        mMarkers = new ArrayList<Marker>();
         mMarkerImageContainer = new HashMap<String, BitmapDescriptor>();
         mDefaultCameraPosition = new CameraPosition(new LatLng(NZ_CENTRE_LATITUDE, NZ_CENTRE_LONGITUDE), // target
                 // TODO Zoom should probably change by device...
@@ -136,15 +134,17 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.OnMar
         });
 
         for (Earthquake q : mQuakes) {
-            MarkerOptions markerOptions = getMarkerForQuake(q);
-            // Specify a title so we get an info window when tapped.
-            markerOptions.title(q.getFormattedMagnitude())
-                    .snippet(q.getFormattedDepth());
-            Marker marker = map.addMarker(markerOptions);
-            mMarkerIdToQuake.put(marker.getId(), q);
-            mQuakeReferenceToMarker.put(q.getReference(), marker);
+            addQuakeMarker(map, q);
         }
 
+    }
+
+    private void addQuakeMarker(GoogleMap map, Earthquake q) {
+        if (map == null || q == null) return;
+        MarkerOptions markerOptions = getMarkerForQuake(q);
+        Marker marker = map.addMarker(markerOptions);
+        mMarkerIdToQuake.put(marker.getId(), q);
+        mMarkers.add(marker);
     }
 
     private MarkerOptions getMarkerForQuake(Earthquake q) {
@@ -217,22 +217,21 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.OnMar
     }
 
     public void highlightQuake(Earthquake q) {
-        String quakeRef = q.getReference();
-        for(Map.Entry<String, Marker> entry : mQuakeReferenceToMarker.entrySet()) {
-            Marker marker = entry.getValue();
-            if(entry.getKey().equals(quakeRef)) {
-                // Highlight marker.
-                //marker.setIcon(bigIcon...);
-            } else {
-                //marker.setIcon(grayIcon...);
-            }
+        removeAllMarkers();
+        addQuakeMarker(getMap(), q);
+    }
+
+    private void removeAllMarkers() {
+        for(Marker marker : mMarkers) {
+            marker.remove();
+            mMarkerIdToQuake.remove(marker.getId());
         }
+        mMarkers.clear();
     }
 
     public void clearHighlight() {
-        for(Marker marker : mQuakeReferenceToMarker.values()) {
-            marker.setIcon(BitmapDescriptorFactory.defaultMarker(mMarkerIdToQuake.get(marker.getId()).getHue()));
-        }
+        removeAllMarkers();
+        updateOverlayItems();
     }
 
     public void setOnEarthquakeTapListener(EarthquakeTapListener listener) {

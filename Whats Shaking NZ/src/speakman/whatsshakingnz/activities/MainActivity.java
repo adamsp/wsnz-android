@@ -303,18 +303,22 @@ public class MainActivity extends SherlockFragmentActivity implements
             if (quake.equals(detailFragment.getQuake()) && v.isVisible()) {
                 detailFragment.setQuake(null);
                 v.hide(true);
+                mMapFragment.clearHighlight();
             } else {
                 detailFragment.setQuake(quake);
                 v.show(true);
+                mMapFragment.highlightQuake(quake);
             }
         }
     }
 
     @Override
     public void onEarthquakeLostFocus(Earthquake quake) {
+        if (!mTabletMode) return;
         AnimatingLinearLayout v = (AnimatingLinearLayout)findViewById(R.id.earthquake_details_animating_overlay);
         if (v != null) {
             v.hide(true);
+            mMapFragment.clearHighlight();
         }
     }
 
