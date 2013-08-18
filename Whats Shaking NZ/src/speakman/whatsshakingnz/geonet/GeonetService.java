@@ -34,6 +34,12 @@ public class GeonetService extends WakefulIntentService {
     protected void doWakefulWork(Intent intent) {
         Log.d("WSNZ", "doWakefulWork called.");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean serviceEnabled = prefs.getBoolean(PreferenceActivity.KEY_PREF_ALLOW_BG_NOTIFICATIONS,
+                DefaultPrefs.BG_NOTIFICATIONS_ENABLED);
+        if (!serviceEnabled) {
+            WakefulIntentService.cancelAlarms(getApplicationContext());
+            return;
+        }
         int minMagnitude = prefs.getInt(
                 PreferenceActivity.KEY_PREF_MIN_HIGHLIGHT_MAGNITUDE,
                 DefaultPrefs.MIN_HIGHLIGHT_MAGNITUDE);
