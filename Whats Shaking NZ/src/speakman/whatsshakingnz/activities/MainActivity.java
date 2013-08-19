@@ -316,7 +316,7 @@ public class MainActivity extends SherlockFragmentActivity implements
     public void onEarthquakeLostFocus(Earthquake quake) {
         if (!mTabletMode) return;
         AnimatingLinearLayout v = (AnimatingLinearLayout)findViewById(R.id.earthquake_details_animating_overlay);
-        if (v != null) {
+        if (v != null && v.isVisible()) {
             v.hide(true);
             mMapFragment.clearHighlight();
         }
