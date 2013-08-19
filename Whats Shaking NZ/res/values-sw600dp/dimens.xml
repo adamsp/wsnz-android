@@ -24,4 +24,6 @@
     <dimen name="detail_fragment_detail_text_size">18sp</dimen>
     <dimen name="detail_fragment_detail_padding_left">8dp</dimen>
     <dimen name="detail_fragment_heading_padding_left">4dp</dimen>
+
+    <dimen name="detail_fragment_padding">8dp</dimen>
 </resources>

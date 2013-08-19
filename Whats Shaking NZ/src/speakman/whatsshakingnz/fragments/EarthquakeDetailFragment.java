@@ -66,7 +66,11 @@ public class EarthquakeDetailFragment extends SherlockFragment {
         v = (TextView) root.findViewById(R.id.status_detail_field);
         if (null != v) {
             v.setText(mQuake.getStatus());
-            v.setOnClickListener(new View.OnClickListener() {
+        }
+
+        View container = root.findViewById(R.id.status_detail_container);
+        if (null != container) {
+            container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     showEarthquakeStatusMessage(mQuake);
