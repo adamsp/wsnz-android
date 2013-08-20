@@ -21,6 +21,16 @@
 
         <TextView
             style="@style/AboutActivityFont.Heading"
+            android:text="@string/about_app_update_1_2_heading"/>
+
+        <TextView
+            style="@style/AboutActivityFont.Detail"
+            android:autoLink="all"
+            android:text="@string/about_app_update_1_2_detail"
+            tools:context=".AboutActivity"/>
+
+        <TextView
+            style="@style/AboutActivityFont.Heading"
             android:text="@string/about_app_update_1_1_heading"/>
 
         <TextView

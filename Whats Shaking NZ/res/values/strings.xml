@@ -34,7 +34,7 @@
     <string name="pref_minHighlightMagnitude_summ">Notifications and highlighting for quakes above magnitude: %s
     </string>
     <string name="pref_maxNumQuakesToShow">Max Number of Quakes</string>
-    <string name="pref_maxNumQuakesToShow_summ">Showing up to %s quakes</string>
+    <string name="pref_maxNumQuakesToShow_summ">Showing up to %s quakes (limited to 30 by Geonet)</string>
     <string name="pref_allowBackgroundNotifications">Background notifications</string>
     <string name="pref_allowBackgroundNotifications_summ">Enables background notifications for quakes.</string>
     <string name="pref_backgroundNotificationsFrequency">Update Frequency</string>
@@ -61,6 +61,17 @@
         \n\nFor news and more information, check out the What\'s Shaking, NZ? website:\nwww.whatsshaking.co.nz
     </string>
     <string name="about_app_heading">The App</string>
+    <string name="about_app_update_1_2_heading">Update 1.2</string>
+    <string name="about_app_update_1_2_detail">- Added tablet support\n
+        - Added landscape support\n
+        - Added a message explaining what an earthquakes \'status\' means\n
+        - Added an option to only notify about \'reviewed\' quakes (turned on by default)\n
+        - Updated UI with Roboto font and better spacing for list items\n
+        - Updated default preferences to some better values\n
+        - Updated earthquake map markers to have a gradual colour change, rather than the red &amp; blue from before\n
+        - Upgraded to Google Maps v2\n
+        - Fixed a bug where notifications would sometimes show up even when disabled
+    </string>
     <string name="about_app_update_1_1_heading">Update 1.1</string>
     <string name="about_app_update_1_1_detail">- Fixed the background check service crashing when no
         internet connection is available\n
@@ -71,6 +82,7 @@
         by a human, or has been automatically calculated by the computer. Reviewed quakes are
         reliable, automatic ones are not.
     </string>
+
     <string name="tab_title_list">List</string>
     <string name="tab_title_map">Map</string>
 
