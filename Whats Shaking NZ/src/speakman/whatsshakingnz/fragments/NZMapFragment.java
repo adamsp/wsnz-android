@@ -72,8 +72,10 @@ public class NZMapFragment extends SupportMapFragment implements GoogleMap.OnMar
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         GoogleMap map = getMap();
-        CameraPosition position = map.getCameraPosition();
-        outState.putParcelable("mapPosition", position);
+        if (map != null) {
+            CameraPosition position = map.getCameraPosition();
+            outState.putParcelable("mapPosition", position);
+        }
     }
 
     private void setInitialCameraPosition(Bundle savedInstanceState) {
