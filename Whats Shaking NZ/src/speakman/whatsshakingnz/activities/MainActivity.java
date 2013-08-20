@@ -166,7 +166,7 @@ public class MainActivity extends SherlockFragmentActivity implements
         SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(this);
         mMaxNumberOfQuakes = prefs.getInt(
-                PreferenceActivity.KEY_PREF_NUM_QUAKES_TO_SHOW, 10);
+                PreferenceActivity.KEY_PREF_NUM_QUAKES_TO_SHOW, DefaultPrefs.NUM_QUAKES_TO_DISPLAY);
         mMinDisplay = prefs.getInt(PreferenceActivity.KEY_PREF_MIN_DISPLAY_MAGNITUDE,
                 DefaultPrefs.MIN_DISPLAY_MAGNITUDE);
     }
