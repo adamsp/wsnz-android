@@ -8,9 +8,10 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.widget.TabHost;
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -30,14 +31,13 @@ import speakman.whatsshakingnz.views.AnimatingLinearLayout;
 import java.util.ArrayList;
 
 public class MainActivity extends SherlockFragmentActivity implements
-        OnSharedPreferenceChangeListener, TabHost.OnTabChangeListener, EarthquakeTapListener {
-
-    private static final String TAB_TAG_LIST = "tab_list";
-    private static final String TAB_TAG_MAP = "tab_map";
+        OnSharedPreferenceChangeListener, ActionBar.TabListener, EarthquakeTapListener {
 
     private static final String FRAGMENT_TAG_LIST = "fragment_list";
     private static final String FRAGMENT_TAG_MAP = "fragment_map";
     private static final String FRAGMENT_TAG_DETAIL = "fragment_detail";
+
+    private String tabTitleList, tabTitleMap;
 
     private AsyncTask mDownloadTask;
 
@@ -76,67 +76,42 @@ public class MainActivity extends SherlockFragmentActivity implements
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         // Request Feature must be called before adding content.
+        // Note this turns it on by default, ABS thing (so only on 2.x devices).
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);
-        if (tabHost == null)
-            mTabletMode = true;
-        else
-            mTabletMode = false;
+        mTabletMode = findViewById(R.id.activity_main_tabs) == null;
+
+        mListFragment = (ListFragment) getSupportFragmentManager()
+                .findFragmentByTag(FRAGMENT_TAG_LIST);
+        mMapFragment = (NZMapFragment) getSupportFragmentManager()
+                .findFragmentByTag(FRAGMENT_TAG_MAP);
+
+        mListFragment.setOnEarthquakeTapListener(this);
+        mMapFragment.setOnEarthquakeTapListener(this);
+
+        if(!mTabletMode) {
+            tabTitleList = getString(R.string.tab_title_list);
+            tabTitleMap = getString(R.string.tab_title_map);
+            getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+            addTab(tabTitleList);
+            addTab(tabTitleMap);
+        }
 
         // First start-up
         if (null == savedInstanceState) {
-            if (tabHost != null) { // tabbed layout
-                mSelectedTab = TAB_TAG_LIST;
-            } else { // 2-pane layout
-                mListFragment = (ListFragment) getSupportFragmentManager()
-                        .findFragmentByTag(FRAGMENT_TAG_LIST);
-                mMapFragment = (NZMapFragment) getSupportFragmentManager()
-                        .findFragmentByTag(FRAGMENT_TAG_MAP);
-            }
-            /**
-             * Set this to true, so that quakes are downloaded and preference items
-             * are updated in the onResume call.
-             */
+             // Set this to true, so that quakes are downloaded and preference items
+             // are updated in the onResume call.
             mPreferencesUpdated = true;
         }
         // App was killed by the OS
         else {
-            mListFragment = (ListFragment) getSupportFragmentManager()
-                    .findFragmentByTag(FRAGMENT_TAG_LIST);
-            mMapFragment = (NZMapFragment) getSupportFragmentManager()
-                    .findFragmentByTag(FRAGMENT_TAG_MAP);
             mQuakes = savedInstanceState.getParcelableArrayList("mQuakes");
-            if(tabHost != null) { // tabbed layout
+            if(!mTabletMode) { // tabbed layout
                 mSelectedTab = savedInstanceState.getString("mSelectedTab");
+                getSupportActionBar().setSelectedNavigationItem(mSelectedTab.equals(tabTitleList) ? 0 : 1);
             }
-        }
-        if (mListFragment != null) mListFragment.setOnEarthquakeTapListener(this);
-        if (mMapFragment != null) mMapFragment.setOnEarthquakeTapListener(this);
-
-        /**
-         * This has to come after we've acquired our fragments and list of quakes from saved state, or we get NPEs with
-         * fragments not being attached to the activity etc.
-         */
-        if(tabHost != null) {
-            tabHost.setup();
-            tabHost.addTab(tabHost.newTabSpec(TAB_TAG_LIST)
-                    .setIndicator(getString(R.string.tab_title_list))
-                    .setContent(R.id.list_view_placeholder));
-            tabHost.addTab(tabHost.newTabSpec(TAB_TAG_MAP)
-                    .setIndicator(getString(R.string.tab_title_map))
-                    .setContent(R.id.map_view_placeholder));
-            // Set the listener after adding tabs, because we don't want to know about adding them.
-            tabHost.setOnTabChangedListener(this);
-            /**
-             * Have to call both setCurrentTabByTag (because if we've just been restored on map tab, then we have to
-             * tell the tab host to show the map tab) and onTabChanged (because if we've just been restored on list tab,
-             * then we have to tell the data to update).
-             */
-            tabHost.setCurrentTabByTag(mSelectedTab);
-            onTabChanged(mSelectedTab);
         }
 
         updateItemsFromPreferences();
@@ -159,7 +134,10 @@ public class MainActivity extends SherlockFragmentActivity implements
             mPreferencesUpdated = false;
             updateItemsFromPreferences();
             downloadQuakes();
+        } else {
+            setSupportProgressBarIndeterminateVisibility(false);
         }
+        showSelectedTab();
     }
 
     private void updateItemsFromPreferences() {
@@ -214,31 +192,41 @@ public class MainActivity extends SherlockFragmentActivity implements
         }
     }
 
+    private void addTab(String title) {
+        ActionBar.Tab tab = getSupportActionBar().newTab();
+        tab.setText(title);
+        tab.setTag(title);
+        tab.setTabListener(this);
+        getSupportActionBar().addTab(tab);
+    }
+
     @Override
-    public void onTabChanged(String tabId) {
-        mSelectedTab = tabId;
-        if(TAB_TAG_LIST.equals(tabId)) {
-            if (mListFragment == null) {
-                mListFragment = new ListFragment();
-                mListFragment.setOnEarthquakeTapListener(this);
-                replaceFragment(R.id.list_view_placeholder, mListFragment, FRAGMENT_TAG_LIST);
-            }
-        } else {
-            if (mMapFragment == null) {
-                mMapFragment = NZMapFragment.newInstance();
-                mMapFragment.setOnEarthquakeTapListener(this);
-                replaceFragment(R.id.map_view_placeholder, mMapFragment, FRAGMENT_TAG_MAP);
-            }
-        }
-        updateQuakesDisplay();
+    public void onTabSelected(Tab tab, FragmentTransaction ft) {
+        mSelectedTab = (String) tab.getTag();
+        showSelectedTab();
+    }
+
+    @Override
+    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 
     }
 
-    private void replaceFragment(int placeholderId, Fragment replacementFragment, String tag) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(placeholderId, replacementFragment, tag)
-                .commit();
+    @Override
+    public void onTabReselected(Tab tab, FragmentTransaction ft) {
+
+    }
+
+    private void showSelectedTab() {
+        if(mTabletMode) return;
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        if(tabTitleList.equals(mSelectedTab)) {
+            ft.hide(mMapFragment);
+            ft.show(mListFragment);
+        } else {
+            ft.hide(mListFragment);
+            ft.show(mMapFragment);
+        }
+        ft.commit();
     }
 
     /**
