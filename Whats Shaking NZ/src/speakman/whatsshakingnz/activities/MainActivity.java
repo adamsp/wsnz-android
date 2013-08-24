@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
@@ -31,15 +33,14 @@ import speakman.whatsshakingnz.views.AnimatingLinearLayout;
 import java.util.ArrayList;
 
 public class MainActivity extends SherlockFragmentActivity implements
-        OnSharedPreferenceChangeListener, ActionBar.TabListener, EarthquakeTapListener {
+        OnSharedPreferenceChangeListener, ActionBar.TabListener, EarthquakeTapListener,
+        LoaderManager.LoaderCallbacks<ArrayList<Earthquake>> {
 
     private static final String FRAGMENT_TAG_LIST = "fragment_list";
     private static final String FRAGMENT_TAG_MAP = "fragment_map";
     private static final String FRAGMENT_TAG_DETAIL = "fragment_detail";
 
     private String tabTitleList, tabTitleMap;
-
-    private AsyncTask mDownloadTask;
 
     private NZMapFragment mMapFragment;
     private ListFragment mListFragment;
@@ -107,7 +108,13 @@ public class MainActivity extends SherlockFragmentActivity implements
         }
         // App was killed by the OS
         else {
+            mDownloading = savedInstanceState.getBoolean("mDownloading");
             mQuakes = savedInstanceState.getParcelableArrayList("mQuakes");
+            if (mDownloading || mQuakes == null) {
+                mPreferencesUpdated = true;
+            } else {
+                hideProgress();
+            }
             if(!mTabletMode) { // tabbed layout
                 mSelectedTab = savedInstanceState.getString("mSelectedTab");
                 getSupportActionBar().setSelectedNavigationItem(mSelectedTab.equals(tabTitleList) ? 0 : 1);
@@ -123,6 +130,7 @@ public class MainActivity extends SherlockFragmentActivity implements
         super.onSaveInstanceState(outState);
         outState.putString("mSelectedTab", mSelectedTab);
         outState.putParcelableArrayList("mQuakes", mQuakes);
+        outState.putBoolean("mDownloading", mDownloading);
     }
 
     @Override
@@ -134,8 +142,6 @@ public class MainActivity extends SherlockFragmentActivity implements
             mPreferencesUpdated = false;
             updateItemsFromPreferences();
             downloadQuakes();
-        } else {
-            setSupportProgressBarIndeterminateVisibility(false);
         }
         showSelectedTab();
     }
@@ -150,19 +156,10 @@ public class MainActivity extends SherlockFragmentActivity implements
     }
 
     @Override
-    protected void onDestroy() {
-        if (null != mDownloadTask) {
-            Log.d("WSNZ", "Killing background download task as onDestroy() was called before it returned.");
-            mDownloadTask.cancel(true);
-        }
-        super.onDestroy();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getSupportMenuInflater().inflate(R.menu.activity_main, menu);
         mRefreshMenuItem = menu.findItem(R.id.menu_refresh);
-        updateRefreshButtonVisibility();
+        if(mDownloading) mRefreshMenuItem.setVisible(false);
         return true;
     }
 
@@ -258,18 +255,22 @@ public class MainActivity extends SherlockFragmentActivity implements
     }
 
     private void downloadQuakes() {
-        if (mDownloading)
-            return;
-        mDownloadTask = new DownloadQuakesTask().execute(mMaxNumberOfQuakes, mMinDisplay);
+        mDownloading = true;
+        showProgress();
+        getSupportLoaderManager().initLoader(0, null, this);
     }
 
-    /**
-     * Updates the visibility of the Refresh button - hides it if
-     * {@link #mDownloading} is true, shows it if false.
-     */
-    protected void updateRefreshButtonVisibility() {
+    private void hideProgress() {
         if (null != mRefreshMenuItem)
-            mRefreshMenuItem.setVisible(!mDownloading);
+            mRefreshMenuItem.setVisible(true);
+        setSupportProgressBarIndeterminateVisibility(false);
+    }
+
+    private void showProgress() {
+        if (null != mRefreshMenuItem)
+            mRefreshMenuItem.setVisible(false);
+        setSupportProgress(Window.PROGRESS_END);
+        setSupportProgressBarIndeterminateVisibility(true);
     }
 
     @Override
@@ -310,70 +311,50 @@ public class MainActivity extends SherlockFragmentActivity implements
         }
     }
 
-    /**
-     * Downloads the latest earthquakes from Geonet, and populates them back
-     * into the display.
-     *
-     * @author Adam Speakman
-     */
-    private class DownloadQuakesTask extends
-            AsyncTask<Integer, Void, ArrayList<Earthquake>> {
-        /**
-         * Called before the worker thread is executed. Runs on the UI thread.
-         */
-        @Override
-        protected void onPreExecute() {
-            mDownloading = true;
-            updateRefreshButtonVisibility();
-            setSupportProgress(Window.PROGRESS_END);
-            setSupportProgressBarIndeterminateVisibility(true);
-        }
+    @Override
+    public Loader<ArrayList<Earthquake>> onCreateLoader(int i, Bundle bundle) {
+        AsyncTaskLoader<ArrayList<Earthquake>> loader = new AsyncTaskLoader<ArrayList<Earthquake>>(this) {
+            @Override
+            public ArrayList<Earthquake> loadInBackground() {
+                return GeonetAccessor.getQuakes();
+            }
+        };
+        loader.forceLoad();
+        return loader;
+    }
 
-        /**
-         * The system calls this to perform work in a worker thread and delivers
-         * it the parameters given to AsyncTask.execute()
-         */
-        @Override
-        protected ArrayList<Earthquake> doInBackground(Integer... params) {
-            return GeonetAccessor.getQuakes();
+    @Override
+    public void onLoadFinished(Loader<ArrayList<Earthquake>> objectLoader, ArrayList<Earthquake> results) {
+        mDownloading = false;
+        getSupportLoaderManager().destroyLoader(0);
+        hideProgress();
+        if (null == results) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(
+                    MainActivity.this);
+            dialog.setTitle("No Connection")
+                    .setMessage(
+                            "There appears to be a problem "
+                                    + "with the connection. Please make sure "
+                                    + "you have internet connectivity.")
+                    .setNeutralButton("Close", null);
+            dialog.show();
+            results = new ArrayList<Earthquake>();
         }
+        mQuakes = results;
+        // Update our "last checked" key in the prefs.
+        if (results.size() > 0) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+            Editor editor = prefs.edit();
+            editor.putString(GeonetService.KEY_PREFS_LAST_CHECKED_ID, results
+                    .get(0).getReference());
+            editor.commit();
+        }
+        updateQuakesDisplay();
+    }
 
-        /**
-         * The system calls this to perform work in the UI thread and delivers
-         * the result from doInBackground()
-         */
-        @Override
-        protected void onPostExecute(ArrayList<Earthquake> results) {
-            if (isCancelled()) {
-                Log.d("WSNZ", "This download task has been killed. Not updating results.");
-                return;
-            }
-            mDownloading = false;
-            setSupportProgressBarIndeterminateVisibility(false);
-            updateRefreshButtonVisibility();
-            if (null == results) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(
-                        MainActivity.this);
-                dialog.setTitle("No Connection")
-                        .setMessage(
-                                "There appears to be a problem "
-                                        + "with the connection. Please make sure "
-                                        + "you have internet connectivity.")
-                        .setNeutralButton("Close", null);
-                dialog.show();
-                results = new ArrayList<Earthquake>();
-            }
-            mQuakes = results;
-            // Update our "last checked" key in the prefs.
-            if (results.size() > 0) {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                Editor editor = prefs.edit();
-                editor.putString(GeonetService.KEY_PREFS_LAST_CHECKED_ID, results
-                        .get(0).getReference());
-                editor.commit();
-            }
-            updateQuakesDisplay();
-        }
+    @Override
+    public void onLoaderReset(Loader<ArrayList<Earthquake>> objectLoader) {
+
     }
 
 }
