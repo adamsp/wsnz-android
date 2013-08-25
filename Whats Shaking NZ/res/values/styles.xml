@@ -1,33 +1,46 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="AppTheme" parent="android:Theme.Light" />
+    <style name="AppTheme" parent="Theme.Sherlock.Light"/>
 
-    <style name="Theme.Styled" parent="Theme.Sherlock.Light.DarkActionBar"></style>
-
+    <!-- http://developer.android.com/design/style/metrics-grids.html -->
+    <!-- http://developer.android.com/design/style/typography.html -->
     <style name="ListFont">
-        <item name="android:textColor">#000000</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="typeface">Roboto-Light.ttf</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
     <style name="ListFont.Magnitude">
-        <item name="android:textSize">32sp</item>
-        <item name="android:gravity">center_vertical|right</item>
-        <item name="android:paddingLeft">@dimen/padding_medium</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:paddingTop">4dp</item>
-        <item name="android:paddingBottom">4dp</item>
-        <item name="android:paddingRight">@dimen/padding_medium</item>
+        <item name="android:textSize">@dimen/list_row_item_magnitude_text_size</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">@dimen/list_row_item_magnitude_layout_width</item>
+        <item name="android:layout_height">@dimen/list_row_item_magnitude_layout_height</item>
+        <item name="android:layout_margin">@dimen/list_row_item_magnitude_layout_margin</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
     </style>
 
-    <style name="ListFont.NonMagnitude">
+    <style name="ListFont.Primary">
+        <item name="android:textSize">@dimen/list_row_item_primary_text_size</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:padding">2dp</item>
+        <item name="android:layout_height">@dimen/list_row_item_primary_layout_height</item>
+        <item name="android:layout_marginTop">@dimen/list_row_item_primary_layout_margin_top</item>
+        <item name="android:layout_marginRight">@dimen/list_row_item_primary_layout_margin_right</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+    </style>
+
+    <style name="ListFont.Secondary">
+        <item name="android:textSize">@dimen/list_row_item_secondary_text_size</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/list_row_item_secondary_layout_height</item>
+        <item name="android:layout_marginBottom">@dimen/list_row_item_secondary_layout_margin_bottom</item>
+        <item name="android:layout_marginRight">@dimen/list_row_item_secondary_layout_margin_right</item>
+        <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
     <style name="AboutActivityFont">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">@dimen/padding_medium</item>
+        <item name="android:padding">@dimen/about_page_text_padding</item>
     </style>
 
     <style name="AboutActivityFont.Heading">
@@ -36,28 +49,30 @@
 
     <style name="AboutActivityFont.Detail"></style>
 
-    <style name="QuakeActivityFont">
+    <!-- Earthquake Detail Overlay -->
+    <style name="EarthquakeDetailFragmentFont">
+        <item name="typeface">Roboto-Light.ttf</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="QuakeActivityFont.Heading">
+    <style name="EarthquakeDetailFragmentFont.Heading">
         <item name="android:textColor">#7F7F7F</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:paddingLeft">2dp</item>
+        <item name="android:textSize">@dimen/detail_fragment_heading_text_size</item>
+        <item name="android:paddingLeft">@dimen/detail_fragment_heading_padding_left</item>
     </style>
 
-    <style name="QuakeActivityFont.Heading.Weighted">
+    <style name="EarthquakeDetailFragmentFont.Heading.Weighted">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
     </style>
 
-    <style name="QuakeActivityFont.Detail">
-        <item name="android:textSize">24sp</item>
-        <item name="android:paddingLeft">8dp</item>
+    <style name="EarthquakeDetailFragmentFont.Detail">
+        <item name="android:textSize">@dimen/detail_fragment_detail_text_size</item>
+        <item name="android:paddingLeft">@dimen/detail_fragment_detail_padding_left</item>
     </style>
 
-    <style name="QuakeActivityFont.Detail.Weighted">
+    <style name="EarthquakeDetailFragmentFont.Detail.Weighted">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
     </style>
