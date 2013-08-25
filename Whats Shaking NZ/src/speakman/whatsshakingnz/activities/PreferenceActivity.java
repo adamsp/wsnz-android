@@ -1,19 +1,17 @@
 package speakman.whatsshakingnz.activities;
 
-import speakman.whatsshakingnz.R;
-import speakman.whatsshakingnz.earthquake.Earthquake;
-import speakman.whatsshakingnz.geonet.GeonetAlarmListener;
-import speakman.whatsshakingnz.preferences.DefaultPrefs;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.util.Log;
 import android.widget.Toast;
-
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.commonsware.cwac.wakeful.WakefulIntentService;
+import speakman.whatsshakingnz.R;
+import speakman.whatsshakingnz.earthquake.Earthquake;
+import speakman.whatsshakingnz.geonet.GeonetAlarmListener;
+import speakman.whatsshakingnz.preferences.DefaultPrefs;
 
 public class PreferenceActivity extends SherlockPreferenceActivity implements
         OnSharedPreferenceChangeListener {
@@ -113,16 +111,13 @@ public class PreferenceActivity extends SherlockPreferenceActivity implements
     }
 
     private void startGeonetAlarm() {
-        Log.d("WSNZ", "Start Alarm Called");
         stopGeonetAlarm();
         WakefulIntentService.scheduleAlarms(new GeonetAlarmListener(),
                 getApplicationContext());
-        Log.d("WSNZ", "Alarm Started.");
     }
 
     private void stopGeonetAlarm() {
         WakefulIntentService.cancelAlarms(getApplicationContext());
-        Log.d("WSNZ", "Alarm cancelled.");
     }
 
     @Override

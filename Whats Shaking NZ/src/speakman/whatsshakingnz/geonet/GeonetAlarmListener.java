@@ -1,15 +1,13 @@
 package speakman.whatsshakingnz.geonet;
 
-import speakman.whatsshakingnz.activities.PreferenceActivity;
-import speakman.whatsshakingnz.preferences.DefaultPrefs;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.preference.PreferenceManager;
-import android.util.Log;
-
 import com.commonsware.cwac.wakeful.WakefulIntentService;
 import com.commonsware.cwac.wakeful.WakefulIntentService.AlarmListener;
+import speakman.whatsshakingnz.activities.PreferenceActivity;
+import speakman.whatsshakingnz.preferences.DefaultPrefs;
 
 public class GeonetAlarmListener implements AlarmListener {
 
@@ -33,12 +31,10 @@ public class GeonetAlarmListener implements AlarmListener {
         mgr.setRepeating(AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis() + freqInMilli,
                 freqInMilli, pi);
-        Log.d("WSNZ", "Alarm scheduled for every " + freqInMilli + " ms");
     }
 
     @Override
     public void sendWakefulWork(Context ctx) {
-        Log.d("WSNZ", "sendWakefulWork in GeonetAlarmListener called");
         WakefulIntentService.sendWakefulWork(ctx, GeonetService.class);
     }
 

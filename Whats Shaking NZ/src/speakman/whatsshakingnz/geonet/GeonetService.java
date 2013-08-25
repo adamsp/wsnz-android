@@ -19,7 +19,6 @@ import android.content.SharedPreferences.Editor;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.commonsware.cwac.wakeful.WakefulIntentService;
 
@@ -32,7 +31,6 @@ public class GeonetService extends WakefulIntentService {
 
     @Override
     protected void doWakefulWork(Intent intent) {
-        Log.d("WSNZ", "doWakefulWork called.");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean serviceEnabled = prefs.getBoolean(PreferenceActivity.KEY_PREF_ALLOW_BG_NOTIFICATIONS,
                 DefaultPrefs.BG_NOTIFICATIONS_ENABLED);
@@ -43,12 +41,9 @@ public class GeonetService extends WakefulIntentService {
         int minMagnitude = prefs.getInt(
                 PreferenceActivity.KEY_PREF_MIN_HIGHLIGHT_MAGNITUDE,
                 DefaultPrefs.MIN_HIGHLIGHT_MAGNITUDE);
-        Log.d("WSNZ", "Checking with Geonet for new quakes above magnitude "
-                + minMagnitude);
         // Get the last-notified-quake
         ArrayList<Earthquake> quakes = GeonetAccessor.getQuakes();
         if (null == quakes) {
-            Log.d("WSNZ", "No internet connection.");
             return;
         }
         quakes = EarthquakeFilter.filterQuakes(quakes
@@ -60,14 +55,11 @@ public class GeonetService extends WakefulIntentService {
                 false);
         ArrayList<Earthquake> newQuakes = getNewQuakes(lastChecked, quakes, reviewedOnly);
         if (newQuakes.size() > 0) {
-            Log.d("WSNZ", newQuakes.size() + " new quakes.");
             notifyUser(newQuakes, prefs);
             Editor editor = prefs.edit();
             editor.putString(KEY_PREFS_LAST_CHECKED_ID, newQuakes.get(0)
                     .getReference());
             editor.commit();
-        } else {
-            Log.d("WSNZ", "No new quakes.");
         }
     }
 
