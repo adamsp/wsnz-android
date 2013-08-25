@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="list_row_item_height">72dp</dimen>
+
+    <dimen name="list_row_item_magnitude_layout_width">32dp</dimen>
+    <dimen name="list_row_item_magnitude_layout_height">48dp</dimen>
+    <dimen name="list_row_item_magnitude_layout_margin">12dp</dimen>
+
+    <dimen name="list_row_item_primary_layout_height">42dp</dimen>
+    <dimen name="list_row_item_primary_layout_margin_top">4dp</dimen>
+    <dimen name="list_row_item_primary_layout_margin_right">4dp</dimen>
+
+    <dimen name="list_row_item_secondary_layout_height">22dp</dimen>
+    <dimen name="list_row_item_secondary_layout_margin_bottom">4dp</dimen>
+    <dimen name="list_row_item_secondary_layout_margin_right">4dp</dimen>
+
+    <dimen name="list_row_item_magnitude_text_size">22sp</dimen>
+    <dimen name="list_row_item_primary_text_size">18sp</dimen>
+    <dimen name="list_row_item_secondary_text_size">14sp</dimen>
+
+    <dimen name="about_page_text_padding">16dp</dimen>
+</resources>

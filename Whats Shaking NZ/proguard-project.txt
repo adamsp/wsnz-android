@@ -19,13 +19,11 @@
 #   public *;
 #}
 
-
 -keep class android.support.v4.app.** { *; }
 -keep interface android.support.v4.app.** { *; }
 -keep class com.actionbarsherlock.** { *; }
 -keep interface com.actionbarsherlock.** { *; }
--keep public class * extends android.app.Fragment
--keep public class * extends com.actionbarsherlock.app.SherlockFragment
+-keep class speakman.whatsshakingnz.** { *; }
 
 -assumenosideeffects class android.util.Log {
     public static *** d(...);
