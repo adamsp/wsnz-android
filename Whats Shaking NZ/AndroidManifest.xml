@@ -5,11 +5,11 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="18" />
+        android:targetSdkVersion="19" />
 
     <uses-feature
         android:glEsVersion="0x00020000"
-        android:required="true"/>
+        android:required="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -17,9 +17,9 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <!-- Maps. -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -28,7 +28,8 @@
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/title_activity_main"
-            android:launchMode="singleInstance" >
+            android:launchMode="singleInstance"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,11 +51,10 @@
             android:name=".activities.AboutActivity"
             android:label="@string/title_activity_about" >
         </activity>
-        <activity
-            android:name=".activities.QuakeActivity" >
+        <activity android:name=".activities.QuakeActivity" >
         </activity>
-        <activity
-            android:name=".activities.PreferenceActivity" >
+        <activity android:name=".activities.PreferenceActivity"
+            android:exported="true" >
         </activity>
 
         <service
@@ -65,7 +65,17 @@
         <!-- See https://developers.google.com/maps/documentation/android/start for details on acquiring an API key. -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBmfpr8MHUrpQxjnqVXA-T4tdhyJB0Izig"/>
+            android:value="AIzaSyBmfpr8MHUrpQxjnqVXA-T4tdhyJB0Izig" />
+
+        <receiver android:name=".widget.WhatsShakingWidgetProvider" android:label="@string/widget_label" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
     </application>
 
 </manifest>

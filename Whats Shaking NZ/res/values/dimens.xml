@@ -30,5 +30,12 @@
     <dimen name="detail_fragment_heading_padding_left">2dp</dimen>
 
     <dimen name="detail_fragment_padding">4dp</dimen>
-
+    
+    <dimen name="widget_margin">8dp</dimen>
+    <dimen name="widget_padding">8dp</dimen>
+    <dimen name="widget_error_text_size">12sp</dimen>
+    <dimen name="widget_heading_text_size">10sp</dimen>
+    <dimen name="widget_detail_text_size">16sp</dimen>
+    <dimen name="widget_detail_padding_left">10dp</dimen>
+    <dimen name="widget_heading_padding_left">6dp</dimen>
 </resources>

@@ -1,6 +1,7 @@
 package speakman.whatsshakingnz.geonet;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import speakman.whatsshakingnz.R;
@@ -8,7 +9,9 @@ import speakman.whatsshakingnz.activities.MainActivity;
 import speakman.whatsshakingnz.activities.PreferenceActivity;
 import speakman.whatsshakingnz.earthquake.Earthquake;
 import speakman.whatsshakingnz.earthquake.EarthquakeFilter;
+import speakman.whatsshakingnz.formatting.DateFormatting;
 import speakman.whatsshakingnz.preferences.DefaultPrefs;
+import speakman.whatsshakingnz.widget.WidgetUpdater;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -19,6 +22,7 @@ import android.content.SharedPreferences.Editor;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.preference.PreferenceManager;
+import android.widget.RemoteViews;
 
 import com.commonsware.cwac.wakeful.WakefulIntentService;
 
@@ -46,6 +50,8 @@ public class GeonetService extends WakefulIntentService {
         if (null == quakes) {
             return;
         }
+        updateWidget(quakes);
+        
         quakes = EarthquakeFilter.filterQuakes(quakes
                 , ((float) minMagnitude) / 10.0f, 30);
 
@@ -61,6 +67,31 @@ public class GeonetService extends WakefulIntentService {
                     .getReference());
             editor.commit();
         }
+    }
+
+    private void updateWidget(List<Earthquake> earthquakes) {
+        WidgetUpdater widgetUpdater = new WidgetUpdater(this);
+
+        if (!widgetUpdater.widgetsExist() || earthquakes == null || earthquakes.size() == 0) {
+            // No widgets! Bail out.
+            return;
+        }
+        
+        Earthquake earthquake = earthquakes.get(0);
+        RemoteViews views = new RemoteViews(getPackageName(), R.layout.widget_detail);
+        
+        // Update click to take to main page.
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setOnClickPendingIntent(R.id.widget_detail_parent_container, pendingIntent);
+        
+        // Update views
+        views.setTextViewText(R.id.widget_detail_latest_magnitude, earthquake.getFormattedMagnitude());
+        views.setTextViewText(R.id.widget_detail_latest_datetime, DateFormatting.getMediumDateString(this, earthquake.getDate()));
+        views.setTextViewText(R.id.widget_detail_latest_depth, getString(R.string.depth_detail, earthquake.getFormattedDepth()));
+        
+        widgetUpdater.updateWidgets(views);
     }
 
     private void notifyUser(ArrayList<Earthquake> quakes, SharedPreferences prefs) {

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- The docs say don't include a margin for API > 14. Bugger that; this way it's flush with the Google Now widget. -->
+    <dimen name="widget_margin">6dp</dimen>
+    <dimen name="widget_padding">8dp</dimen>
+
+</resources>

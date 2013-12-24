@@ -5,12 +5,12 @@ import java.util.Date;
 
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.activities.PreferenceActivity;
+import speakman.whatsshakingnz.formatting.DateFormatting;
 import speakman.whatsshakingnz.preferences.DefaultPrefs;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,12 +60,7 @@ public class EarthquakeArrayAdapter extends ArrayAdapter<Earthquake> {
             if (itemView != null) {
                 Date date = quake.getDate();
                 if (null != date) {
-                    java.text.DateFormat tf = DateFormat
-                            .getTimeFormat(getContext());
-                    java.text.DateFormat df = DateFormat
-                            .getMediumDateFormat(getContext());
-                    String dateString = String.format("%s, %s",
-                            df.format(date), tf.format(date));
+                    String dateString = DateFormatting.getMediumDateString(getContext(), date);
                     itemView.setText(dateString);
                 }
             }

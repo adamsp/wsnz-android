@@ -1,17 +1,19 @@
 package speakman.whatsshakingnz.activities;
 
+import speakman.whatsshakingnz.R;
+import speakman.whatsshakingnz.earthquake.Earthquake;
+import speakman.whatsshakingnz.geonet.GeonetAlarmListener;
+import speakman.whatsshakingnz.preferences.DefaultPrefs;
+import speakman.whatsshakingnz.widget.WidgetUpdater;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.widget.Toast;
+
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.commonsware.cwac.wakeful.WakefulIntentService;
-import speakman.whatsshakingnz.R;
-import speakman.whatsshakingnz.earthquake.Earthquake;
-import speakman.whatsshakingnz.geonet.GeonetAlarmListener;
-import speakman.whatsshakingnz.preferences.DefaultPrefs;
 
 public class PreferenceActivity extends SherlockPreferenceActivity implements
         OnSharedPreferenceChangeListener {
@@ -63,6 +65,7 @@ public class PreferenceActivity extends SherlockPreferenceActivity implements
                         getString(R.string.pref_backgroundNotificationsDisabled),
                         Toast.LENGTH_SHORT).show();
             }
+            new WidgetUpdater(this).updateWidgets();
         } else if (key.equals(KEY_PREF_BG_NOTIFICATIONS_FREQ)) {
             String value = sharedPreferences.getString(key,
                     DefaultPrefs.BG_NOTIFICATIONS_FREQ_STRING);

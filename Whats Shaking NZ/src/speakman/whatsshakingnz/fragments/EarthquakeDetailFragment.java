@@ -1,18 +1,19 @@
 package speakman.whatsshakingnz.fragments;
 
+import java.util.Date;
+import java.util.Locale;
+
+import speakman.whatsshakingnz.R;
+import speakman.whatsshakingnz.earthquake.Earthquake;
+import speakman.whatsshakingnz.formatting.DateFormatting;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.actionbarsherlock.app.SherlockFragment;
-import speakman.whatsshakingnz.R;
-import speakman.whatsshakingnz.earthquake.Earthquake;
 
-import java.util.Date;
-import java.util.Locale;
+import com.actionbarsherlock.app.SherlockFragment;
 
 /**
  * Created by Adam on 8/08/13.
@@ -49,16 +50,13 @@ public class EarthquakeDetailFragment extends SherlockFragment {
 
         v = (TextView) root.findViewById(R.id.depth_detail_field);
         if (null != v)
-            v.setText(mQuake.getFormattedDepth() + " km");
+            v.setText(getString(R.string.depth_detail, mQuake.getFormattedDepth()));
 
         v = (TextView) root.findViewById(R.id.date_detail_field);
         if (null != v) {
             Date date = mQuake.getDate();
             if (null != date) {
-                java.text.DateFormat tf = DateFormat.getTimeFormat(getActivity());
-                java.text.DateFormat df = DateFormat.getDateFormat(getActivity());
-                String dateString = String.format("%s, %s", df.format(date),
-                        tf.format(date));
+                String dateString = DateFormatting.getShortDateString(getActivity(), date);
                 v.setText(dateString);
             }
         }

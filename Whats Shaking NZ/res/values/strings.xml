@@ -14,6 +14,8 @@
     <string name="depth_heading_text">DEPTH</string>
     <string name="date_heading_text">DATE</string>
     <string name="status_heading_text">STATUS</string>
+    
+    <string name="depth_detail">%s km</string>
 
     <string name="earthquake_status_automatic">An automatic earthquake location that has not been reviewed by a duty officer or analyst.</string>
     <string name="earthquake_status_deleted">Oops! This was not a real earthquake and has been deleted.</string>
@@ -85,5 +87,11 @@
 
     <string name="tab_title_list">List</string>
     <string name="tab_title_map">Map</string>
+    
+    <!-- Widget strings -->
+    <string name="widget_label">What\'s Shaking, NZ?</string>
+    <string name="widget_heading">LATEST EARTHQUAKE</string>
+    <string name="widget_loading">Loading...</string>
+    <string name="widget_background_service_not_enabled_message">Automatic updates not enabled. Tap here to turn on.</string>
 
 </resources>
