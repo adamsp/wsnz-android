@@ -18,6 +18,16 @@
             android:autoLink="all"
             android:text="@string/about_app_detail"
             tools:context=".AboutActivity"/>
+        
+        <TextView
+            style="@style/AboutActivityFont.Heading"
+            android:text="@string/about_app_update_1_3_heading"/>
+
+        <TextView
+            style="@style/AboutActivityFont.Detail"
+            android:autoLink="all"
+            android:text="@string/about_app_update_1_3_detail"
+            tools:context=".AboutActivity"/>
 
         <TextView
             style="@style/AboutActivityFont.Heading"

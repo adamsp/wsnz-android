@@ -64,6 +64,10 @@
         \n\nFor news and more information, check out the What\'s Shaking, NZ? website:\nwww.whatsshaking.co.nz
     </string>
     <string name="about_app_heading">The App</string>
+    <string name="about_app_update_1_3_heading">Update 1.3</string>
+    <string name="about_app_update_1_3_detail">- Added a homescreen widget\n
+        - Added an open source licenses page
+    </string>
     <string name="about_app_update_1_2_heading">Update 1.2</string>
     <string name="about_app_update_1_2_detail">- Added tablet support\n
         - Added landscape support\n
