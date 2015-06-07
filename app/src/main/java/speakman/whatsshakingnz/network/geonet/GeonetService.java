@@ -16,7 +16,10 @@
 
 package speakman.whatsshakingnz.network.geonet;
 
+import org.joda.time.DateTime;
+
 import retrofit.http.GET;
+import retrofit.http.Query;
 import rx.Observable;
 
 /**
@@ -30,6 +33,9 @@ import rx.Observable;
  */
 public interface GeonetService {
 
-    @GET("/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json&maxFeatures=50")
-    public Observable<GeonetResponse> getEarthquakes();
+    @GET("/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json")
+    Observable<GeonetResponse> getEarthquakes(@Query("maxFeatures") int max);
+
+    @GET("/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json&sortBy=origintime")
+    Observable<GeonetResponse> getEarthquakesSince(@Query("cql_filter=origintime>") DateTime since, @Query("maxFeatures") int query);
 }

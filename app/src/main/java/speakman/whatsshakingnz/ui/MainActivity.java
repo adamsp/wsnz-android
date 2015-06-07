@@ -17,37 +17,70 @@
 package speakman.whatsshakingnz.ui;
 
 import android.databinding.DataBindingUtil;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import speakman.whatsshakingnz.model.Earthquake;
+import com.google.gson.GsonBuilder;
+
+import org.joda.time.DateTime;
+
+import retrofit.RestAdapter;
+import retrofit.converter.GsonConverter;
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.databinding.RowEarthquakeBinding;
+import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
 import speakman.whatsshakingnz.network.RequestManager;
+import speakman.whatsshakingnz.network.RequestTimeStore;
+import speakman.whatsshakingnz.network.geonet.GeonetDateTimeAdapter;
+import speakman.whatsshakingnz.network.geonet.GeonetService;
 
 public class MainActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver {
 
     private static EarthquakeStore store;
     private static RequestManager requestManager;
+    private static DateTime mostRecentRequestTime;
 
-    private RecyclerView mainList;
     private RecyclerView.Adapter<Earthquake.ViewHolder> dataAdapter;
 
     static {
+        // TODO Implement actual store
         store = new EarthquakeStore();
-        requestManager = new RequestManager(store);
+        // TODO Inject this
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setConverter(new GsonConverter(new GsonBuilder()
+                        .registerTypeAdapter(DateTime.class, new GeonetDateTimeAdapter())
+                        .create()))
+                .setEndpoint("http://wfs.geonet.org.nz")
+                .build();
+        mostRecentRequestTime = new DateTime().minusDays(7);
+        // TODO Inject this
+        requestManager = new RequestManager(store, restAdapter.create(GeonetService.class),
+                // TODO Implement actual store
+                new RequestTimeStore() {
+                    @Override
+                    public void saveMostRecentRequestTime(DateTime dateTime) {
+                        mostRecentRequestTime = dateTime;
+                    }
+
+                    @Nullable
+                    @Override
+                    public DateTime getMostRecentRequestTime() {
+                        return mostRecentRequestTime;
+                    }
+                });
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mainList = (RecyclerView) findViewById(R.id.activity_main_list);
+        RecyclerView mainList = (RecyclerView) findViewById(R.id.activity_main_list);
         mainList.setHasFixedSize(true);
         mainList.setLayoutManager(new LinearLayoutManager(this));
         dataAdapter = new RecyclerView.Adapter<Earthquake.ViewHolder>() {

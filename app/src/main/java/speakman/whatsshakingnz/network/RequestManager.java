@@ -16,11 +16,18 @@
 
 package speakman.whatsshakingnz.network;
 
-import retrofit.RestAdapter;
+import android.util.Log;
+
+import org.joda.time.DateTime;
+
+import java.util.List;
+
+import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import speakman.whatsshakingnz.model.EarthquakeStore;
+import speakman.whatsshakingnz.network.geonet.GeonetFeature;
 import speakman.whatsshakingnz.network.geonet.GeonetResponse;
 import speakman.whatsshakingnz.network.geonet.GeonetService;
 
@@ -29,35 +36,56 @@ import speakman.whatsshakingnz.network.geonet.GeonetService;
  */
 public class RequestManager {
 
-    private GeonetService service;
-    private EarthquakeStore store;
+    public static final int MAX_EVENTS_PER_REQUEST = 50;
+
+    private final RequestTimeStore timeStore;
+    private final GeonetService service;
+    private final EarthquakeStore store;
     private Subscription subscription;
 
-    public RequestManager(EarthquakeStore store) {
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("http://wfs.geonet.org.nz")
-                .build();
-        service = restAdapter.create(GeonetService.class);
+    public RequestManager(EarthquakeStore store, GeonetService service, RequestTimeStore timeStore) {
+        this.service = service;
         this.store = store;
+        this.timeStore = timeStore;
     }
 
     public void retrieveNewEarthquakes() {
         if (subscription != null) return;
-        subscription = service.getEarthquakes().observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<GeonetResponse>() {
+        subscription = getMostRecentEventsObservable().subscribe(new Subscriber<GeonetResponse>() {
             @Override
-            public void onCompleted() {
-
-            }
+            public void onCompleted() { }
 
             @Override
             public void onError(Throwable e) {
-
+                Log.e(RequestManager.class.getSimpleName(), "Error retrieving earthquakes", e);
             }
 
             @Override
             public void onNext(GeonetResponse geonetResponse) {
-                store.setEarthquakes(geonetResponse.getFeatures());
+                List<GeonetFeature> features = geonetResponse.getFeatures();
+                store.setEarthquakes(features);
+                subscription.unsubscribe();
+                subscription = null;
+                if (features != null && features.size() > 0) {
+                    GeonetFeature lastFeature = features.get(features.size() - 1);
+                    timeStore.saveMostRecentRequestTime(lastFeature.getOriginTime());
+                    if (features.size() == MAX_EVENTS_PER_REQUEST) {
+                        // TODO Figure out a better paging solution
+                        retrieveNewEarthquakes();
+                    }
+                }
             }
         });
+    }
+
+    private Observable<GeonetResponse> getMostRecentEventsObservable() {
+        Observable<GeonetResponse> observable;
+        DateTime mostRecentRequestTime = timeStore.getMostRecentRequestTime();
+        if (mostRecentRequestTime == null) {
+            observable = service.getEarthquakes(MAX_EVENTS_PER_REQUEST);
+        } else {
+            observable = service.getEarthquakesSince(mostRecentRequestTime, MAX_EVENTS_PER_REQUEST);
+        }
+        return observable.observeOn(AndroidSchedulers.mainThread());
     }
 }
