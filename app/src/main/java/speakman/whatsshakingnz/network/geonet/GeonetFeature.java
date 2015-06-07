@@ -16,6 +16,8 @@
 
 package speakman.whatsshakingnz.network.geonet;
 
+import org.joda.time.DateTime;
+
 import speakman.whatsshakingnz.model.Earthquake;
 
 /**
@@ -28,6 +30,7 @@ public class GeonetFeature implements Earthquake {
         double longitude;
         double depth;
         double magnitude;
+        DateTime origintime;
         String publicid;
     }
 
@@ -88,5 +91,9 @@ public class GeonetFeature implements Earthquake {
     @Override
     public String getId() {
         return properties == null ? null : properties.publicid;
+    }
+
+    public DateTime getOriginTime() {
+        return properties == null ? null : properties.origintime;
     }
 }
