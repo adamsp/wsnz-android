@@ -41,6 +41,7 @@ public class EarthquakeStore {
     }
 
     public void setEarthquakes(List<? extends Earthquake> earthquakes) {
+        //noinspection unchecked
         this.earthquakes = (List<Earthquake>) earthquakes;
         for (EarthquakeDataChangeObserver observer : observers) {
             observer.onEarthquakeDataChanged();

@@ -23,6 +23,7 @@ import speakman.whatsshakingnz.databinding.RowEarthquakeBinding;
 /**
  * Created by Adam on 15-05-31.
  */
+@SuppressWarnings("unused")
 public interface Earthquake {
     class ViewHolder extends RecyclerView.ViewHolder {
         public RowEarthquakeBinding binding;
