@@ -22,6 +22,8 @@ import org.joda.time.DateTime;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -43,6 +45,7 @@ public class RequestManager {
     private final EarthquakeStore store;
     private Subscription subscription;
 
+    @Inject
     public RequestManager(EarthquakeStore store, GeonetService service, RequestTimeStore timeStore) {
         this.service = service;
         this.store = store;

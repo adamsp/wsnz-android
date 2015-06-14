@@ -16,33 +16,17 @@
 
 package speakman.whatsshakingnz;
 
-import android.app.Application;
-
-import net.danlew.android.joda.JodaTimeAndroid;
-
+import dagger.Component;
+import speakman.whatsshakingnz.dagger.AppScope;
+import speakman.whatsshakingnz.model.ModelModule;
+import speakman.whatsshakingnz.network.NetworkModule;
 import speakman.whatsshakingnz.ui.MainActivity;
 
 /**
- * Created by Adam on 15-06-07.
+ * Created by Adam on 15-06-13.
  */
-public class WhatsShakingApplication extends Application {
-
-    private static WhatsShakingApplication instance;
-    private AppComponent component;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        instance = this;
-        JodaTimeAndroid.init(this);
-        component = DaggerAppComponent.create();
-    }
-
-    public void inject(MainActivity activity) {
-        component.inject(activity);
-    }
-
-    public static WhatsShakingApplication getInstance() {
-        return instance;
-    }
+@AppScope
+@Component(modules = { NetworkModule.class, ModelModule.class, AppModule.class })
+public interface AppComponent {
+    void inject(MainActivity activity);
 }
