@@ -39,6 +39,7 @@ import speakman.whatsshakingnz.network.geonet.GeonetService;
 public class RequestManager {
 
     public static final int MAX_EVENTS_PER_REQUEST = 50;
+    public static final int DAYS_BEFORE_TODAY = 7;
 
     private final RequestTimeStore timeStore;
     private final GeonetService service;
@@ -85,10 +86,9 @@ public class RequestManager {
         Observable<GeonetResponse> observable;
         DateTime mostRecentRequestTime = timeStore.getMostRecentRequestTime();
         if (mostRecentRequestTime == null) {
-            observable = service.getEarthquakes(MAX_EVENTS_PER_REQUEST);
-        } else {
-            observable = service.getEarthquakesSince(mostRecentRequestTime, MAX_EVENTS_PER_REQUEST);
+            mostRecentRequestTime = DateTime.now().minusDays(DAYS_BEFORE_TODAY);
         }
+        observable = service.getEarthquakesSince(mostRecentRequestTime, MAX_EVENTS_PER_REQUEST);
         return observable.observeOn(AndroidSchedulers.mainThread());
     }
 }

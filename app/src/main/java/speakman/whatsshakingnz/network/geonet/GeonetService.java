@@ -32,10 +32,6 @@ import rx.Observable;
  * http://wfs.geonet.org.nz/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json&cql_filter=origintime%3E=%272015-05-31T18:06:16.912Z%27&sortBy=origintime&maxFeatures=1
  */
 public interface GeonetService {
-
-    @GET("/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json")
-    Observable<GeonetResponse> getEarthquakes(@Query("maxFeatures") int max);
-
     @GET("/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json&sortBy=origintime")
     Observable<GeonetResponse> getEarthquakesSince(@Query("cql_filter=origintime>") DateTime since, @Query("maxFeatures") int query);
 }
