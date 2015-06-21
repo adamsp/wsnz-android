@@ -37,6 +37,7 @@ public class RealmEarthquakeStore implements EarthquakeStore {
 
     private Realm realm;
     private Set<EarthquakeDataChangeObserver> observers = new HashSet<>();
+    private RealmResults<RealmEarthquake> earthquakes;
 
     @Inject
     public RealmEarthquakeStore(Context context) {
@@ -45,8 +46,11 @@ public class RealmEarthquakeStore implements EarthquakeStore {
 
     @Override
     public List<? extends Earthquake> getEarthquakes() {
-        RealmResults<RealmEarthquake> all = realm.where(RealmEarthquake.class).findAll();
-        return all;
+        if (earthquakes == null) {
+            // Realm manages refreshing this for us because it's magic.
+            earthquakes = realm.where(RealmEarthquake.class).findAll();
+        }
+        return earthquakes;
     }
 
     @Override
