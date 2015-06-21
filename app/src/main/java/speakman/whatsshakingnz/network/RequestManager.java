@@ -28,6 +28,7 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
 import speakman.whatsshakingnz.network.geonet.GeonetFeature;
 import speakman.whatsshakingnz.network.geonet.GeonetResponse;
@@ -67,7 +68,7 @@ public class RequestManager {
             @Override
             public void onNext(GeonetResponse geonetResponse) {
                 List<GeonetFeature> features = geonetResponse.getFeatures();
-                store.setEarthquakes(features);
+                store.addEarthquakes(features);
                 subscription.unsubscribe();
                 subscription = null;
                 if (features != null && features.size() > 0) {

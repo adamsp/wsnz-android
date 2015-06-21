@@ -26,9 +26,9 @@ public interface EarthquakeStore {
         void onEarthquakeDataChanged();
     }
 
-    List<Earthquake> getEarthquakes();
+    List<? extends Earthquake> getEarthquakes();
 
-    void setEarthquakes(List<? extends Earthquake> earthquakes);
+    void addEarthquakes(List<? extends Earthquake> earthquakes);
 
     void registerDataChangeObserver(EarthquakeDataChangeObserver observer);
 

@@ -108,7 +108,7 @@ public class RequestManagerTest extends AndroidTestCase {
         mgr.retrieveNewEarthquakes();
         Thread.sleep(20);
 
-        verify(store).setEarthquakes(events);
+        verify(store).addEarthquakes(events);
         verifyNoMoreInteractions(store);
     }
 
@@ -174,9 +174,9 @@ public class RequestManagerTest extends AndroidTestCase {
         mgr.retrieveNewEarthquakes();
         Thread.sleep(20);
 
-        verify(store).setEarthquakes(events1);
-        verify(store).setEarthquakes(events2);
-        verify(store).setEarthquakes(events3);
+        verify(store).addEarthquakes(events1);
+        verify(store).addEarthquakes(events2);
+        verify(store).addEarthquakes(events3);
         verifyNoMoreInteractions(store);
 
         assertEquals(originTime3, timeStore.getMostRecentRequestTime());
@@ -225,7 +225,7 @@ public class RequestManagerTest extends AndroidTestCase {
         mgr.retrieveNewEarthquakes();
         Thread.sleep(20);
 
-        verify(store).setEarthquakes(events);
+        verify(store).addEarthquakes(events);
         verifyNoMoreInteractions(store);
         assertEquals(lastTimeFirstPage, timeStore.getMostRecentRequestTime());
     }
