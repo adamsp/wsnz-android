@@ -24,8 +24,8 @@ import org.joda.time.DateTime;
  * Created by Adam on 15-06-07.
  */
 public interface RequestTimeStore {
-    void saveMostRecentRequestTime(DateTime dateTime);
+    void saveMostRecentUpdateTime(DateTime dateTime);
 
     @Nullable
-    DateTime getMostRecentRequestTime();
+    DateTime getMostRecentUpdateTime();
 }

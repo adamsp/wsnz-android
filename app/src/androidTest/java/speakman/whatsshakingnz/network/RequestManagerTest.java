@@ -56,8 +56,8 @@ public class RequestManagerTest extends AndroidTestCase {
         RequestTimeStore timeStore = mock(RequestTimeStore.class);
         RequestManager mgr = new RequestManager(store, service, timeStore);
 
-        when(timeStore.getMostRecentRequestTime()).thenReturn(null);
-        when(service.getEarthquakesSince(notNull(DateTime.class), eq(RequestManager.MAX_EVENTS_PER_REQUEST)))
+        when(timeStore.getMostRecentUpdateTime()).thenReturn(null);
+        when(service.getEarthquakes(notNull(DateTime.class), eq(RequestManager.MAX_EVENTS_PER_REQUEST)))
                 .thenReturn(Observable.<GeonetResponse>empty());
 
         mgr.retrieveNewEarthquakes();
@@ -80,7 +80,7 @@ public class RequestManagerTest extends AndroidTestCase {
 
         DateTime mostRecentRequestTime = new DateTime();
 
-        when(timeStore.getMostRecentRequestTime()).thenReturn(mostRecentRequestTime);
+        when(timeStore.getMostRecentUpdateTime()).thenReturn(mostRecentRequestTime);
         when(service.getEarthquakesSince(mostRecentRequestTime, RequestManager.MAX_EVENTS_PER_REQUEST))
                 .thenReturn(Observable.<GeonetResponse>empty());
 
@@ -105,7 +105,7 @@ public class RequestManagerTest extends AndroidTestCase {
             events.add(new GeonetFeature());
         }
         GeonetResponse response = new GeonetResponse(events);
-        when(timeStore.getMostRecentRequestTime()).thenReturn(mostRecentRequestTime);
+        when(timeStore.getMostRecentUpdateTime()).thenReturn(mostRecentRequestTime);
         when(service.getEarthquakesSince(mostRecentRequestTime, RequestManager.MAX_EVENTS_PER_REQUEST))
                 .thenReturn(Observable.just(response));
 
@@ -123,20 +123,20 @@ public class RequestManagerTest extends AndroidTestCase {
         RequestTimeStore timeStore = new RequestTimeStore() {
             DateTime time;
             @Override
-            public void saveMostRecentRequestTime(DateTime dateTime) {
+            public void saveMostRecentUpdateTime(DateTime dateTime) {
                 time = dateTime;
             }
 
             @Nullable
             @Override
-            public DateTime getMostRecentRequestTime() {
+            public DateTime getMostRecentUpdateTime() {
                 return time;
             }
         };
         RequestManager mgr = new RequestManager(store, service, timeStore);
 
         DateTime mostRecentRequestTime = new DateTime();
-        timeStore.saveMostRecentRequestTime(mostRecentRequestTime);
+        timeStore.saveMostRecentUpdateTime(mostRecentRequestTime);
 
         int eventCount = RequestManager.MAX_EVENTS_PER_REQUEST;
         List<GeonetFeature> events1 = new ArrayList<>();
@@ -181,7 +181,7 @@ public class RequestManagerTest extends AndroidTestCase {
         verify(store).addEarthquakes(events3);
         verifyNoMoreInteractions(store);
 
-        assertEquals(originTime3, timeStore.getMostRecentRequestTime());
+        assertEquals(originTime3, timeStore.getMostRecentUpdateTime());
     }
 
     public void testLastEventTimeIsUpdatedWhenFirstPageSucceedsButFollowingPageFails() throws InterruptedException {
@@ -191,20 +191,20 @@ public class RequestManagerTest extends AndroidTestCase {
         RequestTimeStore timeStore = new RequestTimeStore() {
             DateTime time;
             @Override
-            public void saveMostRecentRequestTime(DateTime dateTime) {
+            public void saveMostRecentUpdateTime(DateTime dateTime) {
                 time = dateTime;
             }
 
             @Nullable
             @Override
-            public DateTime getMostRecentRequestTime() {
+            public DateTime getMostRecentUpdateTime() {
                 return time;
             }
         };
         RequestManager mgr = new RequestManager(store, service, timeStore);
 
         DateTime mostRecentRequestTime = new DateTime();
-        timeStore.saveMostRecentRequestTime(mostRecentRequestTime);
+        timeStore.saveMostRecentUpdateTime(mostRecentRequestTime);
 
         int eventCount = RequestManager.MAX_EVENTS_PER_REQUEST;
         List<GeonetFeature> events = new ArrayList<>();
@@ -230,7 +230,7 @@ public class RequestManagerTest extends AndroidTestCase {
 
         verify(store).addEarthquakes(events);
         verifyNoMoreInteractions(store);
-        assertEquals(lastTimeFirstPage, timeStore.getMostRecentRequestTime());
+        assertEquals(lastTimeFirstPage, timeStore.getMostRecentUpdateTime());
     }
 
 }

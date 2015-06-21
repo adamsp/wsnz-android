@@ -28,8 +28,8 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
+import speakman.whatsshakingnz.network.geonet.GeonetDateTimeAdapter;
 import speakman.whatsshakingnz.network.geonet.GeonetFeature;
 import speakman.whatsshakingnz.network.geonet.GeonetResponse;
 import speakman.whatsshakingnz.network.geonet.GeonetService;
@@ -73,7 +73,7 @@ public class RequestManager {
                 subscription = null;
                 if (features != null && features.size() > 0) {
                     GeonetFeature lastFeature = features.get(features.size() - 1);
-                    timeStore.saveMostRecentRequestTime(new DateTime(lastFeature.getOriginTime()));
+                    timeStore.saveMostRecentUpdateTime(new DateTime(lastFeature.getUpdatedTime()));
                     if (features.size() == MAX_EVENTS_PER_REQUEST) {
                         // TODO Figure out a better paging solution
                         retrieveNewEarthquakes();
@@ -85,11 +85,12 @@ public class RequestManager {
 
     private Observable<GeonetResponse> getMostRecentEventsObservable() {
         Observable<GeonetResponse> observable;
-        DateTime mostRecentRequestTime = timeStore.getMostRecentRequestTime();
-        if (mostRecentRequestTime == null) {
-            mostRecentRequestTime = DateTime.now().minusDays(DAYS_BEFORE_TODAY);
+        DateTime mostRecentUpdateTime = timeStore.getMostRecentUpdateTime();
+        if (mostRecentUpdateTime == null) {
+            mostRecentUpdateTime = DateTime.now().minusDays(DAYS_BEFORE_TODAY);
         }
-        observable = service.getEarthquakesSince(mostRecentRequestTime, MAX_EVENTS_PER_REQUEST);
+        String filter = "modificationtime>" + mostRecentUpdateTime.toString(GeonetDateTimeAdapter.writeFormatter);
+        observable = service.getEarthquakes(filter, MAX_EVENTS_PER_REQUEST);
         return observable.observeOn(AndroidSchedulers.mainThread());
     }
 }

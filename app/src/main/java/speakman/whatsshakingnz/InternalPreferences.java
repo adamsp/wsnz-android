@@ -39,7 +39,7 @@ public class InternalPreferences implements RequestTimeStore {
     }
 
     @Override
-    public void saveMostRecentRequestTime(@Nullable DateTime dateTime) {
+    public void saveMostRecentUpdateTime(@Nullable DateTime dateTime) {
         if (dateTime == null) {
             sharedPrefs.edit().remove(KEY_MOST_RECENT_REQUEST_TIME).apply();
         } else {
@@ -49,7 +49,7 @@ public class InternalPreferences implements RequestTimeStore {
 
     @Nullable
     @Override
-    public DateTime getMostRecentRequestTime() {
+    public DateTime getMostRecentUpdateTime() {
         if (sharedPrefs.contains(KEY_MOST_RECENT_REQUEST_TIME)) {
             return new DateTime(sharedPrefs.getLong(KEY_MOST_RECENT_REQUEST_TIME, 0));
         } else {
