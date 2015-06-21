@@ -73,7 +73,7 @@ public class RequestManager {
                 subscription = null;
                 if (features != null && features.size() > 0) {
                     GeonetFeature lastFeature = features.get(features.size() - 1);
-                    timeStore.saveMostRecentRequestTime(lastFeature.getOriginTime());
+                    timeStore.saveMostRecentRequestTime(new DateTime(lastFeature.getOriginTime()));
                     if (features.size() == MAX_EVENTS_PER_REQUEST) {
                         // TODO Figure out a better paging solution
                         retrieveNewEarthquakes();

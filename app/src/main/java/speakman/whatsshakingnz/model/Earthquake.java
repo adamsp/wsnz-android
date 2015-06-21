@@ -33,7 +33,12 @@ public interface Earthquake {
         }
     }
 
+    long getOriginTime();
+    long getUpdatedTime();
+    double getLatitude();
+    double getLongitude();
     double getMagnitude();
+    double getDepth();
     String getLocation();
     String getId();
 }

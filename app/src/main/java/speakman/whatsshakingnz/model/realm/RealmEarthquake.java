@@ -28,6 +28,11 @@ public class RealmEarthquake extends RealmObject implements Earthquake {
     @PrimaryKey
     private String id;
 
+    private long originTime;
+    private long updatedTime;
+    private double latitude;
+    private double longitude;
+    private double depth;
     private double magnitude;
     private String location;
 
@@ -36,8 +41,67 @@ public class RealmEarthquake extends RealmObject implements Earthquake {
 
     public RealmEarthquake(Earthquake other) {
         this.id = other.getId();
+        this.originTime = other.getOriginTime();
+        this.updatedTime = other.getUpdatedTime();
+        this.latitude = other.getLatitude();
+        this.longitude = other.getLongitude();
+        this.depth = other.getDepth();
         this.magnitude = other.getMagnitude();
         this.location = other.getLocation();
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public long getOriginTime() {
+        return originTime;
+    }
+
+    public void setOriginTime(long originTime) {
+        this.originTime = originTime;
+    }
+
+    @Override
+    public long getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(long updatedTime) {
+        this.updatedTime = updatedTime;
+    }
+
+    @Override
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    @Override
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    @Override
+    public double getDepth() {
+        return depth;
+    }
+
+    public void setDepth(double depth) {
+        this.depth = depth;
     }
 
     @Override
@@ -56,14 +120,5 @@ public class RealmEarthquake extends RealmObject implements Earthquake {
 
     public void setLocation(String location) {
         this.location = location;
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

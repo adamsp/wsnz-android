@@ -31,6 +31,7 @@ public class GeonetFeature implements Earthquake {
         double depth;
         double magnitude;
         DateTime origintime;
+        DateTime modificationtime;
         String publicid;
     }
 
@@ -84,6 +85,11 @@ public class GeonetFeature implements Earthquake {
     }
 
     @Override
+    public double getDepth() {
+        return properties == null ? 0 : properties.depth;
+    }
+
+    @Override
     public String getLocation() {
         return properties == null ? null : String.format("%.3f / %.3f (%.0f km)", properties.latitude, properties.longitude, properties.depth);
     }
@@ -93,14 +99,26 @@ public class GeonetFeature implements Earthquake {
         return properties == null ? null : properties.publicid;
     }
 
-    public DateTime getOriginTime() {
-        return properties == null ? null : properties.origintime;
+    public long getOriginTime() {
+        if (properties == null) return 0;
+        else if (properties.origintime == null) return 0;
+        else return properties.origintime.getMillis();
     }
 
-    public void setOriginTime(DateTime originTime) {
-        if (properties == null) {
-            properties = new Properties();
-        }
-        properties.origintime = originTime;
+    @Override
+    public long getUpdatedTime() {
+        if (properties == null) return 0;
+        else if (properties.origintime == null) return 0;
+        else return properties.modificationtime.getMillis();
+    }
+
+    @Override
+    public double getLatitude() {
+        return properties == null ? 0 : properties.latitude;
+    }
+
+    @Override
+    public double getLongitude() {
+        return properties == null ? 0 : properties.longitude;
     }
 }

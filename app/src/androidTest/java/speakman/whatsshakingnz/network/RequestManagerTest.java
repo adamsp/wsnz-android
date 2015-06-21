@@ -19,6 +19,9 @@ package speakman.whatsshakingnz.network;
 import android.support.annotation.Nullable;
 import android.test.AndroidTestCase;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -30,6 +33,7 @@ import java.util.List;
 
 import rx.Observable;
 import speakman.whatsshakingnz.model.EarthquakeStore;
+import speakman.whatsshakingnz.network.geonet.GeonetDateTimeAdapter;
 import speakman.whatsshakingnz.network.geonet.GeonetFeature;
 import speakman.whatsshakingnz.network.geonet.GeonetResponse;
 import speakman.whatsshakingnz.network.geonet.GeonetService;
@@ -143,20 +147,18 @@ public class RequestManagerTest extends AndroidTestCase {
             events2.add(new GeonetFeature());
             events3.add(new GeonetFeature());
         }
-        GeonetFeature feature1 = new GeonetFeature();
-        DateTime originTime1 = new DateTime().plusDays(1);
-        feature1.setOriginTime(originTime1);
+        Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new GeonetDateTimeAdapter()).create();
+        GeonetFeature feature1 = gson.fromJson("{ \"properties\": { \"origintime\": \"2015-05-29T21:10:45.867Z\" } }", GeonetFeature.class);
         events1.add(feature1);
+        DateTime originTime1 = new DateTime("2015-05-29T21:10:45.867Z");
 
-        GeonetFeature feature2 = new GeonetFeature();
-        DateTime originTime2 = new DateTime().plusDays(2);
-        feature2.setOriginTime(originTime2);
+        GeonetFeature feature2 = gson.fromJson("{ \"properties\": { \"origintime\": \"2015-05-30T21:10:45.867Z\" } }", GeonetFeature.class);
         events2.add(feature2);
+        DateTime originTime2 = new DateTime("2015-05-30T21:10:45.867Z");
 
-        GeonetFeature feature3 = new GeonetFeature();
-        DateTime originTime3 = new DateTime().plusDays(3);
-        feature3.setOriginTime(originTime3);
+        GeonetFeature feature3 = gson.fromJson("{ \"properties\": { \"origintime\": \"2015-05-31T21:10:45.867Z\" } }", GeonetFeature.class);
         events3.add(feature3);
+        DateTime originTime3 = new DateTime("2015-05-31T21:10:45.867Z");
 
         GeonetResponse page1 = new GeonetResponse(events1);
         GeonetResponse page2 = new GeonetResponse(events2);
@@ -209,10 +211,11 @@ public class RequestManagerTest extends AndroidTestCase {
         for (int i = 0; i < eventCount - 1; i++) {
             events.add(new GeonetFeature());
         }
-        GeonetFeature feature = new GeonetFeature();
-        DateTime lastTimeFirstPage = new DateTime().plusDays(1);
-        feature.setOriginTime(lastTimeFirstPage);
+
+        Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new GeonetDateTimeAdapter()).create();
+        GeonetFeature feature = gson.fromJson("{ \"properties\": { \"origintime\": \"2015-05-31T21:10:45.867Z\" } }", GeonetFeature.class);
         events.add(feature);
+        DateTime lastTimeFirstPage = new DateTime("2015-05-31T21:10:45.867Z");
         GeonetResponse response = new GeonetResponse(events);
 
         // First page succeeds

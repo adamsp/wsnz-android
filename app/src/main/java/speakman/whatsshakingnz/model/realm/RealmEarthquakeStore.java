@@ -55,6 +55,7 @@ public class RealmEarthquakeStore implements EarthquakeStore {
 
     @Override
     public void addEarthquakes(List<? extends Earthquake> earthquakes) {
+        if (earthquakes == null || earthquakes.size() == 0) return;
         List<RealmEarthquake> realmEarthquakes = convertToRealmEarthquakes(earthquakes);
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(realmEarthquakes);
@@ -77,7 +78,6 @@ public class RealmEarthquakeStore implements EarthquakeStore {
     }
 
     private List<RealmEarthquake> convertToRealmEarthquakes(List<? extends Earthquake> earthquakes) {
-        if (earthquakes == null || earthquakes.size() == 0) return new ArrayList<>();
         List<RealmEarthquake> result = new ArrayList<>(earthquakes.size());
         for (Earthquake earthquake : earthquakes) {
             RealmEarthquake realmEarthquake = new RealmEarthquake(earthquake);
