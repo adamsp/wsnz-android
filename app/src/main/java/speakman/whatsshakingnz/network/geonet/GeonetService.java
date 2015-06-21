@@ -16,6 +16,8 @@
 
 package speakman.whatsshakingnz.network.geonet;
 
+import org.joda.time.DateTime;
+
 import retrofit.http.GET;
 import retrofit.http.Query;
 import rx.Observable;
@@ -30,6 +32,12 @@ import rx.Observable;
  * http://wfs.geonet.org.nz/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json&cql_filter=origintime%3E=%272015-05-31T18:06:16.912Z%27&sortBy=origintime&maxFeatures=1
  */
 public interface GeonetService {
+
+    /**
+     * A format string for filtering earthquakes after a given most recent update timestamp.
+     */
+    String FILTER_FORMAT_MOST_RECENT_UPDATE = "modificationtime>%s AND eventtype='earthquake'";
+
     @GET("/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json&sortBy=modificationtime")
     Observable<GeonetResponse> getEarthquakes(@Query("cql_filter") String filter, @Query("maxFeatures") int maxFeatures);
 }

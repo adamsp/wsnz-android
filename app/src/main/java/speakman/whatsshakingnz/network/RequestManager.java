@@ -89,7 +89,7 @@ public class RequestManager {
         if (mostRecentUpdateTime == null) {
             mostRecentUpdateTime = DateTime.now().minusDays(DAYS_BEFORE_TODAY);
         }
-        String filter = "modificationtime>" + mostRecentUpdateTime.toString(GeonetDateTimeAdapter.writeFormatter);
+        String filter = String.format(GeonetService.FILTER_FORMAT_MOST_RECENT_UPDATE, mostRecentUpdateTime.toString(GeonetDateTimeAdapter.writeFormatter));
         observable = service.getEarthquakes(filter, MAX_EVENTS_PER_REQUEST);
         return observable.observeOn(AndroidSchedulers.mainThread());
     }
