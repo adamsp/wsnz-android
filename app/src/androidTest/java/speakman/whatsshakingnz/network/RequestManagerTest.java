@@ -50,6 +50,10 @@ import static org.mockito.Mockito.when;
  */
 public class RequestManagerTest extends AndroidTestCase {
 
+    private String updateTimeToFilterString(DateTime updateTime) {
+        return "modificationtime>" + updateTime.toString(GeonetDateTimeAdapter.writeFormatter);
+    }
+
     public void testRequestLastNDaysWhenNoMostRecentEventDateIsAvailable() throws InterruptedException {
         GeonetService service = mock(GeonetService.class);
         EarthquakeStore store = mock(EarthquakeStore.class);
@@ -57,16 +61,16 @@ public class RequestManagerTest extends AndroidTestCase {
         RequestManager mgr = new RequestManager(store, service, timeStore);
 
         when(timeStore.getMostRecentUpdateTime()).thenReturn(null);
-        when(service.getEarthquakes(notNull(DateTime.class), eq(RequestManager.MAX_EVENTS_PER_REQUEST)))
+        when(service.getEarthquakes(notNull(String.class), eq(RequestManager.MAX_EVENTS_PER_REQUEST)))
                 .thenReturn(Observable.<GeonetResponse>empty());
 
         mgr.retrieveNewEarthquakes();
         Thread.sleep(20);
 
-        ArgumentCaptor<DateTime> argumentCaptor = ArgumentCaptor.forClass(DateTime.class);
-        verify(service).getEarthquakesSince(argumentCaptor.capture(), eq(RequestManager.MAX_EVENTS_PER_REQUEST));
+        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+        verify(service).getEarthquakes(argumentCaptor.capture(), eq(RequestManager.MAX_EVENTS_PER_REQUEST));
         verifyNoMoreInteractions(service);
-        LocalDate requestedDate = argumentCaptor.getValue().toLocalDate();
+        LocalDate requestedDate = new DateTime(argumentCaptor.getValue().substring("modificationtime>".length())).toLocalDate();
         LocalDate today = DateTime.now().toLocalDate();
         // We want to ensure that the request was for DAYS_BEFORE_TODAY days ago.
         assertEquals(RequestManager.DAYS_BEFORE_TODAY, Days.daysBetween(requestedDate, today).getDays());
@@ -78,16 +82,17 @@ public class RequestManagerTest extends AndroidTestCase {
         RequestTimeStore timeStore = mock(RequestTimeStore.class);
         RequestManager mgr = new RequestManager(store, service, timeStore);
 
-        DateTime mostRecentRequestTime = new DateTime();
+        DateTime mostRecentUpdateTime = new DateTime();
+        String filter = updateTimeToFilterString(mostRecentUpdateTime);
 
-        when(timeStore.getMostRecentUpdateTime()).thenReturn(mostRecentRequestTime);
-        when(service.getEarthquakesSince(mostRecentRequestTime, RequestManager.MAX_EVENTS_PER_REQUEST))
+        when(timeStore.getMostRecentUpdateTime()).thenReturn(mostRecentUpdateTime);
+        when(service.getEarthquakes(filter, RequestManager.MAX_EVENTS_PER_REQUEST))
                 .thenReturn(Observable.<GeonetResponse>empty());
 
         mgr.retrieveNewEarthquakes();
         Thread.sleep(20);
 
-        verify(service).getEarthquakesSince(mostRecentRequestTime, RequestManager.MAX_EVENTS_PER_REQUEST);
+        verify(service).getEarthquakes(filter, RequestManager.MAX_EVENTS_PER_REQUEST);
         verifyNoMoreInteractions(service);
     }
 
@@ -97,7 +102,8 @@ public class RequestManagerTest extends AndroidTestCase {
         RequestTimeStore timeStore = mock(RequestTimeStore.class);
         RequestManager mgr = new RequestManager(store, service, timeStore);
 
-        DateTime mostRecentRequestTime = new DateTime();
+        DateTime mostRecentUpdateTime = new DateTime();
+        String filter = updateTimeToFilterString(mostRecentUpdateTime);
 
         int eventCount = 20;
         List<GeonetFeature> events = new ArrayList<>();
@@ -105,8 +111,8 @@ public class RequestManagerTest extends AndroidTestCase {
             events.add(new GeonetFeature());
         }
         GeonetResponse response = new GeonetResponse(events);
-        when(timeStore.getMostRecentUpdateTime()).thenReturn(mostRecentRequestTime);
-        when(service.getEarthquakesSince(mostRecentRequestTime, RequestManager.MAX_EVENTS_PER_REQUEST))
+        when(timeStore.getMostRecentUpdateTime()).thenReturn(mostRecentUpdateTime);
+        when(service.getEarthquakes(filter, RequestManager.MAX_EVENTS_PER_REQUEST))
                 .thenReturn(Observable.just(response));
 
         mgr.retrieveNewEarthquakes();
@@ -148,29 +154,29 @@ public class RequestManagerTest extends AndroidTestCase {
             events3.add(new GeonetFeature());
         }
         Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new GeonetDateTimeAdapter()).create();
-        GeonetFeature feature1 = gson.fromJson("{ \"properties\": { \"origintime\": \"2015-05-29T21:10:45.867Z\" } }", GeonetFeature.class);
+        GeonetFeature feature1 = gson.fromJson("{ \"properties\": { \"modificationtime\": \"2015-05-29T21:10:45.867Z\" } }", GeonetFeature.class);
         events1.add(feature1);
-        DateTime originTime1 = new DateTime("2015-05-29T21:10:45.867Z");
+        DateTime modificationtime1 = new DateTime("2015-05-29T21:10:45.867Z");
 
-        GeonetFeature feature2 = gson.fromJson("{ \"properties\": { \"origintime\": \"2015-05-30T21:10:45.867Z\" } }", GeonetFeature.class);
+        GeonetFeature feature2 = gson.fromJson("{ \"properties\": { \"modificationtime\": \"2015-05-30T21:10:45.867Z\" } }", GeonetFeature.class);
         events2.add(feature2);
-        DateTime originTime2 = new DateTime("2015-05-30T21:10:45.867Z");
+        DateTime modificationtime2 = new DateTime("2015-05-30T21:10:45.867Z");
 
-        GeonetFeature feature3 = gson.fromJson("{ \"properties\": { \"origintime\": \"2015-05-31T21:10:45.867Z\" } }", GeonetFeature.class);
+        GeonetFeature feature3 = gson.fromJson("{ \"properties\": { \"modificationtime\": \"2015-05-31T21:10:45.867Z\" } }", GeonetFeature.class);
         events3.add(feature3);
-        DateTime originTime3 = new DateTime("2015-05-31T21:10:45.867Z");
+        DateTime modificationtime3 = new DateTime("2015-05-31T21:10:45.867Z");
 
         GeonetResponse page1 = new GeonetResponse(events1);
         GeonetResponse page2 = new GeonetResponse(events2);
         GeonetResponse page3 = new GeonetResponse(events3);
 
-        when(service.getEarthquakesSince(mostRecentRequestTime, RequestManager.MAX_EVENTS_PER_REQUEST))
+        when(service.getEarthquakes(updateTimeToFilterString(mostRecentRequestTime), RequestManager.MAX_EVENTS_PER_REQUEST))
                 .thenReturn(Observable.just(page1));
-        when(service.getEarthquakesSince(originTime1, RequestManager.MAX_EVENTS_PER_REQUEST))
+        when(service.getEarthquakes(updateTimeToFilterString(modificationtime1), RequestManager.MAX_EVENTS_PER_REQUEST))
                 .thenReturn(Observable.just(page2));
-        when(service.getEarthquakesSince(originTime2, RequestManager.MAX_EVENTS_PER_REQUEST))
+        when(service.getEarthquakes(updateTimeToFilterString(modificationtime2), RequestManager.MAX_EVENTS_PER_REQUEST))
                 .thenReturn(Observable.just(page3));
-        when(service.getEarthquakesSince(originTime3, RequestManager.MAX_EVENTS_PER_REQUEST))
+        when(service.getEarthquakes(updateTimeToFilterString(modificationtime3), RequestManager.MAX_EVENTS_PER_REQUEST))
                 .thenReturn(Observable.<GeonetResponse>empty());
 
         mgr.retrieveNewEarthquakes();
@@ -181,7 +187,7 @@ public class RequestManagerTest extends AndroidTestCase {
         verify(store).addEarthquakes(events3);
         verifyNoMoreInteractions(store);
 
-        assertEquals(originTime3, timeStore.getMostRecentUpdateTime());
+        assertEquals(modificationtime3, timeStore.getMostRecentUpdateTime());
     }
 
     public void testLastEventTimeIsUpdatedWhenFirstPageSucceedsButFollowingPageFails() throws InterruptedException {
@@ -213,16 +219,16 @@ public class RequestManagerTest extends AndroidTestCase {
         }
 
         Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new GeonetDateTimeAdapter()).create();
-        GeonetFeature feature = gson.fromJson("{ \"properties\": { \"origintime\": \"2015-05-31T21:10:45.867Z\" } }", GeonetFeature.class);
+        GeonetFeature feature = gson.fromJson("{ \"properties\": { \"modificationtime\": \"2015-05-31T21:10:45.867Z\" } }", GeonetFeature.class);
         events.add(feature);
         DateTime lastTimeFirstPage = new DateTime("2015-05-31T21:10:45.867Z");
         GeonetResponse response = new GeonetResponse(events);
 
         // First page succeeds
-        when(service.getEarthquakesSince(mostRecentRequestTime, RequestManager.MAX_EVENTS_PER_REQUEST))
+        when(service.getEarthquakes(updateTimeToFilterString(mostRecentRequestTime), RequestManager.MAX_EVENTS_PER_REQUEST))
                 .thenReturn(Observable.just(response));
         // Second page fails
-        when(service.getEarthquakesSince(lastTimeFirstPage, RequestManager.MAX_EVENTS_PER_REQUEST))
+        when(service.getEarthquakes(updateTimeToFilterString(lastTimeFirstPage), RequestManager.MAX_EVENTS_PER_REQUEST))
                 .thenReturn(Observable.<GeonetResponse>error(new UnknownHostException()));
 
         mgr.retrieveNewEarthquakes();
