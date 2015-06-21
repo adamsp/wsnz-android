@@ -108,7 +108,7 @@ public class GeonetFeature implements Earthquake {
     @Override
     public long getUpdatedTime() {
         if (properties == null) return 0;
-        else if (properties.origintime == null) return 0;
+        else if (properties.modificationtime == null) return 0;
         else return properties.modificationtime.getMillis();
     }
 
