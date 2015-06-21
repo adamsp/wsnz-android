@@ -24,6 +24,7 @@ import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.mockito.ArgumentCaptor;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -181,16 +182,52 @@ public class RequestManagerTest extends AndroidTestCase {
         assertEquals(originTime3, timeStore.getMostRecentRequestTime());
     }
 
-    public void testLastEventTimeIsStored() {
+    public void testLastEventTimeIsUpdatedWhenFirstPageSucceedsButFollowingPageFails() throws InterruptedException {
+        GeonetService service = mock(GeonetService.class);
+        EarthquakeStore store = mock(EarthquakeStore.class);
+        // Can't mock this as we need to update it each time it's set to allow paging to work.
+        RequestTimeStore timeStore = new RequestTimeStore() {
+            DateTime time;
+            @Override
+            public void saveMostRecentRequestTime(DateTime dateTime) {
+                time = dateTime;
+            }
 
-    }
+            @Nullable
+            @Override
+            public DateTime getMostRecentRequestTime() {
+                return time;
+            }
+        };
+        RequestManager mgr = new RequestManager(store, service, timeStore);
 
-    public void testLastEventTimeIsNotUpdatedWhenFirstPageFails() {
+        DateTime mostRecentRequestTime = new DateTime();
+        timeStore.saveMostRecentRequestTime(mostRecentRequestTime);
 
-    }
+        int eventCount = RequestManager.MAX_EVENTS_PER_REQUEST;
+        List<GeonetFeature> events = new ArrayList<>();
+        for (int i = 0; i < eventCount - 1; i++) {
+            events.add(new GeonetFeature());
+        }
+        GeonetFeature feature = new GeonetFeature();
+        DateTime lastTimeFirstPage = new DateTime().plusDays(1);
+        feature.setOriginTime(lastTimeFirstPage);
+        events.add(feature);
+        GeonetResponse response = new GeonetResponse(events);
 
-    public void testLastEventTimeIsStoredWhenASubsequentPageFails() {
+        // First page succeeds
+        when(service.getEarthquakesSince(mostRecentRequestTime, RequestManager.MAX_EVENTS_PER_REQUEST))
+                .thenReturn(Observable.just(response));
+        // Second page fails
+        when(service.getEarthquakesSince(lastTimeFirstPage, RequestManager.MAX_EVENTS_PER_REQUEST))
+                .thenReturn(Observable.<GeonetResponse>error(new UnknownHostException()));
 
+        mgr.retrieveNewEarthquakes();
+        Thread.sleep(20);
+
+        verify(store).setEarthquakes(events);
+        verifyNoMoreInteractions(store);
+        assertEquals(lastTimeFirstPage, timeStore.getMostRecentRequestTime());
     }
 
 }
