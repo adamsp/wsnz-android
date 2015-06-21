@@ -45,7 +45,7 @@ import static org.mockito.Mockito.when;
  */
 public class RequestManagerTest extends AndroidTestCase {
 
-    public void testRequestLastNDaysWhenNoMostRecentEventDateIsAvailable() {
+    public void testRequestLastNDaysWhenNoMostRecentEventDateIsAvailable() throws InterruptedException {
         GeonetService service = mock(GeonetService.class);
         EarthquakeStore store = mock(EarthquakeStore.class);
         RequestTimeStore timeStore = mock(RequestTimeStore.class);
@@ -56,6 +56,7 @@ public class RequestManagerTest extends AndroidTestCase {
                 .thenReturn(Observable.<GeonetResponse>empty());
 
         mgr.retrieveNewEarthquakes();
+        Thread.sleep(20);
 
         ArgumentCaptor<DateTime> argumentCaptor = ArgumentCaptor.forClass(DateTime.class);
         verify(service).getEarthquakesSince(argumentCaptor.capture(), eq(RequestManager.MAX_EVENTS_PER_REQUEST));
@@ -66,7 +67,7 @@ public class RequestManagerTest extends AndroidTestCase {
         assertEquals(RequestManager.DAYS_BEFORE_TODAY, Days.daysBetween(requestedDate, today).getDays());
     }
 
-    public void testRequestOnlyEventsSinceLastEventDate() {
+    public void testRequestOnlyEventsSinceLastEventDate() throws InterruptedException {
         GeonetService service = mock(GeonetService.class);
         EarthquakeStore store = mock(EarthquakeStore.class);
         RequestTimeStore timeStore = mock(RequestTimeStore.class);
@@ -79,12 +80,13 @@ public class RequestManagerTest extends AndroidTestCase {
                 .thenReturn(Observable.<GeonetResponse>empty());
 
         mgr.retrieveNewEarthquakes();
+        Thread.sleep(20);
 
         verify(service).getEarthquakesSince(mostRecentRequestTime, RequestManager.MAX_EVENTS_PER_REQUEST);
         verifyNoMoreInteractions(service);
     }
 
-    public void testAllEventsAreProvidedToStore() {
+    public void testAllEventsAreProvidedToStore() throws InterruptedException {
         GeonetService service = mock(GeonetService.class);
         EarthquakeStore store = mock(EarthquakeStore.class);
         RequestTimeStore timeStore = mock(RequestTimeStore.class);
@@ -103,6 +105,7 @@ public class RequestManagerTest extends AndroidTestCase {
                 .thenReturn(Observable.just(response));
 
         mgr.retrieveNewEarthquakes();
+        Thread.sleep(20);
 
         verify(store).setEarthquakes(events);
         verifyNoMoreInteractions(store);
