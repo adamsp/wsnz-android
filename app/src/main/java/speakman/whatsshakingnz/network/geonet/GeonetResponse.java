@@ -23,6 +23,12 @@ import java.util.List;
  */
 public class GeonetResponse {
 
+    public GeonetResponse() {}
+
+    public GeonetResponse(List<GeonetFeature> features) {
+        this.features = features;
+    }
+
     List<GeonetFeature> features;
 
     public List<GeonetFeature> getFeatures() {
