@@ -60,7 +60,20 @@ public class RequestManagerTest extends AndroidTestCase {
     }
 
     public void testRequestOnlyEventsSinceLastEventDate() {
+        GeonetService service = mock(GeonetService.class);
+        EarthquakeStore store = mock(EarthquakeStore.class);
+        RequestTimeStore timeStore = mock(RequestTimeStore.class);
+        RequestManager mgr = new RequestManager(store, service, timeStore);
 
+        DateTime mostRecentRequestTime = new DateTime();
+
+        when(timeStore.getMostRecentRequestTime()).thenReturn(mostRecentRequestTime);
+        when(service.getEarthquakesSince(mostRecentRequestTime, RequestManager.MAX_EVENTS_PER_REQUEST))
+                .thenReturn(Observable.<GeonetResponse>empty());
+
+        mgr.retrieveNewEarthquakes();
+
+        verify(service).getEarthquakesSince(mostRecentRequestTime, RequestManager.MAX_EVENTS_PER_REQUEST);
     }
 
     public void testAllEventsAreProvidedToStore() {
