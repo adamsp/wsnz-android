@@ -16,6 +16,7 @@
 
 package speakman.whatsshakingnz.network;
 
+import android.support.annotation.Nullable;
 import android.test.AndroidTestCase;
 
 import org.joda.time.DateTime;
@@ -107,12 +108,74 @@ public class RequestManagerTest extends AndroidTestCase {
         verifyNoMoreInteractions(store);
     }
 
-    public void testSpecificEventIsRetrieved() { // We can request updated/detailed info on a specific event, maybe?
+    public void testAllPagedEventsAreRetrieved() throws InterruptedException {
+        GeonetService service = mock(GeonetService.class);
+        EarthquakeStore store = mock(EarthquakeStore.class);
+        // Can't mock this as we need to update it each time it's set to allow paging to work.
+        RequestTimeStore timeStore = new RequestTimeStore() {
+            DateTime time;
+            @Override
+            public void saveMostRecentRequestTime(DateTime dateTime) {
+                time = dateTime;
+            }
 
-    }
+            @Nullable
+            @Override
+            public DateTime getMostRecentRequestTime() {
+                return time;
+            }
+        };
+        RequestManager mgr = new RequestManager(store, service, timeStore);
 
-    public void testAllPagedEventsAreRetrieved() {
+        DateTime mostRecentRequestTime = new DateTime();
+        timeStore.saveMostRecentRequestTime(mostRecentRequestTime);
 
+        int eventCount = RequestManager.MAX_EVENTS_PER_REQUEST;
+        List<GeonetFeature> events1 = new ArrayList<>();
+        List<GeonetFeature> events2 = new ArrayList<>();
+        List<GeonetFeature> events3 = new ArrayList<>();
+        for (int i = 0; i < eventCount - 1; i++) {
+            events1.add(new GeonetFeature());
+            events2.add(new GeonetFeature());
+            events3.add(new GeonetFeature());
+        }
+        GeonetFeature feature1 = new GeonetFeature();
+        DateTime originTime1 = new DateTime().plusDays(1);
+        feature1.setOriginTime(originTime1);
+        events1.add(feature1);
+
+        GeonetFeature feature2 = new GeonetFeature();
+        DateTime originTime2 = new DateTime().plusDays(2);
+        feature2.setOriginTime(originTime2);
+        events2.add(feature2);
+
+        GeonetFeature feature3 = new GeonetFeature();
+        DateTime originTime3 = new DateTime().plusDays(3);
+        feature3.setOriginTime(originTime3);
+        events3.add(feature3);
+
+        GeonetResponse page1 = new GeonetResponse(events1);
+        GeonetResponse page2 = new GeonetResponse(events2);
+        GeonetResponse page3 = new GeonetResponse(events3);
+
+        when(service.getEarthquakesSince(mostRecentRequestTime, RequestManager.MAX_EVENTS_PER_REQUEST))
+                .thenReturn(Observable.just(page1));
+        when(service.getEarthquakesSince(originTime1, RequestManager.MAX_EVENTS_PER_REQUEST))
+                .thenReturn(Observable.just(page2));
+        when(service.getEarthquakesSince(originTime2, RequestManager.MAX_EVENTS_PER_REQUEST))
+                .thenReturn(Observable.just(page3));
+        when(service.getEarthquakesSince(originTime3, RequestManager.MAX_EVENTS_PER_REQUEST))
+                .thenReturn(Observable.<GeonetResponse>empty());
+
+        mgr.retrieveNewEarthquakes();
+        Thread.sleep(20);
+
+        verify(store).setEarthquakes(events1);
+        verify(store).setEarthquakes(events2);
+        verify(store).setEarthquakes(events3);
+        verifyNoMoreInteractions(store);
+
+        assertEquals(originTime3, timeStore.getMostRecentRequestTime());
     }
 
     public void testLastEventTimeIsStored() {

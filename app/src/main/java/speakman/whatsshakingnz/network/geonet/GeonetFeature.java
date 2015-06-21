@@ -96,4 +96,11 @@ public class GeonetFeature implements Earthquake {
     public DateTime getOriginTime() {
         return properties == null ? null : properties.origintime;
     }
+
+    public void setOriginTime(DateTime originTime) {
+        if (properties == null) {
+            properties = new Properties();
+        }
+        properties.origintime = originTime;
+    }
 }
