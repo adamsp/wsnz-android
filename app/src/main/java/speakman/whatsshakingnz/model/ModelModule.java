@@ -16,6 +16,11 @@
 
 package speakman.whatsshakingnz.model;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import dagger.Module;
 import dagger.Provides;
 import speakman.whatsshakingnz.dagger.AppScope;
@@ -28,6 +33,31 @@ public class ModelModule {
     @AppScope
     @Provides
     EarthquakeStore provideEarthquakeStore() {
-        return new EarthquakeStore();
+        return new EarthquakeStore() {
+            private List<Earthquake> earthquakes = new ArrayList<>();
+            private Set<EarthquakeDataChangeObserver> observers = new HashSet<>();
+
+            public List<Earthquake> getEarthquakes() {
+                return earthquakes;
+            }
+
+            public void setEarthquakes(List<? extends Earthquake> earthquakes) {
+                //noinspection unchecked
+                this.earthquakes = (List<Earthquake>) earthquakes;
+                for (EarthquakeDataChangeObserver observer : observers) {
+                    observer.onEarthquakeDataChanged();
+                }
+            }
+
+            public void registerDataChangeObserver(EarthquakeDataChangeObserver observer) {
+                if (observer == null) return;
+                observers.add(observer);
+            }
+
+            public void unregisterDataChangeObserver(EarthquakeDataChangeObserver observer) {
+                if (observer == null) return;
+                observers.remove(observer);
+            }
+        };
     }
 }

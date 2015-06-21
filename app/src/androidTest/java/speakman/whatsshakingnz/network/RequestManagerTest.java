@@ -41,7 +41,7 @@ public class RequestManagerTest extends AndroidTestCase {
 
     public void testRequestLastNDaysWhenNoMostRecentEventDateIsAvailable() {
         GeonetService service = mock(GeonetService.class);
-        EarthquakeStore store = new EarthquakeStore();
+        EarthquakeStore store = mock(EarthquakeStore.class);
         RequestTimeStore timeStore = mock(RequestTimeStore.class);
         RequestManager mgr = new RequestManager(store, service, timeStore);
 

@@ -16,45 +16,21 @@
 
 package speakman.whatsshakingnz.model;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Adam on 15-05-31.
  */
-public class EarthquakeStore {
-    public interface EarthquakeDataChangeObserver {
+public interface EarthquakeStore {
+    interface EarthquakeDataChangeObserver {
         void onEarthquakeDataChanged();
     }
 
-    private List<Earthquake> earthquakes;
-    private Set<EarthquakeDataChangeObserver> observers = new HashSet<>();
+    List<Earthquake> getEarthquakes();
 
-    public EarthquakeStore() {
-        this.earthquakes = new ArrayList<>();
-    }
+    void setEarthquakes(List<? extends Earthquake> earthquakes);
 
-    public List<Earthquake> getEarthquakes() {
-        return earthquakes;
-    }
+    void registerDataChangeObserver(EarthquakeDataChangeObserver observer);
 
-    public void setEarthquakes(List<? extends Earthquake> earthquakes) {
-        //noinspection unchecked
-        this.earthquakes = (List<Earthquake>) earthquakes;
-        for (EarthquakeDataChangeObserver observer : observers) {
-            observer.onEarthquakeDataChanged();
-        }
-    }
-
-    public void registerDataChangeObserver(EarthquakeDataChangeObserver observer) {
-        if (observer == null) return;
-        observers.add(observer);
-    }
-
-    public void unregisterDataChangeObserver(EarthquakeDataChangeObserver observer) {
-        if (observer == null) return;
-        observers.remove(observer);
-    }
+    void unregisterDataChangeObserver(EarthquakeDataChangeObserver observer);
 }
