@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setSupportActionBar((Toolbar)findViewById(R.id.activity_main_toolbar));
         WhatsShakingApplication.getInstance().inject(this);
         RecyclerView mainList = (RecyclerView) findViewById(R.id.activity_main_list);
         mainList.setHasFixedSize(true);
