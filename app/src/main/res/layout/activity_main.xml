@@ -20,8 +20,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-    <android.support.design.widget.AppBarLayout
-        android:layout_height="192dp"
+    <speakman.whatsshakingnz.ui.SquareAppBarLayout
+        android:layout_height="match_parent"
         android:layout_width="match_parent">
         <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
@@ -39,7 +39,7 @@
                 android:layout_width="match_parent"
                 app:layout_collapseMode="parallax"/>
         </android.support.design.widget.CollapsingToolbarLayout>
-    </android.support.design.widget.AppBarLayout>
+    </speakman.whatsshakingnz.ui.SquareAppBarLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/activity_main_list"
         android:layout_width="match_parent"
