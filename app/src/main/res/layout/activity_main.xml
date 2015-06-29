@@ -31,12 +31,13 @@
             app:contentScrim="?attr/colorPrimary"
             android:fitsSystemWindows="true"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
-            <ImageView
+            <!-- All the map attributes plain don't work, gotta set it up in code. -->
+            <fragment
+                class="com.google.android.gms.maps.MapFragment"
+                android:id="@+id/activity_main_map"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
-                android:src="@drawable/map"
-                android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax"/>
             <android.support.v7.widget.Toolbar
                 android:id="@+id/activity_main_toolbar"
