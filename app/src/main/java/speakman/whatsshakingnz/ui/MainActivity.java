@@ -25,13 +25,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.MapView;
 
 import javax.inject.Inject;
 
@@ -42,13 +36,14 @@ import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
 import speakman.whatsshakingnz.network.RequestManager;
 
-public class MainActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver, OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver {
 
     @Inject
     EarthquakeStore store;
     @Inject
     RequestManager requestManager;
 
+    private MapView map;
     private RecyclerView.Adapter<Earthquake.ViewHolder> dataAdapter;
 
     @Override
@@ -57,10 +52,8 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar)findViewById(R.id.activity_main_toolbar));
         WhatsShakingApplication.getInstance().inject(this);
-        MapFragment map = (MapFragment)getFragmentManager().findFragmentById(R.id.activity_main_map);
-        if (map != null) {
-            map.getMapAsync(this);
-        }
+        map = ((MapView)findViewById(R.id.activity_main_map)); 
+        map.onCreate(savedInstanceState);
         RecyclerView mainList = (RecyclerView) findViewById(R.id.activity_main_list);
         mainList.setHasFixedSize(true);
         mainList.setLayoutManager(new LinearLayoutManager(this));
@@ -89,33 +82,37 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
     @Override
     protected void onResume() {
         super.onResume();
+        map.onResume();
         store.registerDataChangeObserver(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        map.onPause();
         store.unregisterDataChangeObserver(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        map.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        map.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        map.onLowMemory();
     }
 
     @Override
     public void onEarthquakeDataChanged() {
         dataAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        // Why aren't these set in the XML, I hear you ask?
-        // Because on my Nexus 5 running Android M dev preview, they get silently ignored.
-        // This works, though, so... here we are.
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(new LatLng(-41, 173), 4.5f);
-        googleMap.moveCamera(update);
-        UiSettings uiSettings = googleMap.getUiSettings();
-        uiSettings.setCompassEnabled(false);
-        uiSettings.setRotateGesturesEnabled(false);
-        uiSettings.setScrollGesturesEnabled(false);
-        uiSettings.setTiltGesturesEnabled(false);
-        uiSettings.setZoomControlsEnabled(false);
-        uiSettings.setZoomGesturesEnabled(false);
     }
 }
