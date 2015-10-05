@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
+import rx.Scheduler;
+import rx.schedulers.Schedulers;
 import speakman.whatsshakingnz.model.EarthquakeStore;
 import speakman.whatsshakingnz.network.geonet.GeonetDateTimeAdapter;
 import speakman.whatsshakingnz.network.geonet.GeonetFeature;
@@ -82,7 +84,6 @@ public class RequestManagerTest extends AndroidTestCase {
         EarthquakeStore store = mock(EarthquakeStore.class);
         RequestTimeStore timeStore = mock(RequestTimeStore.class);
         RequestManager mgr = new RequestManager(store, service, timeStore);
-
         DateTime mostRecentUpdateTime = new DateTime();
         String filter = updateTimeToFilterString(mostRecentUpdateTime);
 
@@ -114,7 +115,7 @@ public class RequestManagerTest extends AndroidTestCase {
         GeonetResponse response = new GeonetResponse(events);
         when(timeStore.getMostRecentUpdateTime()).thenReturn(mostRecentUpdateTime);
         when(service.getEarthquakes(filter, RequestManager.MAX_EVENTS_PER_REQUEST))
-                .thenReturn(Observable.just(response));
+                .thenReturn(Observable.just(response).observeOn(Schedulers.newThread()));
 
         mgr.retrieveNewEarthquakes();
         Thread.sleep(20);
@@ -170,18 +171,18 @@ public class RequestManagerTest extends AndroidTestCase {
         GeonetResponse page1 = new GeonetResponse(events1);
         GeonetResponse page2 = new GeonetResponse(events2);
         GeonetResponse page3 = new GeonetResponse(events3);
-
+        Scheduler testScheduler = Schedulers.newThread();
         when(service.getEarthquakes(updateTimeToFilterString(mostRecentRequestTime), RequestManager.MAX_EVENTS_PER_REQUEST))
-                .thenReturn(Observable.just(page1));
+                .thenReturn(Observable.just(page1).observeOn(testScheduler));
         when(service.getEarthquakes(updateTimeToFilterString(modificationtime1), RequestManager.MAX_EVENTS_PER_REQUEST))
-                .thenReturn(Observable.just(page2));
+                .thenReturn(Observable.just(page2).observeOn(testScheduler));
         when(service.getEarthquakes(updateTimeToFilterString(modificationtime2), RequestManager.MAX_EVENTS_PER_REQUEST))
-                .thenReturn(Observable.just(page3));
+                .thenReturn(Observable.just(page3).observeOn(testScheduler));
         when(service.getEarthquakes(updateTimeToFilterString(modificationtime3), RequestManager.MAX_EVENTS_PER_REQUEST))
                 .thenReturn(Observable.<GeonetResponse>empty());
 
         mgr.retrieveNewEarthquakes();
-        Thread.sleep(20);
+        Thread.sleep(100);
 
         verify(store).addEarthquakes(events1);
         verify(store).addEarthquakes(events2);
@@ -225,12 +226,13 @@ public class RequestManagerTest extends AndroidTestCase {
         DateTime lastTimeFirstPage = new DateTime("2015-05-31T21:10:45.867Z");
         GeonetResponse response = new GeonetResponse(events);
 
+        Scheduler testScheduler = Schedulers.newThread();
         // First page succeeds
         when(service.getEarthquakes(updateTimeToFilterString(mostRecentRequestTime), RequestManager.MAX_EVENTS_PER_REQUEST))
-                .thenReturn(Observable.just(response));
+                .thenReturn(Observable.just(response).observeOn(testScheduler));
         // Second page fails
         when(service.getEarthquakes(updateTimeToFilterString(lastTimeFirstPage), RequestManager.MAX_EVENTS_PER_REQUEST))
-                .thenReturn(Observable.<GeonetResponse>error(new UnknownHostException()));
+                .thenReturn(Observable.<GeonetResponse>error(new UnknownHostException()).observeOn(testScheduler));
 
         mgr.retrieveNewEarthquakes();
         Thread.sleep(20);
