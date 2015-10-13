@@ -56,6 +56,6 @@ public class EarthquakeListAdapter extends RecyclerView.Adapter<Earthquake.ViewH
 
     @Override
     public void onClick(View v, Earthquake earthquake) {
-        
+        v.getContext().startActivity(DetailActivity.getIntent(v.getContext(), earthquake));
     }
 }

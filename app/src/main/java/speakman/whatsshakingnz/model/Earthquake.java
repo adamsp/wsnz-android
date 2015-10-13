@@ -26,10 +26,10 @@ import speakman.whatsshakingnz.databinding.RowEarthquakeBinding;
  */
 @SuppressWarnings("unused")
 public interface Earthquake {
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public interface OnClickListener {
-            public void onClick(View v, Earthquake earthquake);
+            void onClick(View v, Earthquake earthquake);
         }
 
         public RowEarthquakeBinding binding;
@@ -38,6 +38,7 @@ public interface Earthquake {
             super(binding.getRoot());
             this.binding = binding;
             this.clickListener = clickListener;
+            this.itemView.setOnClickListener(this);
         }
 
         public void onClick(View v) {
