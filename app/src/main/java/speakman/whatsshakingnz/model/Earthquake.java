@@ -17,6 +17,7 @@
 package speakman.whatsshakingnz.model;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import speakman.whatsshakingnz.databinding.RowEarthquakeBinding;
 
@@ -26,10 +27,21 @@ import speakman.whatsshakingnz.databinding.RowEarthquakeBinding;
 @SuppressWarnings("unused")
 public interface Earthquake {
     class ViewHolder extends RecyclerView.ViewHolder {
+
+        public interface OnClickListener {
+            public void onClick(View v, Earthquake earthquake);
+        }
+
         public RowEarthquakeBinding binding;
-        public ViewHolder(RowEarthquakeBinding binding) {
+        private OnClickListener clickListener;
+        public ViewHolder(RowEarthquakeBinding binding, OnClickListener clickListener) {
             super(binding.getRoot());
             this.binding = binding;
+            this.clickListener = clickListener;
+        }
+
+        public void onClick(View v) {
+            this.clickListener.onClick(v, this.binding.getEarthquake());
         }
     }
 

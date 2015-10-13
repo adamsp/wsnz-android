@@ -16,14 +16,11 @@
 
 package speakman.whatsshakingnz.ui;
 
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
 
 import com.google.android.gms.maps.MapView;
 
@@ -31,7 +28,6 @@ import javax.inject.Inject;
 
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.WhatsShakingApplication;
-import speakman.whatsshakingnz.databinding.RowEarthquakeBinding;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
 import speakman.whatsshakingnz.network.RequestManager;
@@ -50,31 +46,14 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setSupportActionBar((Toolbar)findViewById(R.id.activity_main_toolbar));
+        setSupportActionBar((Toolbar) findViewById(R.id.activity_main_toolbar));
         WhatsShakingApplication.getInstance().inject(this);
         map = ((MapView)findViewById(R.id.activity_main_map)); 
         map.onCreate(savedInstanceState);
         RecyclerView mainList = (RecyclerView) findViewById(R.id.activity_main_list);
         mainList.setHasFixedSize(true);
         mainList.setLayoutManager(new LinearLayoutManager(this));
-        dataAdapter = new RecyclerView.Adapter<Earthquake.ViewHolder>() {
-
-            @Override
-            public Earthquake.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                RowEarthquakeBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.row_earthquake, parent, false);
-                return new Earthquake.ViewHolder(binding);
-            }
-
-            @Override
-            public void onBindViewHolder(Earthquake.ViewHolder holder, int position) {
-                holder.binding.setEarthquake(store.getEarthquakes().get(position));
-            }
-
-            @Override
-            public int getItemCount() {
-                return store.getEarthquakes().size();
-            }
-        };
+        dataAdapter = new EarthquakeListAdapter(store);
         mainList.setAdapter(dataAdapter);
         requestManager.retrieveNewEarthquakes();
     }
