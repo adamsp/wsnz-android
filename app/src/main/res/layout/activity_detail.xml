@@ -15,74 +15,78 @@
   ~ limitations under the License.
   -->
 
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="speakman.whatsshakingnz.ui.DetailActivity">
-
-    <android.support.design.widget.AppBarLayout
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"/>
-
-    </android.support.design.widget.AppBarLayout>
-
-    <LinearLayout
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable name="earthquake" type="speakman.whatsshakingnz.model.Earthquake"/>
+    </data>
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/activity_main_map"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.6"
-            map:cameraTargetLat="-41.0"
-            map:cameraTargetLng="172.0"
-            map:cameraZoom="4.5"
-            map:mapType="normal"
-            map:uiCompass="false"
-            map:uiRotateGestures="false"
-            map:uiScrollGestures="false"
-            map:uiTiltGestures="false"
-            map:uiZoomControls="false"
-            map:uiZoomGestures="false"/>
+        android:fitsSystemWindows="true"
+        tools:context="speakman.whatsshakingnz.ui.DetailActivity">
+        <android.support.design.widget.AppBarLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"/>
+
+        </android.support.design.widget.AppBarLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.4"
+            android:layout_height="match_parent"
             android:orientation="vertical">
-            <TextView
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/activity_main_map"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/activity_detail_magnitude_header"/>
+                android:layout_height="0dp"
+                android:layout_weight="0.6"
+                map:cameraTargetLat="-41.0"
+                map:cameraTargetLng="172.0"
+                map:cameraZoom="4.5"
+                map:mapType="normal"
+                map:uiCompass="false"
+                map:uiRotateGestures="false"
+                map:uiScrollGestures="false"
+                map:uiTiltGestures="false"
+                map:uiZoomControls="false"
+                map:uiZoomGestures="false"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.4"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/activity_detail_magnitude_header"
+                    android:text="@string/activity_detail_header_magnitude"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/activity_detail_magnitude_value"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/activity_detail_magnitude_value"
+                    android:text='@{String.format("%.1f", earthquake.magnitude)}'/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/activity_detail_depth_header"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/activity_detail_depth_header"
+                    android:text="@string/activity_detail_header_depth"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/activity_detail_depth_value"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/activity_detail_depth_value"
+                    android:text='@{String.format("%.1f", earthquake.depth)}'/>
+            </LinearLayout>
+
         </LinearLayout>
-
-    </LinearLayout>
-
-
-
-</android.support.design.widget.CoordinatorLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</layout>
