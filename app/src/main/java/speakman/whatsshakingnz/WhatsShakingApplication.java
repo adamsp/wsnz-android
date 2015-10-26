@@ -20,6 +20,7 @@ import android.app.Application;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import speakman.whatsshakingnz.ui.DetailActivity;
 import speakman.whatsshakingnz.ui.MainActivity;
 
 /**
@@ -39,6 +40,10 @@ public class WhatsShakingApplication extends Application {
     }
 
     public void inject(MainActivity activity) {
+        component.inject(activity);
+    }
+
+    public void inject(DetailActivity activity) {
         component.inject(activity);
     }
 

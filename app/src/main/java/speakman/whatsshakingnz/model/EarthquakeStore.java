@@ -16,6 +16,8 @@
 
 package speakman.whatsshakingnz.model;
 
+import android.support.annotation.NonNull;
+
 import java.util.List;
 
 /**
@@ -27,6 +29,8 @@ public interface EarthquakeStore {
     }
 
     List<? extends Earthquake> getEarthquakes();
+
+    Earthquake getEarthquake(@NonNull String id);
 
     void addEarthquakes(List<? extends Earthquake> earthquakes);
 

@@ -17,6 +17,7 @@
 package speakman.whatsshakingnz.model.realm;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,6 +52,11 @@ public class RealmEarthquakeStore implements EarthquakeStore {
             earthquakes = realm.where(RealmEarthquake.class).findAll();
         }
         return earthquakes;
+    }
+
+    @Override
+    public Earthquake getEarthquake(@NonNull String id) {
+        return realm.where(RealmEarthquake.class).equalTo("id", id).findFirst();
     }
 
     @Override

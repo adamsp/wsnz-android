@@ -20,6 +20,7 @@ import dagger.Component;
 import speakman.whatsshakingnz.dagger.AppScope;
 import speakman.whatsshakingnz.model.ModelModule;
 import speakman.whatsshakingnz.network.NetworkModule;
+import speakman.whatsshakingnz.ui.DetailActivity;
 import speakman.whatsshakingnz.ui.MainActivity;
 
 /**
@@ -29,4 +30,5 @@ import speakman.whatsshakingnz.ui.MainActivity;
 @Component(modules = { NetworkModule.class, ModelModule.class, AppModule.class })
 public interface AppComponent {
     void inject(MainActivity activity);
+    void inject(DetailActivity activity);
 }
