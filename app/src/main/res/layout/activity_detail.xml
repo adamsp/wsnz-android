@@ -17,36 +17,32 @@
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable name="earthquake" type="speakman.whatsshakingnz.model.Earthquake"/>
     </data>
-    <android.support.design.widget.CoordinatorLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         android:fitsSystemWindows="true"
         tools:context="speakman.whatsshakingnz.ui.DetailActivity">
-        <android.support.design.widget.AppBarLayout
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"/>
-
-        </android.support.design.widget.AppBarLayout>
-
-        <LinearLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
             <com.google.android.gms.maps.MapView
-                android:id="@+id/activity_main_map"
+                android:id="@+id/activity_detail_map"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.6"
+                android:layout_height="match_parent"
                 map:cameraTargetLat="-41.0"
                 map:cameraTargetLng="172.0"
                 map:cameraZoom="4.5"
@@ -57,36 +53,51 @@
                 map:uiTiltGestures="false"
                 map:uiZoomControls="false"
                 map:uiZoomGestures="false"/>
-            <LinearLayout
+
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.4"
-                android:orientation="vertical">
-                <TextView
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_gravity="bottom"
+                card_view:cardCornerRadius="4dp">
+                <LinearLayout
+                    android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/activity_detail_magnitude_header"
-                    android:text="@string/activity_detail_header_magnitude"/>
+                    android:layout_height="72dp">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/activity_detail_magnitude_value"
-                    android:text='@{String.format("%.1f", earthquake.magnitude)}'/>
+                    <TextView
+                        android:layout_width="72dp"
+                        android:layout_height="match_parent"
+                        android:text='@{String.format("%.1f", earthquake.magnitude)}'
+                        android:textSize="28sp"
+                        android:gravity="center"
+                        tools:text="4.5" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/activity_detail_depth_header"
-                    android:text="@string/activity_detail_header_depth"/>
+                    <LinearLayout
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/activity_detail_depth_value"
-                    android:text='@{String.format("%.1f", earthquake.depth)}'/>
-            </LinearLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="0.6"
+                            android:text="@{earthquake.location}"
+                            android:textSize="20sp"
+                            android:gravity="center_vertical"
+                            tools:text="140km south of Auckland"/>
 
-        </LinearLayout>
-    </android.support.design.widget.CoordinatorLayout>
+                        <TextView
+                            android:layout_weight="0.4"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:textSize="12sp"
+                            android:gravity="top"
+                            tools:text="35 minutes ago"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+        </FrameLayout>
+    </LinearLayout>
 </layout>

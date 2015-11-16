@@ -34,13 +34,28 @@
             android:gravity="center"
             tools:text="4.5" />
 
-        <TextView
+        <LinearLayout
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.6"
             android:text="@{earthquake.location}"
             android:textSize="20sp"
             android:gravity="center_vertical"
             tools:text="140km south of Auckland"/>
+
+            <TextView
+                android:layout_weight="0.4"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:textSize="12sp"
+                android:gravity="top"
+                tools:text="35 minutes ago"/>
+        </LinearLayout>
     </LinearLayout>
 </layout>

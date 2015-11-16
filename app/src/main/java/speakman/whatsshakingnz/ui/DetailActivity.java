@@ -28,6 +28,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.MapView;
+
 import javax.inject.Inject;
 
 import speakman.whatsshakingnz.R;
@@ -36,7 +38,7 @@ import speakman.whatsshakingnz.databinding.ActivityDetailBinding;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver {
 
     public static String EXTRA_EARTHQUAKE = "speakman.whatsshakingnz.ui.DetailActivity.EXTRA_EARTHQUAKE";
     public static Intent createIntent(Context ctx, Earthquake earthquake) {
@@ -48,20 +50,61 @@ public class DetailActivity extends AppCompatActivity {
     @Inject
     EarthquakeStore store;
 
+    private MapView map;
+    private ActivityDetailBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         WhatsShakingApplication.getInstance().inject(this);
-        ActivityDetailBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
+        map = (MapView) findViewById(R.id.activity_detail_map);
+        map.onCreate(savedInstanceState);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Earthquake earthquake = getEarthquake();
         binding.setEarthquake(earthquake);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        map.onResume();
+        store.registerDataChangeObserver(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        map.onPause();
+        store.unregisterDataChangeObserver(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        map.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        map.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        map.onLowMemory();
+    }
+
+    @Override
+    public void onEarthquakeDataChanged() {
+        binding.setEarthquake(getEarthquake());
+    }
+
     private Earthquake getEarthquake() {
         Earthquake earthquake = store.getEarthquake(getIntent().getStringExtra(EXTRA_EARTHQUAKE));
         return earthquake;
     }
-
 }
