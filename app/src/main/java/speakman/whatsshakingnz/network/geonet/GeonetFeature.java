@@ -16,9 +16,13 @@
 
 package speakman.whatsshakingnz.network.geonet;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.joda.time.DateTime;
 
 import speakman.whatsshakingnz.model.Earthquake;
+import speakman.whatsshakingnz.model.LocalPlace;
+import speakman.whatsshakingnz.utils.DistanceUtil;
 
 /**
  * Created by Adam on 15-05-31.
@@ -91,7 +95,15 @@ public class GeonetFeature implements Earthquake {
 
     @Override
     public String getLocation() {
-        return properties == null ? null : String.format("%.3f / %.3f (%.0f km)", properties.latitude, properties.longitude, properties.depth);
+        if (properties == null) {
+            return null;
+        } else {
+            LatLng earthquakeLocation = new LatLng(properties.latitude, properties.longitude);
+            LocalPlace place = DistanceUtil.getClosestPlace(earthquakeLocation);
+            double distance = DistanceUtil.distanceBetweenPlaces(place.location, earthquakeLocation);
+            DistanceUtil.Direction direction = DistanceUtil.getDirection(place.location, earthquakeLocation);
+            return String.format("%.0f km %s of %s", distance, direction.name(), place.name);
+        }
     }
 
     @Override
