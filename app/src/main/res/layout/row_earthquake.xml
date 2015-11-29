@@ -19,7 +19,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <variable name="earthquake" type="speakman.whatsshakingnz.model.Earthquake"/>
+        <variable name="earthquake" type="speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel"/>
     </data>
     <LinearLayout
         android:orientation="horizontal"
@@ -29,7 +29,7 @@
         <TextView
             android:layout_width="72dp"
             android:layout_height="match_parent"
-            android:text='@{String.format("%.1f", earthquake.magnitude)}'
+            android:text="@{earthquake.magnitude}"
             android:textSize="28sp"
             android:gravity="center"
             tools:text="4.5" />

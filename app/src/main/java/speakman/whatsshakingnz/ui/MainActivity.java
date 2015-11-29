@@ -31,6 +31,7 @@ import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
 import speakman.whatsshakingnz.network.RequestManager;
+import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 
 public class MainActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver {
 
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
     RequestManager requestManager;
 
     private MapView map;
-    private RecyclerView.Adapter<Earthquake.ViewHolder> dataAdapter;
+    private RecyclerView.Adapter<EarthquakeListViewModel.ViewHolder> dataAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

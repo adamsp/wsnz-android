@@ -34,7 +34,6 @@ public class RealmEarthquake extends RealmObject implements Earthquake {
     private double longitude;
     private double depth;
     private double magnitude;
-    private String location;
 
     // For Realm support
     public RealmEarthquake() { }
@@ -47,7 +46,6 @@ public class RealmEarthquake extends RealmObject implements Earthquake {
         this.longitude = other.getLongitude();
         this.depth = other.getDepth();
         this.magnitude = other.getMagnitude();
-        this.location = other.getLocation();
     }
 
     @Override
@@ -111,14 +109,5 @@ public class RealmEarthquake extends RealmObject implements Earthquake {
 
     public void setMagnitude(double magnitude) {
         this.magnitude = magnitude;
-    }
-
-    @Override
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 }

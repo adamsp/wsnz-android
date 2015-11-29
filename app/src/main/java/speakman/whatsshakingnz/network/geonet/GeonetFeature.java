@@ -94,19 +94,6 @@ public class GeonetFeature implements Earthquake {
     }
 
     @Override
-    public String getLocation() {
-        if (properties == null) {
-            return null;
-        } else {
-            LatLng earthquakeLocation = new LatLng(properties.latitude, properties.longitude);
-            LocalPlace place = DistanceUtil.getClosestPlace(earthquakeLocation);
-            double distance = DistanceUtil.distanceBetweenPlaces(place.location, earthquakeLocation);
-            DistanceUtil.Direction direction = DistanceUtil.getDirection(place.location, earthquakeLocation);
-            return String.format("%.0f km %s of %s", distance, direction.name(), place.name);
-        }
-    }
-
-    @Override
     public String getId() {
         return properties == null ? null : properties.publicid;
     }

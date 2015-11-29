@@ -16,42 +16,15 @@
 
 package speakman.whatsshakingnz.model;
 
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-
-import speakman.whatsshakingnz.databinding.RowEarthquakeBinding;
-
 /**
  * Created by Adam on 15-05-31.
  */
-@SuppressWarnings("unused")
 public interface Earthquake {
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        public interface OnClickListener {
-            void onClick(View v, Earthquake earthquake);
-        }
-
-        public RowEarthquakeBinding binding;
-        private OnClickListener clickListener;
-        public ViewHolder(RowEarthquakeBinding binding, OnClickListener clickListener) {
-            super(binding.getRoot());
-            this.binding = binding;
-            this.clickListener = clickListener;
-            this.itemView.setOnClickListener(this);
-        }
-
-        public void onClick(View v) {
-            this.clickListener.onClick(v, this.binding.getEarthquake());
-        }
-    }
-
     long getOriginTime();
     long getUpdatedTime();
     double getLatitude();
     double getLongitude();
     double getMagnitude();
     double getDepth();
-    String getLocation();
     String getId();
 }

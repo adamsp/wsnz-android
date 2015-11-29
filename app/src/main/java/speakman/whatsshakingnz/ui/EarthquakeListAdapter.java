@@ -26,11 +26,12 @@ import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.databinding.RowEarthquakeBinding;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
+import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 
 /**
  * Created by Adam on 15-10-12.
  */
-public class EarthquakeListAdapter extends RecyclerView.Adapter<Earthquake.ViewHolder> implements Earthquake.ViewHolder.OnClickListener {
+public class EarthquakeListAdapter extends RecyclerView.Adapter<EarthquakeListViewModel.ViewHolder> implements EarthquakeListViewModel.ViewHolder.OnClickListener {
 
     EarthquakeStore store;
 
@@ -39,14 +40,16 @@ public class EarthquakeListAdapter extends RecyclerView.Adapter<Earthquake.ViewH
     }
 
     @Override
-    public Earthquake.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public EarthquakeListViewModel.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RowEarthquakeBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.row_earthquake, parent, false);
-        return new Earthquake.ViewHolder(binding, this);
+        return new EarthquakeListViewModel.ViewHolder(binding, this);
     }
 
     @Override
-    public void onBindViewHolder(Earthquake.ViewHolder holder, int position) {
-        holder.binding.setEarthquake(store.getEarthquakes().get(position));
+    public void onBindViewHolder(EarthquakeListViewModel.ViewHolder holder, int position) {
+        Earthquake earthquake = store.getEarthquakes().get(position);
+        EarthquakeListViewModel viewModel = new EarthquakeListViewModel(earthquake);
+        holder.binding.setEarthquake(viewModel);
     }
 
     @Override
