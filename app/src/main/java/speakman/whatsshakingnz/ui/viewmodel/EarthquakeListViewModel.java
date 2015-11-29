@@ -48,7 +48,7 @@ public class EarthquakeListViewModel {
         }
 
         public void onClick(View v) {
-            this.clickListener.onClick(v, this.binding.getEarthquake().getEarthquake());
+            this.clickListener.onClick(v, this.binding.getEarthquakeModel().getEarthquake());
         }
     }
 

@@ -49,7 +49,7 @@ public class EarthquakeListAdapter extends RecyclerView.Adapter<EarthquakeListVi
     public void onBindViewHolder(EarthquakeListViewModel.ViewHolder holder, int position) {
         Earthquake earthquake = store.getEarthquakes().get(position);
         EarthquakeListViewModel viewModel = new EarthquakeListViewModel(earthquake);
-        holder.binding.setEarthquake(viewModel);
+        holder.binding.setEarthquakeModel(viewModel);
     }
 
     @Override

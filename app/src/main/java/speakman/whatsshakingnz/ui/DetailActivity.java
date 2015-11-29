@@ -65,7 +65,7 @@ public class DetailActivity extends AppCompatActivity implements EarthquakeStore
         setSupportActionBar(toolbar);
         Earthquake earthquake = getEarthquake();
         EarthquakeDetailViewModel viewModel = new EarthquakeDetailViewModel(earthquake);
-        binding.setEarthquake(viewModel);
+        binding.setEarthquakeModel(viewModel);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class DetailActivity extends AppCompatActivity implements EarthquakeStore
     public void onEarthquakeDataChanged() {
         Earthquake earthquake = getEarthquake();
         EarthquakeDetailViewModel viewModel = new EarthquakeDetailViewModel(earthquake);
-        binding.setEarthquake(viewModel);
+        binding.setEarthquakeModel(viewModel);
     }
 
     private Earthquake getEarthquake() {

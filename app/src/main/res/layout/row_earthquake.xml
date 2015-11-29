@@ -19,7 +19,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <variable name="earthquake" type="speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel"/>
+        <variable name="earthquakeModel" type="speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel"/>
     </data>
     <LinearLayout
         android:orientation="horizontal"
@@ -29,7 +29,7 @@
         <TextView
             android:layout_width="72dp"
             android:layout_height="match_parent"
-            android:text="@{earthquake.magnitude}"
+            android:text="@{earthquakeModel.magnitude}"
             android:textSize="28sp"
             android:gravity="center"
             tools:text="4.5" />
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.6"
-            android:text="@{earthquake.location}"
+            android:text="@{earthquakeModel.location}"
             android:textSize="20sp"
             android:gravity="center_vertical"
             tools:text="140km south of Auckland"/>
