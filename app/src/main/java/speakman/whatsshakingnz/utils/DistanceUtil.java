@@ -116,6 +116,7 @@ public class DistanceUtil {
     /**
      * Returns distance in kilometers between point1 and point2.
      * As seen here: http://stackoverflow.com/questions/27928/how-do-i-calculate-distance-between-two-latitude-longitude-points
+     * @return The distance from the first point to the second.
      */
     public static double distanceBetweenPlaces(LatLng point1, LatLng point2) {
         double lon1 = point1.longitude;//getLongitudeE6() / 1E6;
@@ -132,6 +133,12 @@ public class DistanceUtil {
         return angle * RADIO;
     }
 
+    /**
+     * Calculates the closest town in New Zealand (in the form of a {@link LocalPlace})
+     * to the supplied point.
+     * @param quakeEpicenter The point you'd like a town close to.
+     * @return The town closest to the supplied location.
+     */
     public static LocalPlace getClosestPlace(LatLng quakeEpicenter) {
         // Find the distance from the closest town
         double closestTownDistance = -1;
@@ -151,6 +158,13 @@ public class DistanceUtil {
         return closestTown;
     }
 
+    /**
+     * Calculates the bearing (in the form of a {@link speakman.whatsshakingnz.utils.DistanceUtil.Direction})
+     * from the first arg to the second.
+     * @param fromPoint The center point used to calculate bearing from.
+     * @param toPoint The point whose bearing we'd like from the center.
+     * @return The bearing from the first point to the second.
+     */
     public static Direction getDirection(LatLng fromPoint, LatLng toPoint) {
         double dLon = Math.abs(toPoint.longitude - fromPoint.longitude);
         double dLat = Math.abs(toPoint.latitude - fromPoint.latitude);
