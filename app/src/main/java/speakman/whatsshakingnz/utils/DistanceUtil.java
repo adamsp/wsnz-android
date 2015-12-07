@@ -16,6 +16,8 @@
 
 package speakman.whatsshakingnz.utils;
 
+import android.location.Location;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -159,54 +161,45 @@ public class DistanceUtil {
     }
 
     /**
-     * Calculates the bearing (in the form of a {@link speakman.whatsshakingnz.utils.DistanceUtil.Direction})
-     * from the first arg to the second.
+     * Calculates the {@link speakman.whatsshakingnz.utils.DistanceUtil.Direction} from the first
+     * arg to the second.
      * @param fromPoint The center point used to calculate bearing from.
      * @param toPoint The point whose bearing we'd like from the center.
      * @return The bearing from the first point to the second.
      */
     public static Direction getDirection(LatLng fromPoint, LatLng toPoint) {
-        double dLon = Math.abs(toPoint.longitude - fromPoint.longitude);
-        double dLat = Math.abs(toPoint.latitude - fromPoint.latitude);
-        double brng = Math.atan(dLat / dLon);
+        float[] results = new float[3];
+        Location.distanceBetween(fromPoint.latitude, fromPoint.longitude,
+                toPoint.latitude, toPoint.longitude,
+                results);
+        float bearing = results[2];
 
-        Direction direction;
-        Direction eastOrWest;
-        Direction northOrSouth;
-        // Quake is West of town
-        if (toPoint.longitude < fromPoint.longitude) {
-            eastOrWest = Direction.West;
-        } else { // Quake is East of town
-            eastOrWest = Direction.East;
-        }
-
-        // Quake is North of town
-        if (toPoint.latitude > fromPoint.latitude) {
-            northOrSouth = Direction.North;
-        } else { // Quake is South of town
-            northOrSouth = Direction.South;
-        }
-
-        if (brng < Math.PI / 8) {
-            direction = eastOrWest;
-        } else if (brng < 3 * Math.PI / 8) {
-            if (northOrSouth == Direction.North) {
-                if (eastOrWest == Direction.East) {
-                    direction = Direction.NorthEast;
-                } else { // West
-                    direction = Direction.NorthWest;
-                }
-            } else { // South
-                if (eastOrWest == Direction.East) {
-                    direction = Direction.SouthEast;
-                } else { // West
-                    direction = Direction.SouthWest;
-                }
+        // Split our compass into 8 pieces - 22.5 degrees either side of directly north (0 degrees)
+        // is considered north, then 45 degree intervals for each other direction.
+        if (bearing > 0) { // East!
+            if (bearing < 22.5) {
+                return Direction.North;
+            } else if (bearing < 67.5) {
+                return Direction.NorthEast;
+            } else if (bearing < 112.5) {
+                return Direction.East;
+            } else if (bearing < 157.5) {
+                return Direction.SouthEast;
+            } else {
+                return Direction.South;
             }
-        } else {
-            direction = northOrSouth;
+        } else { // West!
+            if (bearing > -22.5) {
+                return Direction.North;
+            } else if (bearing > -67.5) {
+                return Direction.NorthWest;
+            } else if (bearing > -112.5) {
+                return Direction.West;
+            } else if (bearing > -157.5) {
+                return Direction.SouthWest;
+            } else {
+                return Direction.South;
+            }
         }
-
-        return direction;
     }
 }
