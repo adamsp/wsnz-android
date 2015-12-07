@@ -59,10 +59,33 @@ public class DistanceUtilTests extends AndroidTestCase {
         assertEquals(DistanceUtil.Direction.NorthWest, DistanceUtil.getDirection(center, northWest));
     }
 
-    public void testDirectionIsCorrectAroundAntimeridian() {
+    public void testDirectionIsCorrectForCenterLeftOfAntimeridian() {
+        // Center is left of antimeridian, all points to the right of antimeridian (negative longitude)
         LatLng center = new LatLng(-37, 179);
+        LatLng north = new LatLng(-31.761574, -179.791195);
+        LatLng northEast = new LatLng(-35.767848, -179.542960);
         LatLng east = new LatLng(-37, -179);
-
+        LatLng southEast = new LatLng(-37.776975, -178.863579);
+        LatLng south = new LatLng(-42.013893, -179.724571);
+        assertEquals(DistanceUtil.Direction.North, DistanceUtil.getDirection(center, north));
+        assertEquals(DistanceUtil.Direction.NorthEast, DistanceUtil.getDirection(center, northEast));
         assertEquals(DistanceUtil.Direction.East, DistanceUtil.getDirection(center, east));
+        assertEquals(DistanceUtil.Direction.SouthEast, DistanceUtil.getDirection(center, southEast));
+        assertEquals(DistanceUtil.Direction.South, DistanceUtil.getDirection(center, south));
+    }
+
+    public void testDirectionIsCorrectForCenterRightOfAntimeridian() {
+        // Center is right of antimeridian, all points to the left of antimeridian (positive longitude)
+        LatLng center = new LatLng(-37, -179); // Center to right of antimeridian
+        LatLng north = new LatLng(-31.761574, 179.791195);
+        LatLng northWest = new LatLng(-35.767848, 179.542960);
+        LatLng west = new LatLng(-37, 179);
+        LatLng southWest = new LatLng(-37.776975, 178.863579);
+        LatLng south = new LatLng(-42.013893, 179.724571);
+        assertEquals(DistanceUtil.Direction.North, DistanceUtil.getDirection(center, north));
+        assertEquals(DistanceUtil.Direction.NorthWest, DistanceUtil.getDirection(center, northWest));
+        assertEquals(DistanceUtil.Direction.West, DistanceUtil.getDirection(center, west));
+        assertEquals(DistanceUtil.Direction.SouthWest, DistanceUtil.getDirection(center, southWest));
+        assertEquals(DistanceUtil.Direction.South, DistanceUtil.getDirection(center, south));
     }
 }
