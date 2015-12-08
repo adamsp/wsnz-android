@@ -22,4 +22,12 @@
     <string name="title_activity_detail">DetailActivity</string>
     <string name="activity_detail_header_magnitude">Magnitude</string>
     <string name="activity_detail_header_depth">Depth</string>
+    <string name="direction_north">North</string>
+    <string name="direction_north_east">North East</string>
+    <string name="direction_east">East</string>
+    <string name="direction_south_east">South East</string>
+    <string name="direction_south">South</string>
+    <string name="direction_south_west">South West</string>
+    <string name="direction_west">West</string>
+    <string name="direction_north_west">North West</string>
 </resources>

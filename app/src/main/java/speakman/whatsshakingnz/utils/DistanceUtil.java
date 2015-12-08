@@ -16,13 +16,17 @@
 
 package speakman.whatsshakingnz.utils;
 
+import android.content.Context;
 import android.location.Location;
+import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.model.LocalPlace;
 
 /**
@@ -31,14 +35,23 @@ import speakman.whatsshakingnz.model.LocalPlace;
 public class DistanceUtil {
 
     public enum Direction {
-        North,
-        NorthEast,
-        East,
-        SouthEast,
-        South,
-        SouthWest,
-        West,
-        NorthWest
+        North(R.string.direction_north),
+        NorthEast(R.string.direction_north_east),
+        East(R.string.direction_east),
+        SouthEast(R.string.direction_south_east),
+        South(R.string.direction_south),
+        SouthWest(R.string.direction_south_west),
+        West(R.string.direction_west),
+        NorthWest(R.string.direction_north_west);
+
+        private int directionName;
+        Direction(@StringRes int localisedName) {
+            directionName = localisedName;
+        }
+
+        public String localizedName(@NonNull Context ctx) {
+            return ctx.getString(directionName);
+        }
     }
 
     // For calculating distance
