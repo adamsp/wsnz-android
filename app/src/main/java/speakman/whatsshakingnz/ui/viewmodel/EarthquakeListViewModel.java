@@ -16,8 +16,10 @@
 
 package speakman.whatsshakingnz.ui.viewmodel;
 
+import android.databinding.BindingAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -65,11 +67,22 @@ public class EarthquakeListViewModel {
         return String.format("%.1f", earthquake.getMagnitude());
     }
 
+    // TODO: Ideally this method needs a context - how can we get one here?
     public String getLocation() {
         LatLng earthquakeLocation = new LatLng(earthquake.getLatitude(), earthquake.getLongitude());
         LocalPlace place = DistanceUtil.getClosestPlace(earthquakeLocation);
         double distance = DistanceUtil.distanceBetweenPlaces(place.location, earthquakeLocation);
         DistanceUtil.Direction direction = DistanceUtil.getDirection(place.location, earthquakeLocation);
         return String.format("%.0f km %s of %s", distance, direction.name(), place.name);
+    }
+
+    @BindingAdapter({"earthquake"})
+    public static void setLocationText(TextView view, Earthquake earthquake) {
+        LatLng earthquakeLocation = new LatLng(earthquake.getLatitude(), earthquake.getLongitude());
+        LocalPlace place = DistanceUtil.getClosestPlace(earthquakeLocation);
+        double distance = DistanceUtil.distanceBetweenPlaces(place.location, earthquakeLocation);
+        DistanceUtil.Direction direction = DistanceUtil.getDirection(place.location, earthquakeLocation);
+        String text = String.format("%.0f km %s of %s", distance, direction.localizedName(view.getContext()), place.name);
+        view.setText(text);
     }
 }
