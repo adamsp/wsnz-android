@@ -30,5 +30,5 @@
     <string name="direction_south_west">South West</string>
     <string name="direction_west">West</string>
     <string name="direction_north_west">North West</string>
-    <string name="list_location_format">%.0f km %s of %s</string>
+    <string name="list_location_format">%1$.0f km %2$s of %3$s</string>
 </resources>
