@@ -16,13 +16,13 @@
 
 package speakman.whatsshakingnz.ui.viewmodel;
 
-import android.databinding.BindingAdapter;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.databinding.RowEarthquakeBinding;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.LocalPlace;
@@ -67,22 +67,11 @@ public class EarthquakeListViewModel {
         return String.format("%.1f", earthquake.getMagnitude());
     }
 
-    // TODO: Ideally this method needs a context - how can we get one here?
-    public String getLocation() {
+    public String getLocation(Context context) {
         LatLng earthquakeLocation = new LatLng(earthquake.getLatitude(), earthquake.getLongitude());
         LocalPlace place = DistanceUtil.getClosestPlace(earthquakeLocation);
         double distance = DistanceUtil.distanceBetweenPlaces(place.location, earthquakeLocation);
         DistanceUtil.Direction direction = DistanceUtil.getDirection(place.location, earthquakeLocation);
-        return String.format("%.0f km %s of %s", distance, direction.name(), place.name);
-    }
-
-    @BindingAdapter({"earthquake"})
-    public static void setLocationText(TextView view, Earthquake earthquake) {
-        LatLng earthquakeLocation = new LatLng(earthquake.getLatitude(), earthquake.getLongitude());
-        LocalPlace place = DistanceUtil.getClosestPlace(earthquakeLocation);
-        double distance = DistanceUtil.distanceBetweenPlaces(place.location, earthquakeLocation);
-        DistanceUtil.Direction direction = DistanceUtil.getDirection(place.location, earthquakeLocation);
-        String text = String.format("%.0f km %s of %s", distance, direction.localizedName(view.getContext()), place.name);
-        view.setText(text);
+        return context.getString(R.string.list_location_format, distance, direction.localizedName(context), place.name);
     }
 }

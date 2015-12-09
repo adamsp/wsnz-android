@@ -17,8 +17,7 @@
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable name="earthquakeModel" type="speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel"/>
     </data>
@@ -45,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.6"
-            app:earthquake="@{earthquakeModel.earthquake}"
+            android:text="@{earthquakeModel.getLocation(context)}"
             android:textSize="20sp"
             android:gravity="center_vertical"
             tools:text="140km south of Auckland"/>
