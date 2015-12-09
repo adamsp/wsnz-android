@@ -55,8 +55,15 @@ public class EarthquakeListViewModel {
     }
 
     private Earthquake earthquake;
+    private LocalPlace nearestTown;
+    private double distanceToNearestTown;
+    private DistanceUtil.Direction directionToNearestTown;
     public EarthquakeListViewModel(Earthquake earthquake) {
         this.earthquake = earthquake;
+        LatLng earthquakeLocation = new LatLng(earthquake.getLatitude(), earthquake.getLongitude());
+        this.nearestTown = DistanceUtil.getClosestPlace(earthquakeLocation);
+        this.distanceToNearestTown = DistanceUtil.distanceBetweenPlaces(nearestTown.location, earthquakeLocation);
+        this.directionToNearestTown = DistanceUtil.getDirection(nearestTown.location, earthquakeLocation);
     }
 
     public Earthquake getEarthquake() {
@@ -68,10 +75,7 @@ public class EarthquakeListViewModel {
     }
 
     public String getLocation(Context context) {
-        LatLng earthquakeLocation = new LatLng(earthquake.getLatitude(), earthquake.getLongitude());
-        LocalPlace place = DistanceUtil.getClosestPlace(earthquakeLocation);
-        double distance = DistanceUtil.distanceBetweenPlaces(place.location, earthquakeLocation);
-        DistanceUtil.Direction direction = DistanceUtil.getDirection(place.location, earthquakeLocation);
-        return context.getString(R.string.list_location_format, distance, direction.localizedName(context), place.name);
+        return context.getString(R.string.list_location_format, this.distanceToNearestTown,
+                this.directionToNearestTown.localizedName(context), this.nearestTown.name);
     }
 }
