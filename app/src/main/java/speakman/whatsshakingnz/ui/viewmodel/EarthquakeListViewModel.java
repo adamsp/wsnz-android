@@ -76,9 +76,15 @@ public class EarthquakeListViewModel {
         return String.format("%.1f", earthquake.getMagnitude());
     }
 
-    public String getLocation(Context context) {
-        return context.getString(R.string.list_location_format, this.distanceToNearestTown,
-                this.directionToNearestTown.localizedName(context), this.nearestTown.name);
+    public String getDistanceAndDirectionFromNearestTown(Context context) {
+        return context.getString(R.string.list_distance_direction_format, distanceToNearestTown,
+                directionToNearestTown.localizedName(context));
+    }
+
+    public String getNearestTownName() {
+        return nearestTown.name;
+    }
+
     public String getTimePassedSinceOccurrence(Context context) {
         long millisPassed = DateTime.now().getMillis() - earthquake.getOriginTime();
         if (millisPassed < 1000) {
