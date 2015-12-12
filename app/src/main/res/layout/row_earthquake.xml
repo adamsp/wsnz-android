@@ -54,8 +54,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:textSize="12sp"
-                android:gravity="top"
-                tools:text="35 minutes ago"/>
+                android:gravity="center_vertical|right"
+                android:text="@{earthquakeModel.getTimePassedSinceOccurrence(context)}"
+                tools:text="35 mins ago"/>
         </LinearLayout>
     </LinearLayout>
 </layout>

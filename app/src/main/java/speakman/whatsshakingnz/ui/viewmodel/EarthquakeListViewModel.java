@@ -22,6 +22,8 @@ import android.view.View;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.joda.time.DateTime;
+
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.databinding.RowEarthquakeBinding;
 import speakman.whatsshakingnz.model.Earthquake;
@@ -77,5 +79,24 @@ public class EarthquakeListViewModel {
     public String getLocation(Context context) {
         return context.getString(R.string.list_location_format, this.distanceToNearestTown,
                 this.directionToNearestTown.localizedName(context), this.nearestTown.name);
+    public String getTimePassedSinceOccurrence(Context context) {
+        long millisPassed = DateTime.now().getMillis() - earthquake.getOriginTime();
+        if (millisPassed < 1000) {
+            return "now";
+        }
+        long secondsPassed = millisPassed / 1000;
+        if (secondsPassed < 60) {
+            return String.format("%d seconds ago", secondsPassed);
+        }
+        long minsPassed = secondsPassed / 60;
+        if (minsPassed < 60) {
+            return String.format("%d minutes ago", minsPassed);
+        }
+        long hoursPassed = minsPassed / 60;
+        if (hoursPassed < 24) {
+            return String.format("%d hours ago", hoursPassed);
+        }
+        long daysPassed = hoursPassed / 24;
+        return String.format("%d days ago", daysPassed);
     }
 }
