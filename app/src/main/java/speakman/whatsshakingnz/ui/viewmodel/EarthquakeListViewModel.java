@@ -88,21 +88,21 @@ public class EarthquakeListViewModel {
     public String getTimePassedSinceOccurrence(Context context) {
         long millisPassed = DateTime.now().getMillis() - earthquake.getOriginTime();
         if (millisPassed < 1000) {
-            return "now";
+            return context.getString(R.string.list_time_passed_now);
         }
         long secondsPassed = millisPassed / 1000;
         if (secondsPassed < 60) {
-            return String.format("%d seconds ago", secondsPassed);
+            return String.format(context.getString(R.string.list_time_passed_seconds), secondsPassed);
         }
         long minsPassed = secondsPassed / 60;
         if (minsPassed < 60) {
-            return String.format("%d minutes ago", minsPassed);
+            return String.format(context.getString(R.string.list_time_passed_minutes), minsPassed);
         }
         long hoursPassed = minsPassed / 60;
         if (hoursPassed < 24) {
-            return String.format("%d hours ago", hoursPassed);
+            return String.format(context.getString(R.string.list_time_passed_hours), hoursPassed);
         }
         long daysPassed = hoursPassed / 24;
-        return String.format("%d days ago", daysPassed);
+        return String.format(context.getString(R.string.list_time_passed_days), daysPassed);
     }
 }
