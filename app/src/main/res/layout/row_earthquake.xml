@@ -30,7 +30,7 @@
             android:layout_width="72dp"
             android:layout_height="match_parent"
             android:text="@{earthquakeModel.magnitude}"
-            android:textSize="28sp"
+            android:textSize="34sp"
             android:gravity="center"
             tools:text="4.5" />
 
@@ -41,29 +41,35 @@
             android:gravity="center_vertical"
             android:orientation="vertical">
 
-            <TextView
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{earthquakeModel.getDistanceAndDirectionFromNearestTown(context)}"
-                android:textSize="12sp"
-                android:gravity="center_vertical"
-                tools:text="35km south east of"/>
+                android:layout_height="wrap_content">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{earthquakeModel.getDistanceAndDirectionFromNearestTown(context)}"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical"
+                    tools:text="35km south east of"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
+                    android:textSize="12sp"
+                    android:gravity="center_vertical|right"
+                    android:text="@{earthquakeModel.getTimePassedSinceOccurrence(context)}"
+                    tools:text="35 mins ago"/>
+
+            </LinearLayout>
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{earthquakeModel.nearestTownName}"
                 android:textSize="28sp"
                 android:gravity="center_vertical"
                 tools:text="Auckland"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:gravity="center_vertical|right"
-                android:text="@{earthquakeModel.getTimePassedSinceOccurrence(context)}"
-                tools:text="35 mins ago"/>
         </LinearLayout>
     </LinearLayout>
 </layout>
