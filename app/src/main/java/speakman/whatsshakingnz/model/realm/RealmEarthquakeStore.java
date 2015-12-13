@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
@@ -42,14 +43,17 @@ public class RealmEarthquakeStore implements EarthquakeStore {
 
     @Inject
     public RealmEarthquakeStore(Context context) {
-        this.realm = Realm.getInstance(context);
+        RealmConfiguration config = new RealmConfiguration.Builder(context)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        this.realm = Realm.getInstance(config);
     }
 
     @Override
     public List<? extends Earthquake> getEarthquakes() {
         if (earthquakes == null) {
             // Realm manages refreshing this for us because it's magic.
-            earthquakes = realm.where(RealmEarthquake.class).findAll();
+            earthquakes = realm.where(RealmEarthquake.class).findAllSorted("originTime", false);
         }
         return earthquakes;
     }
