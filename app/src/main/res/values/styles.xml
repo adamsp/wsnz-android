@@ -27,6 +27,9 @@
         <!-- colorAccent is used as the default value for colorControlActivated,
              which is used to tint widgets -->
         <item name="colorAccent">@color/main_theme_accent</item>
+
+        <!-- enable window content transitions -->
+        <item name="android:windowContentTransitions">true</item>
     </style>
 
     <style name="AppTheme.MainActivity">
