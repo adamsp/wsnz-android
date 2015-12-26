@@ -23,7 +23,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import javax.inject.Inject;
 
@@ -34,7 +39,7 @@ import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeOverviewViewModel;
 
-public class DetailActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver {
+public class DetailActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver, OnMapReadyCallback {
 
     public static String EXTRA_EARTHQUAKE = "speakman.whatsshakingnz.ui.activities.DetailActivity.EXTRA_EARTHQUAKE";
     public static Intent createIntent(Context ctx, Earthquake earthquake) {
@@ -46,64 +51,85 @@ public class DetailActivity extends AppCompatActivity implements EarthquakeStore
     @Inject
     EarthquakeStore store;
 
-    private MapView map;
+    private MapView mapView;
     private ActivityDetailBinding binding;
+    private Marker mapMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         WhatsShakingApplication.getInstance().inject(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
-        map = (MapView) findViewById(R.id.activity_detail_map);
-        map.onCreate(savedInstanceState);
+        mapView = (MapView) findViewById(R.id.activity_detail_map);
+        mapView.onCreate(savedInstanceState);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Earthquake earthquake = getEarthquake();
-        EarthquakeOverviewViewModel viewModel = new EarthquakeOverviewViewModel(earthquake);
-        binding.setEarthquakeModel(viewModel);
+        refreshUI();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        map.onResume();
+        mapView.onResume();
         store.registerDataChangeObserver(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        map.onPause();
+        mapView.onPause();
         store.unregisterDataChangeObserver(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        map.onDestroy();
+        mapView.onDestroy();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        map.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        map.onLowMemory();
+        mapView.onLowMemory();
     }
 
     @Override
     public void onEarthquakeDataChanged() {
+        refreshUI();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        if (mapMarker != null) {
+            mapMarker.remove();
+        }
+        MarkerOptions markerOptions = getMarkerOptions();
+        mapMarker = googleMap.addMarker(markerOptions);
+    }
+
+    private MarkerOptions getMarkerOptions() {
         Earthquake earthquake = getEarthquake();
-        EarthquakeOverviewViewModel viewModel = new EarthquakeOverviewViewModel(earthquake);
-        binding.setEarthquakeModel(viewModel);
+        return new MarkerOptions()
+                .position(new LatLng(earthquake.getLatitude(), earthquake.getLongitude()));
     }
 
     private Earthquake getEarthquake() {
         Earthquake earthquake = store.getEarthquake(getIntent().getStringExtra(EXTRA_EARTHQUAKE));
         return earthquake;
     }
+
+    private void refreshUI() {
+        Earthquake earthquake = getEarthquake();
+        EarthquakeOverviewViewModel viewModel = new EarthquakeOverviewViewModel(earthquake);
+        binding.setEarthquakeModel(viewModel);
+        mapView.getMapAsync(this);
+    }
+
+
 }
