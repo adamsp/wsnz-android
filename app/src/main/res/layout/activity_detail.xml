@@ -20,7 +20,7 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <variable name="earthquakeModel" type="speakman.whatsshakingnz.ui.viewmodel.EarthquakeDetailViewModel"/>
+        <variable name="earthquakeModel" type="speakman.whatsshakingnz.ui.viewmodel.EarthquakeOverviewViewModel"/>
     </data>
     <LinearLayout
         android:layout_width="match_parent"
@@ -55,7 +55,6 @@
                 map:uiZoomGestures="false"/>
 
             <android.support.v7.widget.CardView
-                android:transitionName="earthquake_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -64,13 +63,14 @@
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
+                    android:transitionName="earthquake_detail"
                     android:layout_height="72dp">
 
                     <TextView
                         android:layout_width="72dp"
                         android:layout_height="match_parent"
-                        android:text='@{earthquakeModel.magnitude}'
-                        android:textSize="28sp"
+                        android:text="@{earthquakeModel.magnitude}"
+                        android:textSize="34sp"
                         android:gravity="center"
                         tools:text="4.5" />
 
@@ -78,24 +78,38 @@
                         android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
+                        android:gravity="center_vertical"
                         android:orientation="vertical">
 
-                        <TextView
+                        <LinearLayout
+                            android:orientation="horizontal"
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="0.6"
-                            android:text="@{earthquakeModel.location}"
-                            android:textSize="20sp"
-                            android:gravity="center_vertical"
-                            tools:text="140km south of Auckland"/>
+                            android:layout_height="wrap_content">
 
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@{earthquakeModel.getDistanceAndDirectionFromNearestTown(context)}"
+                                android:textSize="12sp"
+                                android:gravity="center_vertical"
+                                tools:text="35km south east of"/>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="8dp"
+                                android:textSize="12sp"
+                                android:gravity="center_vertical|right"
+                                android:text="@{earthquakeModel.getTimePassedSinceOccurrence(context)}"
+                                tools:text="35 mins ago"/>
+
+                        </LinearLayout>
                         <TextView
-                            android:layout_weight="0.4"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:textSize="12sp"
-                            android:gravity="top"
-                            tools:text="35 minutes ago"/>
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{earthquakeModel.nearestTownName}"
+                            android:textSize="28sp"
+                            android:gravity="center_vertical"
+                            tools:text="Auckland"/>
                     </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>

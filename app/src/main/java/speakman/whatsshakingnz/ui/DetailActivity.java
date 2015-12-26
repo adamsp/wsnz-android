@@ -32,7 +32,7 @@ import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.databinding.ActivityDetailBinding;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
-import speakman.whatsshakingnz.ui.viewmodel.EarthquakeDetailViewModel;
+import speakman.whatsshakingnz.ui.viewmodel.EarthquakeOverviewViewModel;
 
 public class DetailActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver {
 
@@ -59,7 +59,7 @@ public class DetailActivity extends AppCompatActivity implements EarthquakeStore
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Earthquake earthquake = getEarthquake();
-        EarthquakeDetailViewModel viewModel = new EarthquakeDetailViewModel(earthquake);
+        EarthquakeOverviewViewModel viewModel = new EarthquakeOverviewViewModel(earthquake);
         binding.setEarthquakeModel(viewModel);
     }
 
@@ -98,7 +98,7 @@ public class DetailActivity extends AppCompatActivity implements EarthquakeStore
     @Override
     public void onEarthquakeDataChanged() {
         Earthquake earthquake = getEarthquake();
-        EarthquakeDetailViewModel viewModel = new EarthquakeDetailViewModel(earthquake);
+        EarthquakeOverviewViewModel viewModel = new EarthquakeOverviewViewModel(earthquake);
         binding.setEarthquakeModel(viewModel);
     }
 

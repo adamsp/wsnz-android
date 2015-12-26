@@ -27,7 +27,7 @@ import speakman.whatsshakingnz.model.Earthquake;
 /**
  * Created by Adam on 12/12/2015.
  */
-public class EarthquakeListViewModelTests extends AndroidTestCase {
+public class EarthquakeOverviewViewModelTests extends AndroidTestCase {
 
     private static class TestEarthquake implements Earthquake {
 
@@ -75,7 +75,7 @@ public class EarthquakeListViewModelTests extends AndroidTestCase {
             }
         };
 
-        EarthquakeListViewModel roundUpViewModel = new EarthquakeListViewModel(roundUpEarthquake);
+        EarthquakeOverviewViewModel roundUpViewModel = new EarthquakeOverviewViewModel(roundUpEarthquake);
         assertEquals("5.4", roundUpViewModel.getMagnitude());
     }
 
@@ -87,7 +87,7 @@ public class EarthquakeListViewModelTests extends AndroidTestCase {
             }
         };
 
-        EarthquakeListViewModel roundDownViewModel = new EarthquakeListViewModel(roundDownEarthquake);
+        EarthquakeOverviewViewModel roundDownViewModel = new EarthquakeOverviewViewModel(roundDownEarthquake);
         assertEquals("5.3", roundDownViewModel.getMagnitude());
     }
 
@@ -104,7 +104,7 @@ public class EarthquakeListViewModelTests extends AndroidTestCase {
             }
         };
 
-        EarthquakeListViewModel northViewModel = new EarthquakeListViewModel(northEarthquake);
+        EarthquakeOverviewViewModel northViewModel = new EarthquakeOverviewViewModel(northEarthquake);
         assertTrue(northViewModel.getNearestTownName().equals("Auckland"));
         assertTrue(northViewModel.getDistanceAndDirectionFromNearestTown(getContext()).contains("North"));
     }
@@ -148,19 +148,19 @@ public class EarthquakeListViewModelTests extends AndroidTestCase {
 
         Context ctx = getContext();
 
-        EarthquakeListViewModel nowViewModel = new EarthquakeListViewModel(nowEarthquake);
-        assertEquals(ctx.getString(R.string.list_time_passed_now), nowViewModel.getTimePassedSinceOccurrence(ctx));
+        EarthquakeOverviewViewModel nowViewModel = new EarthquakeOverviewViewModel(nowEarthquake);
+        assertEquals(ctx.getString(R.string.overview_time_passed_now), nowViewModel.getTimePassedSinceOccurrence(ctx));
 
-        EarthquakeListViewModel secondsViewModel = new EarthquakeListViewModel(secondsEarthquake);
-        assertEquals(ctx.getString(R.string.list_time_passed_seconds, 1), secondsViewModel.getTimePassedSinceOccurrence(ctx));
+        EarthquakeOverviewViewModel secondsViewModel = new EarthquakeOverviewViewModel(secondsEarthquake);
+        assertEquals(ctx.getString(R.string.overview_time_passed_seconds, 1), secondsViewModel.getTimePassedSinceOccurrence(ctx));
 
-        EarthquakeListViewModel minutesViewModel = new EarthquakeListViewModel(minutesEarthquake);
-        assertEquals(ctx.getString(R.string.list_time_passed_minutes, 1), minutesViewModel.getTimePassedSinceOccurrence(ctx));
+        EarthquakeOverviewViewModel minutesViewModel = new EarthquakeOverviewViewModel(minutesEarthquake);
+        assertEquals(ctx.getString(R.string.overview_time_passed_minutes, 1), minutesViewModel.getTimePassedSinceOccurrence(ctx));
 
-        EarthquakeListViewModel hoursViewModel = new EarthquakeListViewModel(hoursEarthquake);
-        assertEquals(ctx.getString(R.string.list_time_passed_hours, 1), hoursViewModel.getTimePassedSinceOccurrence(ctx));
+        EarthquakeOverviewViewModel hoursViewModel = new EarthquakeOverviewViewModel(hoursEarthquake);
+        assertEquals(ctx.getString(R.string.overview_time_passed_hours, 1), hoursViewModel.getTimePassedSinceOccurrence(ctx));
 
-        EarthquakeListViewModel daysViewModel = new EarthquakeListViewModel(daysEarthquake);
-        assertEquals(ctx.getString(R.string.list_time_passed_days, 1), daysViewModel.getTimePassedSinceOccurrence(ctx));
+        EarthquakeOverviewViewModel daysViewModel = new EarthquakeOverviewViewModel(daysEarthquake);
+        assertEquals(ctx.getString(R.string.overview_time_passed_days, 1), daysViewModel.getTimePassedSinceOccurrence(ctx));
     }
 }
