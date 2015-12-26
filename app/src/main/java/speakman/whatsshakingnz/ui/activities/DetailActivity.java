@@ -61,7 +61,7 @@ public class DetailActivity extends AppCompatActivity implements EarthquakeStore
         WhatsShakingApplication.getInstance().inject(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
         mapView = (MapView) findViewById(R.id.activity_detail_map);
-        mapView.onCreate(savedInstanceState);
+        mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         refreshUI();
@@ -90,9 +90,11 @@ public class DetailActivity extends AppCompatActivity implements EarthquakeStore
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
+        Bundle mapState = new Bundle();
+        mapView.onSaveInstanceState(mapState);
+        outState.putBundle("mapState", mapState);
     }
-
+    
     @Override
     public void onLowMemory() {
         super.onLowMemory();

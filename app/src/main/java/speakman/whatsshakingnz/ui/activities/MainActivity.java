@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
         setSupportActionBar((Toolbar) findViewById(R.id.activity_main_toolbar));
         WhatsShakingApplication.getInstance().inject(this);
         map = ((MapView)findViewById(R.id.activity_main_map)); 
-        map.onCreate(savedInstanceState);
+        map.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         RecyclerView mainList = (RecyclerView) findViewById(R.id.activity_main_list);
         mainList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         mainList.setHasFixedSize(true);
@@ -85,7 +85,9 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        map.onSaveInstanceState(outState);
+        Bundle mapState = new Bundle();
+        map.onSaveInstanceState(mapState);
+        outState.putBundle("mapState", mapState);
     }
 
     @Override
