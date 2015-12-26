@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
         map = ((MapView)findViewById(R.id.activity_main_map)); 
         map.onCreate(savedInstanceState);
         RecyclerView mainList = (RecyclerView) findViewById(R.id.activity_main_list);
+        mainList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         mainList.setHasFixedSize(true);
         mainList.setLayoutManager(new LinearLayoutManager(this));
         dataAdapter = new EarthquakeListAdapter(store);
