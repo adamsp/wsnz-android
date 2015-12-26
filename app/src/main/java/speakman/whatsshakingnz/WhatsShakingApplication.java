@@ -20,8 +20,8 @@ import android.app.Application;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
-import speakman.whatsshakingnz.ui.DetailActivity;
-import speakman.whatsshakingnz.ui.MainActivity;
+import speakman.whatsshakingnz.ui.activities.DetailActivity;
+import speakman.whatsshakingnz.ui.activities.MainActivity;
 
 /**
  * Created by Adam on 15-06-07.

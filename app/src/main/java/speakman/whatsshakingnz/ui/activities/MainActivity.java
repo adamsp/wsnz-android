@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package speakman.whatsshakingnz.ui;
+package speakman.whatsshakingnz.ui.activities;
 
-import android.content.Context;
-import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.google.android.gms.maps.MapView;
@@ -29,38 +28,38 @@ import javax.inject.Inject;
 
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.WhatsShakingApplication;
-import speakman.whatsshakingnz.databinding.ActivityDetailBinding;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
-import speakman.whatsshakingnz.ui.viewmodel.EarthquakeOverviewViewModel;
+import speakman.whatsshakingnz.network.RequestManager;
+import speakman.whatsshakingnz.ui.DividerItemDecoration;
+import speakman.whatsshakingnz.ui.EarthquakeListAdapter;
+import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 
-public class DetailActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver {
-
-    public static String EXTRA_EARTHQUAKE = "speakman.whatsshakingnz.ui.DetailActivity.EXTRA_EARTHQUAKE";
-    public static Intent createIntent(Context ctx, Earthquake earthquake) {
-        Intent intent = new Intent(ctx, DetailActivity.class);
-        intent.putExtra(EXTRA_EARTHQUAKE, earthquake.getId());
-        return intent;
-    }
+public class MainActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver {
 
     @Inject
     EarthquakeStore store;
+    @Inject
+    RequestManager requestManager;
 
     private MapView map;
-    private ActivityDetailBinding binding;
+    private RecyclerView.Adapter<EarthquakeListViewModel.ViewHolder> dataAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        setSupportActionBar((Toolbar) findViewById(R.id.activity_main_toolbar));
         WhatsShakingApplication.getInstance().inject(this);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
-        map = (MapView) findViewById(R.id.activity_detail_map);
+        map = ((MapView)findViewById(R.id.activity_main_map)); 
         map.onCreate(savedInstanceState);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        Earthquake earthquake = getEarthquake();
-        EarthquakeOverviewViewModel viewModel = new EarthquakeOverviewViewModel(earthquake);
-        binding.setEarthquakeModel(viewModel);
+        RecyclerView mainList = (RecyclerView) findViewById(R.id.activity_main_list);
+        mainList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+        mainList.setHasFixedSize(true);
+        mainList.setLayoutManager(new LinearLayoutManager(this));
+        dataAdapter = new EarthquakeListAdapter(store);
+        mainList.setAdapter(dataAdapter);
+        requestManager.retrieveNewEarthquakes();
     }
 
     @Override
@@ -97,13 +96,6 @@ public class DetailActivity extends AppCompatActivity implements EarthquakeStore
 
     @Override
     public void onEarthquakeDataChanged() {
-        Earthquake earthquake = getEarthquake();
-        EarthquakeOverviewViewModel viewModel = new EarthquakeOverviewViewModel(earthquake);
-        binding.setEarthquakeModel(viewModel);
-    }
-
-    private Earthquake getEarthquake() {
-        Earthquake earthquake = store.getEarthquake(getIntent().getStringExtra(EXTRA_EARTHQUAKE));
-        return earthquake;
+        dataAdapter.notifyDataSetChanged();
     }
 }

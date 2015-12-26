@@ -27,7 +27,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:fitsSystemWindows="true"
-        tools:context="speakman.whatsshakingnz.ui.DetailActivity">
+        tools:context=".ui.activities.DetailActivity">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"

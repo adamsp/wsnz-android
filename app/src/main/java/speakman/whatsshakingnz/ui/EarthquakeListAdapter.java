@@ -31,6 +31,7 @@ import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.databinding.RowEarthquakeBinding;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
+import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 
 /**
