@@ -30,7 +30,7 @@
     <string name="direction_south_west">South West</string>
     <string name="direction_west">West</string>
     <string name="direction_north_west">North West</string>
-    <string name="overview_distance_direction_format">%1$.0f km %2$s of</string>
+    <string name="overview_distance_direction_format">%1$.0f km %2$s</string>
     <string name="overview_time_passed_now">now</string>
     <string name="overview_time_passed_seconds">%d seconds ago</string>
     <string name="overview_time_passed_minutes">%d minutes ago</string>
