@@ -32,8 +32,21 @@
     <string name="direction_north_west">North West</string>
     <string name="overview_distance_direction_format">%1$.0f km %2$s</string>
     <string name="overview_time_passed_now">now</string>
-    <string name="overview_time_passed_seconds">%d seconds ago</string>
-    <string name="overview_time_passed_minutes">%d minutes ago</string>
-    <string name="overview_time_passed_hours">%d hours ago</string>
-    <string name="overview_time_passed_days">%d days ago</string>
+    <plurals name="overview_time_passed_seconds">
+        <item quantity="one">%d second ago</item>
+        <item quantity="other">%d seconds ago</item>
+    </plurals>
+    <plurals name="overview_time_passed_minutes">
+        <item quantity="one">%d minute ago</item>
+        <item quantity="other">%d minutes ago</item>
+    </plurals>
+    <plurals name="overview_time_passed_hours">
+        <item quantity="one">%d hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+    <plurals name="overview_time_passed_days">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+
 </resources>

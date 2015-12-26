@@ -17,6 +17,7 @@
 package speakman.whatsshakingnz.ui.viewmodel;
 
 import android.content.Context;
+import android.content.res.Resources;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -62,24 +63,25 @@ public class EarthquakeOverviewViewModel {
     }
 
     public String getTimePassedSinceOccurrence(Context context) {
+        final Resources res = context.getResources();
         long millisPassed = DateTime.now().getMillis() - earthquake.getOriginTime();
         if (millisPassed < 1000) {
-            return context.getString(R.string.overview_time_passed_now);
+            return res.getString(R.string.overview_time_passed_now);
         }
         long secondsPassed = millisPassed / 1000;
         if (secondsPassed < 60) {
-            return String.format(context.getString(R.string.overview_time_passed_seconds), secondsPassed);
+            return res.getQuantityString(R.plurals.overview_time_passed_seconds, (int) secondsPassed, secondsPassed);
         }
         long minsPassed = secondsPassed / 60;
         if (minsPassed < 60) {
-            return String.format(context.getString(R.string.overview_time_passed_minutes), minsPassed);
+            return res.getQuantityString(R.plurals.overview_time_passed_minutes, (int) minsPassed, minsPassed);
         }
         long hoursPassed = minsPassed / 60;
         if (hoursPassed < 24) {
-            return String.format(context.getString(R.string.overview_time_passed_hours), hoursPassed);
+            return res.getQuantityString(R.plurals.overview_time_passed_hours, (int) hoursPassed, hoursPassed);
         }
         long daysPassed = hoursPassed / 24;
-        return String.format(context.getString(R.string.overview_time_passed_days), daysPassed);
+        return res.getQuantityString(R.plurals.overview_time_passed_days, (int) daysPassed, daysPassed);
     }
 }
 
