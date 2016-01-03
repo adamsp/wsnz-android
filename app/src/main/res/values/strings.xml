@@ -18,8 +18,8 @@
     <string name="app_name">What\'s Shaking, NZ?</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_licenses">Licenses</string>
+    <string name="menu_action_settings">Settings</string>
+    <string name="menu_action_licenses">Licenses</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="activity_detail_header_magnitude">Magnitude</string>
     <string name="activity_detail_header_depth">Depth</string>

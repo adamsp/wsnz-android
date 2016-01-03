@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.action_licences:
+            case R.id.menu_action_licences:
                 LicensesFragment.displayLicensesFragment(getFragmentManager(), true);
                 return true;
             default:
