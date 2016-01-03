@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.activity_main_toolbar));
         WhatsShakingApplication.getInstance().inject(this);
-        map = ((MapView)findViewById(R.id.activity_main_map)); 
+        map = ((MapView)findViewById(R.id.activity_main_map));
         map.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         RecyclerView mainList = (RecyclerView) findViewById(R.id.activity_main_list);
         mainList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
@@ -103,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
         switch(item.getItemId()) {
             case R.id.menu_action_licences:
                 LicensesFragment.displayLicensesFragment(getFragmentManager(), true);
+                return true;
+            case R.id.menu_action_google_licences:
+                LicensesFragment.displayGooglePlayServicesLicensesFragment(getFragmentManager(), true);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
