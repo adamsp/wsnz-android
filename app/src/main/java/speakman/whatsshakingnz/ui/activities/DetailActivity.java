@@ -108,6 +108,7 @@ public class DetailActivity extends AppCompatActivity implements EarthquakeStore
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
         if (mapMarker != null) {
             mapMarker.remove();
         }
