@@ -21,6 +21,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.google.android.gms.maps.MapView;
 
@@ -28,11 +30,11 @@ import javax.inject.Inject;
 
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.WhatsShakingApplication;
-import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
 import speakman.whatsshakingnz.network.RequestManager;
 import speakman.whatsshakingnz.ui.DividerItemDecoration;
 import speakman.whatsshakingnz.ui.EarthquakeListAdapter;
+import speakman.whatsshakingnz.ui.LicensesFragment;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 
 public class MainActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver {
@@ -88,6 +90,23 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
         Bundle mapState = new Bundle();
         map.onSaveInstanceState(mapState);
         outState.putBundle("mapState", mapState);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_licences:
+                LicensesFragment.displayLicensesFragment(getFragmentManager(), true);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
