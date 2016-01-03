@@ -24,12 +24,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.WhatsShakingApplication;
+import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
 import speakman.whatsshakingnz.network.RequestManager;
 import speakman.whatsshakingnz.ui.DividerItemDecoration;
@@ -37,7 +46,7 @@ import speakman.whatsshakingnz.ui.EarthquakeListAdapter;
 import speakman.whatsshakingnz.ui.LicensesFragment;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 
-public class MainActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver {
+public class MainActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver, OnMapReadyCallback {
 
     @Inject
     EarthquakeStore store;
@@ -46,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
 
     private MapView map;
     private RecyclerView.Adapter<EarthquakeListViewModel.ViewHolder> dataAdapter;
+    private List<Marker> mapMarkers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
         dataAdapter = new EarthquakeListAdapter(store);
         mainList.setAdapter(dataAdapter);
         requestManager.retrieveNewEarthquakes();
+        map.getMapAsync(this);
     }
 
     @Override
@@ -121,5 +132,24 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
     @Override
     public void onEarthquakeDataChanged() {
         dataAdapter.notifyDataSetChanged();
+        map.getMapAsync(this);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        for (Marker marker : mapMarkers) {
+            marker.remove();
+        }
+        List<? extends Earthquake> latestEarthquakes = store.getEarthquakes().subList(0, 10);
+        for (Earthquake earthquake : latestEarthquakes) {
+            MarkerOptions markerOptions = getMarkerOptions(earthquake);
+            Marker marker = googleMap.addMarker(markerOptions);
+            mapMarkers.add(marker);
+        }
+    }
+
+    private MarkerOptions getMarkerOptions(Earthquake earthquake) {
+        return new MarkerOptions()
+                .position(new LatLng(earthquake.getLatitude(), earthquake.getLongitude()));
     }
 }
