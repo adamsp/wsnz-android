@@ -152,15 +152,15 @@ public class EarthquakeOverviewViewModelTests extends AndroidTestCase {
         assertEquals(ctx.getString(R.string.overview_time_passed_now), nowViewModel.getTimePassedSinceOccurrence(ctx));
 
         EarthquakeOverviewViewModel secondsViewModel = new EarthquakeOverviewViewModel(secondsEarthquake);
-        assertEquals(ctx.getString(R.string.overview_time_passed_seconds, 1), secondsViewModel.getTimePassedSinceOccurrence(ctx));
+        assertEquals(ctx.getResources().getQuantityString(R.plurals.overview_time_passed_seconds, 1, 1), secondsViewModel.getTimePassedSinceOccurrence(ctx));
 
         EarthquakeOverviewViewModel minutesViewModel = new EarthquakeOverviewViewModel(minutesEarthquake);
-        assertEquals(ctx.getString(R.string.overview_time_passed_minutes, 1), minutesViewModel.getTimePassedSinceOccurrence(ctx));
+        assertEquals(ctx.getResources().getQuantityString(R.plurals.overview_time_passed_minutes, 1, 1), minutesViewModel.getTimePassedSinceOccurrence(ctx));
 
         EarthquakeOverviewViewModel hoursViewModel = new EarthquakeOverviewViewModel(hoursEarthquake);
-        assertEquals(ctx.getString(R.string.overview_time_passed_hours, 1), hoursViewModel.getTimePassedSinceOccurrence(ctx));
+        assertEquals(ctx.getResources().getQuantityString(R.plurals.overview_time_passed_hours, 1, 1), hoursViewModel.getTimePassedSinceOccurrence(ctx));
 
         EarthquakeOverviewViewModel daysViewModel = new EarthquakeOverviewViewModel(daysEarthquake);
-        assertEquals(ctx.getString(R.string.overview_time_passed_days, 1), daysViewModel.getTimePassedSinceOccurrence(ctx));
+        assertEquals(ctx.getResources().getQuantityString(R.plurals.overview_time_passed_days, 1, 1), daysViewModel.getTimePassedSinceOccurrence(ctx));
     }
 }
