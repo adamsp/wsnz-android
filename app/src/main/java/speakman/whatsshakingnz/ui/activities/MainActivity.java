@@ -44,6 +44,7 @@ import speakman.whatsshakingnz.network.RequestManager;
 import speakman.whatsshakingnz.ui.DividerItemDecoration;
 import speakman.whatsshakingnz.ui.EarthquakeListAdapter;
 import speakman.whatsshakingnz.ui.LicensesFragment;
+import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 
 public class MainActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver, OnMapReadyCallback {
@@ -143,14 +144,9 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
         }
         List<? extends Earthquake> latestEarthquakes = store.getEarthquakes().subList(0, 10);
         for (Earthquake earthquake : latestEarthquakes) {
-            MarkerOptions markerOptions = getMarkerOptions(earthquake);
+            MarkerOptions markerOptions = MapMarkerOptionsFactory.getMarkerOptions(earthquake);
             Marker marker = googleMap.addMarker(markerOptions);
             mapMarkers.add(marker);
         }
-    }
-
-    private MarkerOptions getMarkerOptions(Earthquake earthquake) {
-        return new MarkerOptions()
-                .position(new LatLng(earthquake.getLatitude(), earthquake.getLongitude()));
     }
 }

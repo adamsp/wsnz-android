@@ -26,7 +26,6 @@ import android.support.v7.widget.Toolbar;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -37,6 +36,7 @@ import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.databinding.ActivityDetailBinding;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
+import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeOverviewViewModel;
 
 public class DetailActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver, OnMapReadyCallback {
@@ -112,14 +112,8 @@ public class DetailActivity extends AppCompatActivity implements EarthquakeStore
         if (mapMarker != null) {
             mapMarker.remove();
         }
-        MarkerOptions markerOptions = getMarkerOptions();
+        MarkerOptions markerOptions = MapMarkerOptionsFactory.getMarkerOptions(getEarthquake());
         mapMarker = googleMap.addMarker(markerOptions);
-    }
-
-    private MarkerOptions getMarkerOptions() {
-        Earthquake earthquake = getEarthquake();
-        return new MarkerOptions()
-                .position(new LatLng(earthquake.getLatitude(), earthquake.getLongitude()));
     }
 
     private Earthquake getEarthquake() {
