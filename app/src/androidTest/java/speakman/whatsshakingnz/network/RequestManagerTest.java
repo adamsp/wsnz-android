@@ -53,7 +53,7 @@ import static org.mockito.Mockito.when;
 public class RequestManagerTest extends AndroidTestCase {
 
     private String updateTimeToFilterString(DateTime updateTime) {
-        return String.format(GeonetService.FILTER_FORMAT_MOST_RECENT_UPDATE, updateTime.toString(GeonetDateTimeAdapter.writeFormatter));
+        return String.format(GeonetService.FILTER_FORMAT_MOST_RECENT_UPDATE, updateTime.toString(RequestManager.updateTimeFormatter));
     }
 
     public void testRequestLastNDaysWhenNoMostRecentEventDateIsAvailable() throws InterruptedException {
@@ -72,9 +72,11 @@ public class RequestManagerTest extends AndroidTestCase {
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
         verify(service).getEarthquakes(argumentCaptor.capture(), eq(RequestManager.MAX_EVENTS_PER_REQUEST));
         verifyNoMoreInteractions(service);
-        String argumentDate = argumentCaptor.getValue().substring("modificationtime>".length(), "modificationtime>".length() + "yyyy-MM-ddTHH:mm:ss.SSSZ".length());
+
+        DateTime now = DateTime.now();
+        LocalDate today = now.toLocalDate();
+        String argumentDate = argumentCaptor.getValue().substring("modificationtime>".length(), "modificationtime>".length() + now.toString(RequestManager.updateTimeFormatter).length());
         LocalDate requestedDate = new DateTime(argumentDate).toLocalDate();
-        LocalDate today = DateTime.now().toLocalDate();
         // We want to ensure that the request was for DAYS_BEFORE_TODAY days ago.
         assertEquals(RequestManager.DAYS_BEFORE_TODAY, Days.daysBetween(requestedDate, today).getDays());
     }
