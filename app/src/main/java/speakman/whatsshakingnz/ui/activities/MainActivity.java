@@ -16,6 +16,7 @@
 
 package speakman.whatsshakingnz.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,12 +28,13 @@ import android.view.MenuItem;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -47,7 +49,7 @@ import speakman.whatsshakingnz.ui.LicensesFragment;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 
-public class MainActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver, OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     @Inject
     EarthquakeStore store;
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
     private MapView map;
     private RecyclerView.Adapter<EarthquakeListViewModel.ViewHolder> dataAdapter;
     private List<Marker> mapMarkers = new ArrayList<>();
+    private Map<String, Earthquake> markerEarthquakeMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +142,8 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.getUiSettings().setMapToolbarEnabled(false);
+        googleMap.setOnMarkerClickListener(this);
+        markerEarthquakeMap.clear();
         for (Marker marker : mapMarkers) {
             marker.remove();
         }
@@ -147,6 +152,18 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
             MarkerOptions markerOptions = MapMarkerOptionsFactory.getMarkerOptions(earthquake);
             Marker marker = googleMap.addMarker(markerOptions);
             mapMarkers.add(marker);
+            markerEarthquakeMap.put(marker.getId(), earthquake);
         }
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        Earthquake earthquake = markerEarthquakeMap.get(marker.getId());
+        if (earthquake != null) {
+            Intent intent = DetailActivity.createIntent(this, earthquake);
+            startActivity(intent);
+            return true;
+        }
+        return false;
     }
 }
