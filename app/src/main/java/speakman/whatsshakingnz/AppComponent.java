@@ -22,6 +22,7 @@ import speakman.whatsshakingnz.model.ModelModule;
 import speakman.whatsshakingnz.network.NetworkModule;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;
+import speakman.whatsshakingnz.ui.activities.MapActivity;
 
 /**
  * Created by Adam on 15-06-13.
@@ -31,4 +32,5 @@ import speakman.whatsshakingnz.ui.activities.MainActivity;
 public interface AppComponent {
     void inject(MainActivity activity);
     void inject(DetailActivity activity);
+    void inject(MapActivity activity);
 }

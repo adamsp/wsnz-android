@@ -36,6 +36,7 @@
                 android:id="@+id/activity_main_map"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:transitionName="map_view"
                 map:cameraTargetLat="-41.0"
                 map:cameraTargetLng="172.0"
                 map:cameraZoom="4.5"

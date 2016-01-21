@@ -43,8 +43,12 @@
         <activity
             android:name=".ui.activities.DetailActivity"
             android:label="@string/title_activity_detail"
-            android:theme="@style/AppTheme.DetailActivity" >
-        </activity>
+            android:theme="@style/AppTheme.DetailActivity" />
+
+        <activity
+            android:name=".ui.activities.MapActivity"
+            android:label="@string/title_activity_map"
+            android:theme="@style/AppTheme.DetailActivity" />
     </application>
 
 </manifest>

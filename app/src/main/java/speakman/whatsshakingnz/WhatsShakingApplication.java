@@ -22,6 +22,7 @@ import net.danlew.android.joda.JodaTimeAndroid;
 
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;
+import speakman.whatsshakingnz.ui.activities.MapActivity;
 
 /**
  * Created by Adam on 15-06-07.
@@ -44,6 +45,10 @@ public class WhatsShakingApplication extends Application {
     }
 
     public void inject(DetailActivity activity) {
+        component.inject(activity);
+    }
+
+    public void inject(MapActivity activity) {
         component.inject(activity);
     }
 
