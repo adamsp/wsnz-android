@@ -47,12 +47,7 @@
                 map:cameraTargetLng="172.0"
                 map:cameraZoom="4.5"
                 map:mapType="normal"
-                map:uiCompass="false"
-                map:uiRotateGestures="false"
-                map:uiScrollGestures="false"
-                map:uiTiltGestures="false"
-                map:uiZoomControls="false"
-                map:uiZoomGestures="false"/>
+                map:uiTiltGestures="false"/>
 
             <android.support.v7.widget.CardView
                 android:id="@+id/activity_map_detail_card"
