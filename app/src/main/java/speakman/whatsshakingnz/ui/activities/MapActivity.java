@@ -16,11 +16,17 @@
 
 package speakman.whatsshakingnz.ui.activities;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -37,18 +43,23 @@ import javax.inject.Inject;
 
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.WhatsShakingApplication;
+import speakman.whatsshakingnz.databinding.ActivityMapBinding;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
+import speakman.whatsshakingnz.ui.viewmodel.EarthquakeOverviewViewModel;
 
 /**
  * Created by Adam on 1/20/2016.
  */
-public class MapActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver, OnMapReadyCallback {
+public class MapActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+
+    private ActivityMapBinding binding;
+    private Earthquake selectedEarthquake;
+    private View detailView;
 
     public static Intent createIntent(Context ctx) {
-        Intent intent = new Intent(ctx, MapActivity.class);
-        return intent;
+        return new Intent(ctx, MapActivity.class);
     }
 
     @Inject
@@ -64,6 +75,8 @@ public class MapActivity extends AppCompatActivity implements EarthquakeStore.Ea
         setContentView(R.layout.activity_map);
         setSupportActionBar((Toolbar) findViewById(R.id.activity_map_toolbar));
         WhatsShakingApplication.getInstance().inject(this);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_map);
+        detailView = findViewById(R.id.activity_map_detail_card);
         mapView = (MapView) findViewById(R.id.activity_map_map);
         mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         refreshUI();
@@ -104,6 +117,16 @@ public class MapActivity extends AppCompatActivity implements EarthquakeStore.Ea
     }
 
     @Override
+    public void onBackPressed() {
+        if (selectedEarthquake == null) {
+            super.onBackPressed();
+        } else {
+            selectedEarthquake = null;
+            hideDetailView();
+        }
+    }
+
+    @Override
     public void onEarthquakeDataChanged() {
         refreshUI();
     }
@@ -122,6 +145,7 @@ public class MapActivity extends AppCompatActivity implements EarthquakeStore.Ea
             mapMarkers.add(marker);
             markerEarthquakeMap.put(marker.getId(), earthquake);
         }
+        googleMap.setOnMarkerClickListener(this);
     }
 
     private List<? extends Earthquake> getEarthquakes() {
@@ -133,5 +157,34 @@ public class MapActivity extends AppCompatActivity implements EarthquakeStore.Ea
         mapView.getMapAsync(this);
     }
 
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        Earthquake clickedEarthquake = markerEarthquakeMap.get(marker.getId());
+        if (clickedEarthquake == selectedEarthquake) {
+            selectedEarthquake = null;
+            hideDetailView();
+        } else {
+            selectedEarthquake = clickedEarthquake;
+            EarthquakeOverviewViewModel viewModel = new EarthquakeOverviewViewModel(selectedEarthquake);
+            binding.setEarthquakeModel(viewModel);
+            showDetailView();
+        }
+        return true;
+    }
 
+    private void hideDetailView() {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(detailView, "translationY",
+                0f, detailView.getMeasuredHeight() + ((CardView.LayoutParams) detailView.getLayoutParams()).bottomMargin)
+                .setDuration(350);
+        animator.setInterpolator(new AccelerateInterpolator());
+        animator.start();
+    }
+
+    private void showDetailView() {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(detailView, "translationY",
+                detailView.getTranslationY(), 0f)
+                .setDuration(350);
+        animator.setInterpolator(new DecelerateInterpolator());
+        animator.start();
+    }
 }
