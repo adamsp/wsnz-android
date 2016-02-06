@@ -146,7 +146,8 @@ public class MainActivity extends AppCompatActivity implements EarthquakeStore.E
         for (Marker marker : mapMarkers) {
             marker.remove();
         }
-        List<? extends Earthquake> latestEarthquakes = store.getEarthquakes().subList(0, 10);
+        List<? extends Earthquake> allEarthquakes = store.getEarthquakes();
+        List<? extends Earthquake> latestEarthquakes = allEarthquakes.subList(0, Math.min(10, allEarthquakes.size()));
         for (Earthquake earthquake : latestEarthquakes) {
             MarkerOptions markerOptions = MapMarkerOptionsFactory.getMarkerOptions(earthquake);
             Marker marker = googleMap.addMarker(markerOptions);
