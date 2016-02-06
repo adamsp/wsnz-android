@@ -21,7 +21,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".MainActivity">
+    tools:context=".ui.activities.MainActivity">
     <speakman.whatsshakingnz.ui.SquareAppBarLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
@@ -37,8 +37,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:transitionName="map_view"
-                map:cameraTargetLat="-41.0"
-                map:cameraTargetLng="172.0"
+                map:cameraTargetLat="@string/map_center_lat"
+                map:cameraTargetLng="@string/map_center_long"
                 map:cameraZoom="4.5"
                 map:mapType="normal"
                 map:uiCompass="false"
