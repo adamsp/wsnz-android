@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.EarthquakeStore;
 
@@ -53,7 +54,7 @@ public class RealmEarthquakeStore implements EarthquakeStore {
     public List<? extends Earthquake> getEarthquakes() {
         if (earthquakes == null) {
             // Realm manages refreshing this for us because it's magic.
-            earthquakes = realm.where(RealmEarthquake.class).findAllSorted("originTime", false);
+            earthquakes = realm.where(RealmEarthquake.class).findAllSorted("originTime", Sort.DESCENDING);
         }
         return earthquakes;
     }
