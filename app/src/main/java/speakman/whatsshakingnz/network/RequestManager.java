@@ -26,11 +26,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.realm.Realm;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import speakman.whatsshakingnz.model.EarthquakeStore;
+import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.network.geonet.GeonetFeature;
 import speakman.whatsshakingnz.network.geonet.GeonetResponse;
 import speakman.whatsshakingnz.network.geonet.GeonetService;
@@ -53,13 +54,13 @@ public class RequestManager {
 
     private final RequestTimeStore timeStore;
     private final GeonetService service;
-    private final EarthquakeStore store;
+    private final Realm realm;
     private Subscription subscription;
 
     @Inject
-    public RequestManager(EarthquakeStore store, GeonetService service, RequestTimeStore timeStore) {
+    public RequestManager(Realm realm, GeonetService service, RequestTimeStore timeStore) {
         this.service = service;
-        this.store = store;
+        this.realm = realm;
         this.timeStore = timeStore;
     }
 
@@ -77,10 +78,14 @@ public class RequestManager {
             @Override
             public void onNext(GeonetResponse geonetResponse) {
                 List<GeonetFeature> features = geonetResponse.getFeatures();
-                store.addEarthquakes(features);
+                realm.beginTransaction();
+                for (GeonetFeature feature : features) {
+                    realm.copyToRealmOrUpdate(new RealmEarthquake(feature));
+                }
+                realm.commitTransaction();
                 subscription.unsubscribe();
                 subscription = null;
-                if (features != null && features.size() > 0) {
+                if (features.size() > 0) {
                     GeonetFeature lastFeature = features.get(features.size() - 1);
                     timeStore.saveMostRecentUpdateTime(new DateTime(lastFeature.getUpdatedTime()));
                     if (features.size() == MAX_EVENTS_PER_REQUEST) {

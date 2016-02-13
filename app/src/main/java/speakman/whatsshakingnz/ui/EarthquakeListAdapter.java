@@ -27,10 +27,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.databinding.RowEarthquakeBinding;
 import speakman.whatsshakingnz.model.Earthquake;
-import speakman.whatsshakingnz.model.EarthquakeStore;
+import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 
@@ -39,11 +41,7 @@ import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
  */
 public class EarthquakeListAdapter extends RecyclerView.Adapter<EarthquakeListViewModel.ViewHolder> implements EarthquakeListViewModel.ViewHolder.OnClickListener {
 
-    EarthquakeStore store;
-
-    public EarthquakeListAdapter(EarthquakeStore store) {
-        this.store = store;
-    }
+    private List<RealmEarthquake> earthquakes;
 
     @Override
     public EarthquakeListViewModel.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -53,14 +51,14 @@ public class EarthquakeListAdapter extends RecyclerView.Adapter<EarthquakeListVi
 
     @Override
     public void onBindViewHolder(EarthquakeListViewModel.ViewHolder holder, int position) {
-        Earthquake earthquake = store.getEarthquakes().get(position);
+        Earthquake earthquake = earthquakes.get(position);
         EarthquakeListViewModel viewModel = new EarthquakeListViewModel(earthquake);
         holder.binding.setEarthquakeModel(viewModel);
     }
 
     @Override
     public int getItemCount() {
-        return store.getEarthquakes().size();
+        return earthquakes == null ? 0 : earthquakes.size();
     }
 
     @Override
@@ -77,5 +75,10 @@ public class EarthquakeListAdapter extends RecyclerView.Adapter<EarthquakeListVi
         } else {
             ctx.startActivity(intent);
         }
+    }
+
+    public void updateList(List<RealmEarthquake> earthquakes) {
+        this.earthquakes = earthquakes;
+        notifyDataSetChanged();
     }
 }

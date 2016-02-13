@@ -29,28 +29,29 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import javax.inject.Inject;
-
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.databinding.ActivityDetailBinding;
 import speakman.whatsshakingnz.model.Earthquake;
-import speakman.whatsshakingnz.model.EarthquakeStore;
+import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeOverviewViewModel;
 
-public class DetailActivity extends AppCompatActivity implements EarthquakeStore.EarthquakeDataChangeObserver, OnMapReadyCallback {
+public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback, RealmChangeListener {
 
     public static String EXTRA_EARTHQUAKE = "speakman.whatsshakingnz.ui.activities.DetailActivity.EXTRA_EARTHQUAKE";
+
+
     public static Intent createIntent(Context ctx, Earthquake earthquake) {
         Intent intent = new Intent(ctx, DetailActivity.class);
         intent.putExtra(EXTRA_EARTHQUAKE, earthquake.getId());
         return intent;
     }
 
-    @Inject
-    EarthquakeStore store;
-
+    private Realm realm;
+    private RealmEarthquake earthquake;
     private MapView mapView;
     private ActivityDetailBinding binding;
     private Marker mapMarker;
@@ -60,6 +61,7 @@ public class DetailActivity extends AppCompatActivity implements EarthquakeStore
         super.onCreate(savedInstanceState);
         WhatsShakingApplication.getInstance().inject(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
+        realm = Realm.getDefaultInstance();
         mapView = (MapView) findViewById(R.id.activity_detail_map);
         mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -71,20 +73,22 @@ public class DetailActivity extends AppCompatActivity implements EarthquakeStore
     protected void onResume() {
         super.onResume();
         mapView.onResume();
-        store.registerDataChangeObserver(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         mapView.onPause();
-        store.unregisterDataChangeObserver(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+        if (earthquake != null) {
+            earthquake.removeChangeListener(this);
+        }
+        realm.close();
     }
 
     @Override
@@ -102,11 +106,6 @@ public class DetailActivity extends AppCompatActivity implements EarthquakeStore
     }
 
     @Override
-    public void onEarthquakeDataChanged() {
-        refreshUI();
-    }
-
-    @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         if (mapMarker != null) {
@@ -116,8 +115,16 @@ public class DetailActivity extends AppCompatActivity implements EarthquakeStore
         mapMarker = googleMap.addMarker(markerOptions);
     }
 
+    @Override
+    public void onChange() {
+        refreshUI();
+    }
+
     private Earthquake getEarthquake() {
-        Earthquake earthquake = store.getEarthquake(getIntent().getStringExtra(EXTRA_EARTHQUAKE));
+        if (earthquake == null) {
+            earthquake = realm.where(RealmEarthquake.class).equalTo("id", getIntent().getStringExtra(EXTRA_EARTHQUAKE)).findFirst();
+            earthquake.addChangeListener(this);
+        }
         return earthquake;
     }
 
@@ -127,6 +134,4 @@ public class DetailActivity extends AppCompatActivity implements EarthquakeStore
         binding.setEarthquakeModel(viewModel);
         mapView.getMapAsync(this);
     }
-
-
 }

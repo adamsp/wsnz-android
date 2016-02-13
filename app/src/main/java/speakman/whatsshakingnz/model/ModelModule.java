@@ -20,8 +20,9 @@ import android.content.Context;
 
 import dagger.Module;
 import dagger.Provides;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import speakman.whatsshakingnz.dagger.AppScope;
-import speakman.whatsshakingnz.model.realm.RealmEarthquakeStore;
 
 /**
  * Created by Adam on 15-06-13.
@@ -30,7 +31,11 @@ import speakman.whatsshakingnz.model.realm.RealmEarthquakeStore;
 public class ModelModule {
     @AppScope
     @Provides
-    EarthquakeStore provideEarthquakeStore(Context context) {
-        return new RealmEarthquakeStore(context);
+    Realm provideRealm(Context context) {
+        RealmConfiguration config = new RealmConfiguration.Builder(context)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.setDefaultConfiguration(config);
+        return Realm.getDefaultInstance();
     }
 }
