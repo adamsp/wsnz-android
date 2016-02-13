@@ -16,8 +16,6 @@
 
 package speakman.whatsshakingnz.network;
 
-import android.util.Log;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -26,12 +24,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.realm.Realm;
 import rx.Observable;
 import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import speakman.whatsshakingnz.model.realm.RealmEarthquake;
+import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.network.geonet.GeonetFeature;
 import speakman.whatsshakingnz.network.geonet.GeonetResponse;
 import speakman.whatsshakingnz.network.geonet.GeonetService;
@@ -54,57 +49,40 @@ public class RequestManager {
 
     private final RequestTimeStore timeStore;
     private final GeonetService service;
-    private final Realm realm;
-    private Subscription subscription;
+
 
     @Inject
-    public RequestManager(Realm realm, GeonetService service, RequestTimeStore timeStore) {
+    public RequestManager(GeonetService service, RequestTimeStore timeStore) {
         this.service = service;
-        this.realm = realm;
         this.timeStore = timeStore;
     }
 
-    public void retrieveNewEarthquakes() {
-        if (subscription != null) return;
-        subscription = getMostRecentEventsObservable().subscribe(new Subscriber<GeonetResponse>() {
+    public Observable<Earthquake> retrieveNewEarthquakes() {
+        return Observable.create(new Observable.OnSubscribe<Earthquake>() {
             @Override
-            public void onCompleted() { }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.e(RequestManager.class.getSimpleName(), "Error retrieving earthquakes", e);
-            }
-
-            @Override
-            public void onNext(GeonetResponse geonetResponse) {
-                List<GeonetFeature> features = geonetResponse.getFeatures();
-                realm.beginTransaction();
-                for (GeonetFeature feature : features) {
-                    realm.copyToRealmOrUpdate(new RealmEarthquake(feature));
-                }
-                realm.commitTransaction();
-                subscription.unsubscribe();
-                subscription = null;
-                if (features.size() > 0) {
-                    GeonetFeature lastFeature = features.get(features.size() - 1);
-                    timeStore.saveMostRecentUpdateTime(new DateTime(lastFeature.getUpdatedTime()));
-                    if (features.size() == MAX_EVENTS_PER_REQUEST) {
-                        // TODO Figure out a better paging solution
-                        retrieveNewEarthquakes();
+            public void call(Subscriber<? super Earthquake> subscriber) {
+                List<GeonetFeature> features;
+                do {
+                    features = getMostRecentEvents().getFeatures();
+                    for (GeonetFeature feature : features) {
+                        subscriber.onNext(feature);
                     }
-                }
+                    if (features.size() > 0) {
+                        GeonetFeature lastFeature = features.get(features.size() - 1);
+                        timeStore.saveMostRecentUpdateTime(new DateTime(lastFeature.getUpdatedTime()));
+                    }
+                } while (features.size() >= MAX_EVENTS_PER_REQUEST);
+                subscriber.onCompleted();
             }
         });
     }
 
-    private Observable<GeonetResponse> getMostRecentEventsObservable() {
-        Observable<GeonetResponse> observable;
+    private GeonetResponse getMostRecentEvents() {
         DateTime mostRecentUpdateTime = timeStore.getMostRecentUpdateTime();
         if (mostRecentUpdateTime == null) {
             mostRecentUpdateTime = DateTime.now().minusDays(DAYS_BEFORE_TODAY);
         }
         String filter = String.format(GeonetService.FILTER_FORMAT_MOST_RECENT_UPDATE, mostRecentUpdateTime.toString(updateTimeFormatter));
-        observable = service.getEarthquakes(filter, MAX_EVENTS_PER_REQUEST);
-        return observable.observeOn(AndroidSchedulers.mainThread());
+        return service.getEarthquakes(filter, MAX_EVENTS_PER_REQUEST);
     }
 }

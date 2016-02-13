@@ -20,6 +20,7 @@ import dagger.Component;
 import speakman.whatsshakingnz.dagger.AppScope;
 import speakman.whatsshakingnz.model.ModelModule;
 import speakman.whatsshakingnz.network.NetworkModule;
+import speakman.whatsshakingnz.network.NetworkRunnerService;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;
 import speakman.whatsshakingnz.ui.activities.MapActivity;
@@ -33,4 +34,5 @@ public interface AppComponent {
     void inject(MainActivity activity);
     void inject(DetailActivity activity);
     void inject(MapActivity activity);
+    void inject(NetworkRunnerService service);
 }

@@ -29,6 +29,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import javax.inject.Inject;
+
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import speakman.whatsshakingnz.R;
@@ -50,7 +52,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         return intent;
     }
 
-    private Realm realm;
+    @Inject
+    Realm realm;
     private RealmEarthquake earthquake;
     private MapView mapView;
     private ActivityDetailBinding binding;
@@ -61,7 +64,6 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         super.onCreate(savedInstanceState);
         WhatsShakingApplication.getInstance().inject(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
-        realm = Realm.getDefaultInstance();
         mapView = (MapView) findViewById(R.id.activity_detail_map);
         mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

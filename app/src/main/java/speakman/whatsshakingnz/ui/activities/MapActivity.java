@@ -39,6 +39,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
@@ -65,7 +67,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return new Intent(ctx, MapActivity.class);
     }
 
-    private Realm realm;
+    @Inject
+    Realm realm;
 
     private MapView mapView;
     private List<Marker> mapMarkers = new ArrayList<>();
@@ -78,7 +81,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setSupportActionBar((Toolbar) findViewById(R.id.activity_map_toolbar));
         WhatsShakingApplication.getInstance().inject(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_map);
-        realm = Realm.getDefaultInstance();
         detailView = findViewById(R.id.activity_map_detail_card);
         mapView = (MapView) findViewById(R.id.activity_map_map);
         mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));

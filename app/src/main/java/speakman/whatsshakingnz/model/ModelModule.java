@@ -29,13 +29,18 @@ import speakman.whatsshakingnz.dagger.AppScope;
  */
 @Module
 public class ModelModule {
+
     @AppScope
     @Provides
-    Realm provideRealm(Context context) {
+    RealmConfiguration provideRealmConfiguration(Context context) {
         RealmConfiguration config = new RealmConfiguration.Builder(context)
                 .deleteRealmIfMigrationNeeded()
                 .build();
-        Realm.setDefaultConfiguration(config);
-        return Realm.getDefaultInstance();
+        return config;
+    }
+
+    @Provides
+    Realm provideRealm(RealmConfiguration configuration) {
+        return Realm.getInstance(configuration);
     }
 }

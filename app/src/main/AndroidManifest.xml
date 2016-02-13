@@ -49,6 +49,10 @@
             android:name=".ui.activities.MapActivity"
             android:label="@string/title_activity_map"
             android:theme="@style/AppTheme.DetailActivity" />
+
+        <service
+            android:name=".network.NetworkRunnerService"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -20,6 +20,7 @@ import android.app.Application;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import speakman.whatsshakingnz.network.NetworkRunnerService;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;
 import speakman.whatsshakingnz.ui.activities.MapActivity;
@@ -50,6 +51,10 @@ public class WhatsShakingApplication extends Application {
 
     public void inject(MapActivity activity) {
         component.inject(activity);
+    }
+
+    public void inject(NetworkRunnerService service) {
+        component.inject(service);
     }
 
     public static WhatsShakingApplication getInstance() {

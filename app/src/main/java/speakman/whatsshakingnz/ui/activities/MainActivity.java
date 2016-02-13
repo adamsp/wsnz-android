@@ -47,7 +47,7 @@ import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
-import speakman.whatsshakingnz.network.RequestManager;
+import speakman.whatsshakingnz.network.NetworkRunnerService;
 import speakman.whatsshakingnz.ui.DividerItemDecoration;
 import speakman.whatsshakingnz.ui.EarthquakeListAdapter;
 import speakman.whatsshakingnz.ui.LicensesFragment;
@@ -55,10 +55,8 @@ import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, RealmChangeListener {
 
-    private Realm realm;
-
     @Inject
-    RequestManager requestManager;
+    Realm realm;
 
     private MapView map;
     private EarthquakeListAdapter dataAdapter;
@@ -79,11 +77,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mainList.setLayoutManager(new LinearLayoutManager(this));
         dataAdapter = new EarthquakeListAdapter();
         mainList.setAdapter(dataAdapter);
-        requestManager.retrieveNewEarthquakes();
-        realm = Realm.getDefaultInstance();
-        realm.addChangeListener(this);
         dataAdapter.updateList(realm.allObjectsSorted(RealmEarthquake.class, "originTime", Sort.DESCENDING));
         map.getMapAsync(this);
+        requestNewEarthquakes();
     }
 
     @Override
@@ -182,5 +178,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             earthquakes.addChangeListener(this);
         }
         return earthquakes;
+    }
+
+    private void requestNewEarthquakes() {
+        startService(new Intent(this, NetworkRunnerService.class));
     }
 }

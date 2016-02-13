@@ -39,5 +39,5 @@ public interface GeonetService {
     String FILTER_FORMAT_MOST_RECENT_UPDATE = "modificationtime>%s AND eventtype='earthquake'";
 
     @GET("/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json&sortBy=modificationtime")
-    Observable<GeonetResponse> getEarthquakes(@Query("cql_filter") String filter, @Query("maxFeatures") int maxFeatures);
+    GeonetResponse getEarthquakes(@Query("cql_filter") String filter, @Query("maxFeatures") int maxFeatures);
 }
