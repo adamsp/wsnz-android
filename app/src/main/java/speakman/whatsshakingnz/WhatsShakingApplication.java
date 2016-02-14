@@ -20,10 +20,12 @@ import android.app.Application;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import speakman.whatsshakingnz.analytics.Forest;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;
 import speakman.whatsshakingnz.ui.activities.MapActivity;
+import timber.log.Timber;
 
 /**
  * Created by Adam on 15-06-07.
@@ -36,28 +38,37 @@ public class WhatsShakingApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Timber.plant(Forest.uproot());
         instance = this;
         JodaTimeAndroid.init(this);
         component = DaggerAppComponent.create();
     }
 
     public void inject(MainActivity activity) {
+        logInjection(activity);
         component.inject(activity);
     }
 
     public void inject(DetailActivity activity) {
+        logInjection(activity);
         component.inject(activity);
     }
 
     public void inject(MapActivity activity) {
+        logInjection(activity);
         component.inject(activity);
     }
 
     public void inject(NetworkRunnerService service) {
+        logInjection(service);
         component.inject(service);
     }
 
     public static WhatsShakingApplication getInstance() {
         return instance;
+    }
+
+    private void logInjection(Object object) {
+        Timber.d("Injecting %s inside Application class", object == null ? "null" : object.getClass().getSimpleName());
     }
 }
