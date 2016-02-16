@@ -16,6 +16,9 @@
 
 package speakman.whatsshakingnz.network.geonet;
 
+import android.support.annotation.NonNull;
+
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,7 +34,12 @@ public class GeonetResponse {
 
     List<GeonetFeature> features;
 
+    @NonNull
     public List<GeonetFeature> getFeatures() {
-        return features;
+        if (features == null) {
+            return Collections.emptyList();
+        } else {
+            return features;
+        }
     }
 }

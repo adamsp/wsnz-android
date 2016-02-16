@@ -27,22 +27,22 @@ import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.mockito.ArgumentCaptor;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
-import rx.Scheduler;
-import rx.schedulers.Schedulers;
-import speakman.whatsshakingnz.model.EarthquakeStore;
+import rx.Observer;
+import rx.Subscriber;
+import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.network.geonet.GeonetDateTimeAdapter;
 import speakman.whatsshakingnz.network.geonet.GeonetFeature;
 import speakman.whatsshakingnz.network.geonet.GeonetResponse;
 import speakman.whatsshakingnz.network.geonet.GeonetService;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.notNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -52,26 +52,43 @@ import static org.mockito.Mockito.when;
  */
 public class RequestManagerTest extends AndroidTestCase {
 
+    private GeonetService mockedGeonetService;
+    private RequestTimeStore mockedRequestTimeStore;
+
     private String updateTimeToFilterString(DateTime updateTime) {
         return String.format(GeonetService.FILTER_FORMAT_MOST_RECENT_UPDATE, updateTime.toString(RequestManager.updateTimeFormatter));
     }
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        System.setProperty("dexmaker.dexcache", getContext().getCacheDir().getPath());
+        mockedGeonetService = mock(GeonetService.class);
+        mockedRequestTimeStore = mock(RequestTimeStore.class);
+    }
+
     public void testRequestLastNDaysWhenNoMostRecentEventDateIsAvailable() throws InterruptedException {
-        GeonetService service = mock(GeonetService.class);
-        EarthquakeStore store = mock(EarthquakeStore.class);
-        RequestTimeStore timeStore = mock(RequestTimeStore.class);
-        RequestManager mgr = new RequestManager(store, service, timeStore);
+        RequestManager mgr = new RequestManager(mockedGeonetService, mockedRequestTimeStore);
 
-        when(timeStore.getMostRecentUpdateTime()).thenReturn(null);
-        when(service.getEarthquakes(notNull(String.class), eq(RequestManager.MAX_EVENTS_PER_REQUEST)))
-                .thenReturn(Observable.<GeonetResponse>empty());
+        when(mockedRequestTimeStore.getMostRecentUpdateTime()).thenReturn(null);
+        when(mockedGeonetService.getEarthquakes(notNull(String.class), eq(RequestManager.MAX_EVENTS_PER_REQUEST)))
+                .thenReturn(new GeonetResponse());
 
-        mgr.retrieveNewEarthquakes();
-        Thread.sleep(20);
+        mgr.retrieveNewEarthquakes().subscribe(new Subscriber<Earthquake>() {
+            @Override
+            public void onCompleted() { }
 
+            @Override
+            public void onError(Throwable e) {
+                fail("Should not fail retrieving earthquakes: " + e.getMessage());
+            }
+
+            @Override
+            public void onNext(Earthquake earthquake) { }
+        });
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
-        verify(service).getEarthquakes(argumentCaptor.capture(), eq(RequestManager.MAX_EVENTS_PER_REQUEST));
-        verifyNoMoreInteractions(service);
+        verify(mockedGeonetService).getEarthquakes(argumentCaptor.capture(), eq(RequestManager.MAX_EVENTS_PER_REQUEST));
+        verifyNoMoreInteractions(mockedGeonetService);
 
         DateTime now = DateTime.now();
         LocalDate today = now.toLocalDate();
@@ -82,54 +99,66 @@ public class RequestManagerTest extends AndroidTestCase {
     }
 
     public void testRequestOnlyEventsSinceLastEventDate() throws InterruptedException {
-        GeonetService service = mock(GeonetService.class);
-        EarthquakeStore store = mock(EarthquakeStore.class);
-        RequestTimeStore timeStore = mock(RequestTimeStore.class);
-        RequestManager mgr = new RequestManager(store, service, timeStore);
+        RequestManager mgr = new RequestManager(mockedGeonetService, mockedRequestTimeStore);
         DateTime mostRecentUpdateTime = new DateTime();
-        String filter = updateTimeToFilterString(mostRecentUpdateTime);
+        String expectedFilter = updateTimeToFilterString(mostRecentUpdateTime);
 
-        when(timeStore.getMostRecentUpdateTime()).thenReturn(mostRecentUpdateTime);
-        when(service.getEarthquakes(filter, RequestManager.MAX_EVENTS_PER_REQUEST))
-                .thenReturn(Observable.<GeonetResponse>empty());
+        when(mockedRequestTimeStore.getMostRecentUpdateTime()).thenReturn(mostRecentUpdateTime);
+        when(mockedGeonetService.getEarthquakes(expectedFilter, RequestManager.MAX_EVENTS_PER_REQUEST))
+                .thenReturn(new GeonetResponse());
 
-        mgr.retrieveNewEarthquakes();
-        Thread.sleep(20);
+        mgr.retrieveNewEarthquakes().subscribe(new Subscriber<Earthquake>() {
+            @Override
+            public void onCompleted() { }
 
-        verify(service).getEarthquakes(filter, RequestManager.MAX_EVENTS_PER_REQUEST);
-        verifyNoMoreInteractions(service);
+            @Override
+            public void onError(Throwable e) {
+                fail("Should not fail retrieving earthquakes: " + e.getMessage());
+            }
+
+            @Override
+            public void onNext(Earthquake earthquake) { }
+        });
+
+        // Verify our service was called with the expected filter applied.
+        verify(mockedGeonetService).getEarthquakes(expectedFilter, RequestManager.MAX_EVENTS_PER_REQUEST);
+        verifyNoMoreInteractions(mockedGeonetService);
     }
 
-    public void testAllEventsAreProvidedToStore() throws InterruptedException {
-        GeonetService service = mock(GeonetService.class);
-        EarthquakeStore store = mock(EarthquakeStore.class);
-        RequestTimeStore timeStore = mock(RequestTimeStore.class);
-        RequestManager mgr = new RequestManager(store, service, timeStore);
+    public void testAllEventsAreProvidedToObserver() throws InterruptedException {
+        RequestManager mgr = new RequestManager(mockedGeonetService, mockedRequestTimeStore);
 
         DateTime mostRecentUpdateTime = new DateTime();
         String filter = updateTimeToFilterString(mostRecentUpdateTime);
 
-        int eventCount = 20;
+        final int eventCount = 20;
         List<GeonetFeature> events = new ArrayList<>();
         for (int i = 0; i < eventCount; i++) {
             events.add(new GeonetFeature());
         }
         GeonetResponse response = new GeonetResponse(events);
-        when(timeStore.getMostRecentUpdateTime()).thenReturn(mostRecentUpdateTime);
-        when(service.getEarthquakes(filter, RequestManager.MAX_EVENTS_PER_REQUEST))
-                .thenReturn(Observable.just(response).observeOn(Schedulers.newThread()));
+        when(mockedRequestTimeStore.getMostRecentUpdateTime()).thenReturn(mostRecentUpdateTime);
+        when(mockedGeonetService.getEarthquakes(filter, RequestManager.MAX_EVENTS_PER_REQUEST))
+                .thenReturn(response);
 
-        mgr.retrieveNewEarthquakes();
-        Thread.sleep(20);
+        mgr.retrieveNewEarthquakes().toList().subscribe(new Subscriber<List<Earthquake>>() {
+            @Override
+            public void onCompleted() { }
 
-        verify(store).addEarthquakes(events);
-        verifyNoMoreInteractions(store);
+            @Override
+            public void onError(Throwable e) {
+                fail("Should not fail retrieving earthquakes: " + e.getMessage());
+            }
+
+            @Override
+            public void onNext(List<Earthquake> earthquakes) {
+                assertEquals(eventCount, earthquakes.size());
+            }
+        });
     }
 
     public void testAllPagedEventsAreRetrieved() throws InterruptedException {
-        GeonetService service = mock(GeonetService.class);
-        EarthquakeStore store = mock(EarthquakeStore.class);
-        // Can't mock this as we need to update it each time it's set to allow paging to work.
+        // Easier to just implement this than to mock it in order to allow paging to work.
         RequestTimeStore timeStore = new RequestTimeStore() {
             DateTime time;
             @Override
@@ -143,15 +172,16 @@ public class RequestManagerTest extends AndroidTestCase {
                 return time;
             }
         };
-        RequestManager mgr = new RequestManager(store, service, timeStore);
+        RequestManager mgr = new RequestManager(mockedGeonetService, timeStore);
 
         DateTime mostRecentRequestTime = new DateTime();
         timeStore.saveMostRecentUpdateTime(mostRecentRequestTime);
 
-        int eventCount = RequestManager.MAX_EVENTS_PER_REQUEST;
+        final int eventCount = RequestManager.MAX_EVENTS_PER_REQUEST;
         List<GeonetFeature> events1 = new ArrayList<>();
         List<GeonetFeature> events2 = new ArrayList<>();
         List<GeonetFeature> events3 = new ArrayList<>();
+        // We add 1 less than max so that we can manually set the final event.
         for (int i = 0; i < eventCount - 1; i++) {
             events1.add(new GeonetFeature());
             events2.add(new GeonetFeature());
@@ -173,31 +203,40 @@ public class RequestManagerTest extends AndroidTestCase {
         GeonetResponse page1 = new GeonetResponse(events1);
         GeonetResponse page2 = new GeonetResponse(events2);
         GeonetResponse page3 = new GeonetResponse(events3);
-        Scheduler testScheduler = Schedulers.newThread();
-        when(service.getEarthquakes(updateTimeToFilterString(mostRecentRequestTime), RequestManager.MAX_EVENTS_PER_REQUEST))
-                .thenReturn(Observable.just(page1).observeOn(testScheduler));
-        when(service.getEarthquakes(updateTimeToFilterString(modificationtime1), RequestManager.MAX_EVENTS_PER_REQUEST))
-                .thenReturn(Observable.just(page2).observeOn(testScheduler));
-        when(service.getEarthquakes(updateTimeToFilterString(modificationtime2), RequestManager.MAX_EVENTS_PER_REQUEST))
-                .thenReturn(Observable.just(page3).observeOn(testScheduler));
-        when(service.getEarthquakes(updateTimeToFilterString(modificationtime3), RequestManager.MAX_EVENTS_PER_REQUEST))
-                .thenReturn(Observable.<GeonetResponse>empty());
+        when(mockedGeonetService.getEarthquakes(updateTimeToFilterString(mostRecentRequestTime), RequestManager.MAX_EVENTS_PER_REQUEST))
+                .thenReturn(page1);
+        when(mockedGeonetService.getEarthquakes(updateTimeToFilterString(modificationtime1), RequestManager.MAX_EVENTS_PER_REQUEST))
+                .thenReturn(page2);
+        when(mockedGeonetService.getEarthquakes(updateTimeToFilterString(modificationtime2), RequestManager.MAX_EVENTS_PER_REQUEST))
+                .thenReturn(page3);
+        when(mockedGeonetService.getEarthquakes(updateTimeToFilterString(modificationtime3), RequestManager.MAX_EVENTS_PER_REQUEST))
+                .thenReturn(new GeonetResponse()); // empty response
 
-        mgr.retrieveNewEarthquakes();
-        Thread.sleep(100);
+        mgr.retrieveNewEarthquakes().toList().subscribe(new Subscriber<List<Earthquake>>() {
+            @Override
+            public void onCompleted() { }
 
-        verify(store).addEarthquakes(events1);
-        verify(store).addEarthquakes(events2);
-        verify(store).addEarthquakes(events3);
-        verifyNoMoreInteractions(store);
+            @Override
+            public void onError(Throwable e) {
+                fail("Should not fail retrieving earthquakes: " + e.getMessage());
+            }
 
+            @Override
+            public void onNext(List<Earthquake> earthquakes) {
+                assertEquals(eventCount * 3, earthquakes.size()); // 3 pages of max event count per page.
+            }
+        });
+
+        verify(mockedGeonetService).getEarthquakes(updateTimeToFilterString(mostRecentRequestTime), RequestManager.MAX_EVENTS_PER_REQUEST);
+        verify(mockedGeonetService).getEarthquakes(updateTimeToFilterString(modificationtime1), RequestManager.MAX_EVENTS_PER_REQUEST);
+        verify(mockedGeonetService).getEarthquakes(updateTimeToFilterString(modificationtime2), RequestManager.MAX_EVENTS_PER_REQUEST);
+        verify(mockedGeonetService).getEarthquakes(updateTimeToFilterString(modificationtime3), RequestManager.MAX_EVENTS_PER_REQUEST);
+        verifyNoMoreInteractions(mockedGeonetService);
         assertEquals(modificationtime3, timeStore.getMostRecentUpdateTime());
     }
 
     public void testLastEventTimeIsUpdatedWhenFirstPageSucceedsButFollowingPageFails() throws InterruptedException {
-        GeonetService service = mock(GeonetService.class);
-        EarthquakeStore store = mock(EarthquakeStore.class);
-        // Can't mock this as we need to update it each time it's set to allow paging to work.
+        // Easier to just implement this than to mock it in order to allow paging to work.
         RequestTimeStore timeStore = new RequestTimeStore() {
             DateTime time;
             @Override
@@ -211,7 +250,7 @@ public class RequestManagerTest extends AndroidTestCase {
                 return time;
             }
         };
-        RequestManager mgr = new RequestManager(store, service, timeStore);
+        RequestManager mgr = new RequestManager(mockedGeonetService, timeStore);
 
         DateTime mostRecentRequestTime = new DateTime();
         timeStore.saveMostRecentUpdateTime(mostRecentRequestTime);
@@ -228,20 +267,22 @@ public class RequestManagerTest extends AndroidTestCase {
         DateTime lastTimeFirstPage = new DateTime("2015-05-31T21:10:45.867Z");
         GeonetResponse response = new GeonetResponse(events);
 
-        Scheduler testScheduler = Schedulers.newThread();
         // First page succeeds
-        when(service.getEarthquakes(updateTimeToFilterString(mostRecentRequestTime), RequestManager.MAX_EVENTS_PER_REQUEST))
-                .thenReturn(Observable.just(response).observeOn(testScheduler));
+        when(mockedGeonetService.getEarthquakes(updateTimeToFilterString(mostRecentRequestTime), RequestManager.MAX_EVENTS_PER_REQUEST))
+                .thenReturn(response);
         // Second page fails
-        when(service.getEarthquakes(updateTimeToFilterString(lastTimeFirstPage), RequestManager.MAX_EVENTS_PER_REQUEST))
-                .thenReturn(Observable.<GeonetResponse>error(new UnknownHostException()).observeOn(testScheduler));
+        when(mockedGeonetService.getEarthquakes(updateTimeToFilterString(lastTimeFirstPage), RequestManager.MAX_EVENTS_PER_REQUEST))
+                .thenThrow(new RuntimeException());
 
-        mgr.retrieveNewEarthquakes();
-        Thread.sleep(20);
+        //noinspection unchecked
+        Observer<Earthquake> mockedObserver = mock(Observer.class);
+        mgr.retrieveNewEarthquakes().subscribe(mockedObserver);
 
-        verify(store).addEarthquakes(events);
-        verifyNoMoreInteractions(store);
+        // Verify that our onError was called.
+        verify(mockedObserver).onError(any(Throwable.class));
+        verify(mockedObserver, times(RequestManager.MAX_EVENTS_PER_REQUEST)).onNext(any(Earthquake.class));
+        verifyNoMoreInteractions(mockedObserver);
+        // Verify that the "last time on the first page" is the one that is stored (so we can skip it next time!)
         assertEquals(lastTimeFirstPage, timeStore.getMostRecentUpdateTime());
     }
-
 }
