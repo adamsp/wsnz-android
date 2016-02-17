@@ -20,6 +20,10 @@ import android.app.Application;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import javax.inject.Inject;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import speakman.whatsshakingnz.analytics.Forest;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
@@ -35,6 +39,9 @@ public class WhatsShakingApplication extends Application {
     private static WhatsShakingApplication instance;
     private AppComponent component;
 
+    @Inject
+    RealmConfiguration realmConfiguration;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -42,21 +49,8 @@ public class WhatsShakingApplication extends Application {
         instance = this;
         JodaTimeAndroid.init(this);
         component = DaggerAppComponent.create();
-    }
-
-    public void inject(MainActivity activity) {
-        logInjection(activity);
-        component.inject(activity);
-    }
-
-    public void inject(DetailActivity activity) {
-        logInjection(activity);
-        component.inject(activity);
-    }
-
-    public void inject(MapActivity activity) {
-        logInjection(activity);
-        component.inject(activity);
+        component.inject(this);
+        setupRealm();
     }
 
     public void inject(NetworkRunnerService service) {
@@ -70,5 +64,9 @@ public class WhatsShakingApplication extends Application {
 
     private void logInjection(Object object) {
         Timber.d("Injecting %s inside Application class", object == null ? "null" : object.getClass().getSimpleName());
+    }
+
+    private void setupRealm() {
+        Realm.setDefaultConfiguration(realmConfiguration);
     }
 }

@@ -39,8 +39,4 @@ public class ModelModule {
         return config;
     }
 
-    @Provides
-    Realm provideRealm(RealmConfiguration configuration) {
-        return Realm.getInstance(configuration);
-    }
 }

@@ -39,14 +39,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import speakman.whatsshakingnz.R;
-import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.databinding.ActivityMapBinding;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
@@ -58,18 +55,15 @@ import speakman.whatsshakingnz.ui.viewmodel.EarthquakeOverviewViewModel;
  */
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, RealmChangeListener {
 
-    private ActivityMapBinding binding;
-    private Earthquake selectedEarthquake;
-    private View detailView;
-    private RealmResults<RealmEarthquake> earthquakes;
-
     public static Intent createIntent(Context ctx) {
         return new Intent(ctx, MapActivity.class);
     }
 
-    @Inject
-    Realm realm;
-
+    private ActivityMapBinding binding;
+    private Earthquake selectedEarthquake;
+    private View detailView;
+    private RealmResults<RealmEarthquake> earthquakes;
+    private Realm realm;
     private MapView mapView;
     private List<Marker> mapMarkers = new ArrayList<>();
     private Map<String, Earthquake> markerEarthquakeMap = new HashMap<>();
@@ -79,7 +73,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         setSupportActionBar((Toolbar) findViewById(R.id.activity_map_toolbar));
-        WhatsShakingApplication.getInstance().inject(this);
+        realm = Realm.getDefaultInstance();
         binding = DataBindingUtil.setContentView(this, R.layout.activity_map);
         detailView = findViewById(R.id.activity_map_detail_card);
         mapView = (MapView) findViewById(R.id.activity_map_map);

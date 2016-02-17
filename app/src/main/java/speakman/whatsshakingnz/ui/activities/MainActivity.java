@@ -37,14 +37,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import speakman.whatsshakingnz.R;
-import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
@@ -55,9 +52,7 @@ import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, RealmChangeListener {
 
-    @Inject
-    Realm realm;
-
+    private Realm realm;
     private MapView map;
     private EarthquakeListAdapter dataAdapter;
     private List<Marker> mapMarkers = new ArrayList<>();
@@ -68,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.activity_main_toolbar));
-        WhatsShakingApplication.getInstance().inject(this);
+        realm = Realm.getDefaultInstance();
         map = ((MapView)findViewById(R.id.activity_main_map));
         map.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         RecyclerView mainList = (RecyclerView) findViewById(R.id.activity_main_list);

@@ -31,8 +31,6 @@ import speakman.whatsshakingnz.ui.activities.MapActivity;
 @AppScope
 @Component(modules = { NetworkModule.class, ModelModule.class, AppModule.class })
 public interface AppComponent {
-    void inject(MainActivity activity);
-    void inject(DetailActivity activity);
-    void inject(MapActivity activity);
     void inject(NetworkRunnerService service);
+    void inject(WhatsShakingApplication application);
 }

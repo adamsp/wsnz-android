@@ -29,12 +29,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import javax.inject.Inject;
-
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import speakman.whatsshakingnz.R;
-import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.databinding.ActivityDetailBinding;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
@@ -45,15 +42,13 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
     public static String EXTRA_EARTHQUAKE = "speakman.whatsshakingnz.ui.activities.DetailActivity.EXTRA_EARTHQUAKE";
 
-
     public static Intent createIntent(Context ctx, Earthquake earthquake) {
         Intent intent = new Intent(ctx, DetailActivity.class);
         intent.putExtra(EXTRA_EARTHQUAKE, earthquake.getId());
         return intent;
     }
 
-    @Inject
-    Realm realm;
+    private Realm realm;
     private RealmEarthquake earthquake;
     private MapView mapView;
     private ActivityDetailBinding binding;
@@ -62,7 +57,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WhatsShakingApplication.getInstance().inject(this);
+        realm = Realm.getDefaultInstance();
         binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
         mapView = (MapView) findViewById(R.id.activity_detail_map);
         mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
