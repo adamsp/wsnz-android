@@ -18,7 +18,6 @@ package speakman.whatsshakingnz.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -32,11 +31,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import speakman.whatsshakingnz.R;
-import speakman.whatsshakingnz.databinding.ActivityDetailBinding;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
-import speakman.whatsshakingnz.ui.viewmodel.EarthquakeOverviewViewModel;
+import speakman.whatsshakingnz.ui.views.ExpandableDetailCard;
 
 public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback, RealmChangeListener {
 
@@ -51,14 +49,15 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     private Realm realm;
     private RealmEarthquake earthquake;
     private MapView mapView;
-    private ActivityDetailBinding binding;
     private Marker mapMarker;
+    private ExpandableDetailCard expandableDetailCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         realm = Realm.getDefaultInstance();
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
+        setContentView(R.layout.activity_detail);
+        expandableDetailCard = (ExpandableDetailCard) findViewById(R.id.activity_map_detail_card);
         mapView = (MapView) findViewById(R.id.activity_detail_map);
         mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -103,6 +102,14 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     }
 
     @Override
+    public void onBackPressed() {
+        if (expandableDetailCard.onBackPressed()) {
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         if (mapMarker != null) {
@@ -127,8 +134,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private void refreshUI() {
         Earthquake earthquake = getEarthquake();
-        EarthquakeOverviewViewModel viewModel = new EarthquakeOverviewViewModel(earthquake);
-        binding.setEarthquakeModel(viewModel);
+        expandableDetailCard.bindEarthquake(earthquake);
         mapView.getMapAsync(this);
     }
 }
