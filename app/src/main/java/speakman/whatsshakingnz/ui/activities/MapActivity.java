@@ -19,7 +19,6 @@ package speakman.whatsshakingnz.ui.activities;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -44,11 +43,10 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import speakman.whatsshakingnz.R;
-import speakman.whatsshakingnz.databinding.ActivityMapBinding;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
-import speakman.whatsshakingnz.ui.viewmodel.EarthquakeOverviewViewModel;
+import speakman.whatsshakingnz.ui.views.ExpandableDetailCard;
 
 /**
  * Created by Adam on 1/20/2016.
@@ -59,9 +57,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return new Intent(ctx, MapActivity.class);
     }
 
-    private ActivityMapBinding binding;
     private Earthquake selectedEarthquake;
-    private View detailView;
+    private ExpandableDetailCard detailView;
     private RealmResults<RealmEarthquake> earthquakes;
     private Realm realm;
     private MapView mapView;
@@ -73,9 +70,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         setSupportActionBar((Toolbar) findViewById(R.id.activity_map_toolbar));
+        setContentView(R.layout.activity_map);
         realm = Realm.getDefaultInstance();
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_map);
-        detailView = findViewById(R.id.activity_map_detail_card);
+        detailView = (ExpandableDetailCard) findViewById(R.id.activity_map_detail_card);
+        detailView.setVisibility(View.INVISIBLE);
         mapView = (MapView) findViewById(R.id.activity_map_map);
         mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         refreshUI();
@@ -119,7 +117,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onBackPressed() {
-        if (selectedEarthquake == null) {
+        if (detailView.onBackPressed()) {
+            return;
+        } else if (selectedEarthquake == null) {
             super.onBackPressed();
         } else {
             selectedEarthquake = null;
@@ -154,8 +154,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             hideDetailView();
         } else {
             selectedEarthquake = clickedEarthquake;
-            EarthquakeOverviewViewModel viewModel = new EarthquakeOverviewViewModel(selectedEarthquake);
-            binding.setEarthquakeModel(viewModel);
+            detailView.bindEarthquake(selectedEarthquake);
             showDetailView();
         }
         return true;
@@ -167,15 +166,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void hideDetailView() {
         ObjectAnimator animator = ObjectAnimator.ofFloat(detailView, "translationY",
-                0f, detailView.getMeasuredHeight() + ((CardView.LayoutParams) detailView.getLayoutParams()).bottomMargin)
+                0f, getDetailViewAnimationTranslation())
                 .setDuration(350);
         animator.setInterpolator(new AccelerateInterpolator());
         animator.start();
     }
 
     private void showDetailView() {
+        detailView.setVisibility(View.VISIBLE);
         ObjectAnimator animator = ObjectAnimator.ofFloat(detailView, "translationY",
-                detailView.getTranslationY(), 0f)
+                getDetailViewAnimationTranslation(), 0f)
                 .setDuration(350);
         animator.setInterpolator(new DecelerateInterpolator());
         animator.start();
@@ -191,5 +191,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             earthquakes.addChangeListener(this);
         }
         return earthquakes;
+    }
+
+    private float getDetailViewAnimationTranslation() {
+        return detailView.getMeasuredHeight() + ((CardView.LayoutParams) detailView.getLayoutParams()).bottomMargin;
     }
 }

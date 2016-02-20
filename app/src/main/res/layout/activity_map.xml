@@ -18,7 +18,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable name="earthquakeModel" type="speakman.whatsshakingnz.ui.viewmodel.EarthquakeOverviewViewModel"/>
@@ -50,18 +49,16 @@
                 map:mapType="normal"
                 map:uiTiltGestures="false"/>
 
-            <android.support.v7.widget.CardView
+            <speakman.whatsshakingnz.ui.views.ExpandableDetailCard
                 android:id="@+id/activity_map_detail_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_margin="8dp"
-                android:translationY="80dp"
                 card_view:cardCornerRadius="2dp"
-                card_view:cardElevation="2dp">
-                <include layout="@layout/view_earthquake_detail_small"
-                    bind:earthquakeModel="@{earthquakeModel}" />
-            </android.support.v7.widget.CardView>
+                android:transitionName="earthquake_detail"
+                card_view:cardElevation="2dp"/>
+
         </FrameLayout>
     </LinearLayout>
 </layout>
