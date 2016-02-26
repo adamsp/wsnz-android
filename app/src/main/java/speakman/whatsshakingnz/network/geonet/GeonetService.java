@@ -16,11 +16,8 @@
 
 package speakman.whatsshakingnz.network.geonet;
 
-import org.joda.time.DateTime;
-
 import retrofit.http.GET;
 import retrofit.http.Query;
-import rx.Observable;
 
 /**
  * Created by Adam on 15-05-31.

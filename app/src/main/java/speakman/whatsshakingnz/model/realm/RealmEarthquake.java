@@ -16,6 +16,8 @@
 
 package speakman.whatsshakingnz.model.realm;
 
+import android.support.annotation.Nullable;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import speakman.whatsshakingnz.model.Earthquake;
@@ -34,6 +36,19 @@ public class RealmEarthquake extends RealmObject implements Earthquake {
     private double longitude;
     private double depth;
     private double magnitude;
+    @Nullable private String evaluationMethod;
+    @Nullable private String evaluationStatus;
+    @Nullable private String evaluationMode;
+    @Nullable private String earthModel;
+    @Nullable private String depthType;
+    private double originError;
+    private int usedPhaseCount;
+    private int usedStationCount;
+    private double minimumDistance;
+    private double azimuthalGap;
+    @Nullable private String magnitudeType;
+    private double magnitudeUncertainty;
+    private int magnitudeStationCount;
 
     // For Realm support
     public RealmEarthquake() { }
@@ -46,6 +61,19 @@ public class RealmEarthquake extends RealmObject implements Earthquake {
         this.longitude = other.getLongitude();
         this.depth = other.getDepth();
         this.magnitude = other.getMagnitude();
+        this.evaluationMethod = other.getEvaluationMethod();
+        this.evaluationStatus = other.getEvaluationStatus();
+        this.evaluationMode = other.getEvaluationMode();
+        this.earthModel = other.getEarthModel();
+        this.depthType = other.getDepthType();
+        this.originError = other.getOriginError();
+        this.usedPhaseCount = other.getUsedPhaseCount();
+        this.usedStationCount = other.getUsedStationCount();
+        this.minimumDistance = other.getMinimumDistance();
+        this.azimuthalGap = other.getAzimuthalGap();
+        this.magnitudeType = other.getMagnitudeType();
+        this.magnitudeUncertainty = other.getMagnitudeUncertainty();
+        this.magnitudeStationCount = other.getMagnitudeStationCount();
     }
 
     @Override
@@ -109,5 +137,128 @@ public class RealmEarthquake extends RealmObject implements Earthquake {
 
     public void setMagnitude(double magnitude) {
         this.magnitude = magnitude;
+    }
+
+    @Override
+    @Nullable
+    public String getEvaluationMethod() {
+        return evaluationMethod;
+    }
+
+    public void setEvaluationMethod(@Nullable String evaluationMethod) {
+        this.evaluationMethod = evaluationMethod;
+    }
+
+    @Override
+    @Nullable
+    public String getEvaluationStatus() {
+        return evaluationStatus;
+    }
+
+    public void setEvaluationStatus(@Nullable String evaluationStatus) {
+        this.evaluationStatus = evaluationStatus;
+    }
+
+    @Override
+    @Nullable
+    public String getEvaluationMode() {
+        return evaluationMode;
+    }
+
+    public void setEvaluationMode(@Nullable String evaluationMode) {
+        this.evaluationMode = evaluationMode;
+    }
+
+    @Override
+    @Nullable
+    public String getEarthModel() {
+        return earthModel;
+    }
+
+    public void setEarthModel(@Nullable String earthModel) {
+        this.earthModel = earthModel;
+    }
+
+    @Override
+    @Nullable
+    public String getDepthType() {
+        return depthType;
+    }
+
+    public void setDepthType(@Nullable String depthType) {
+        this.depthType = depthType;
+    }
+
+    @Override
+    public double getOriginError() {
+        return originError;
+    }
+
+    public void setOriginError(double originError) {
+        this.originError = originError;
+    }
+
+    @Override
+    public int getUsedPhaseCount() {
+        return usedPhaseCount;
+    }
+
+    public void setUsedPhaseCount(int usedPhaseCount) {
+        this.usedPhaseCount = usedPhaseCount;
+    }
+
+    @Override
+    public int getUsedStationCount() {
+        return usedStationCount;
+    }
+
+    public void setUsedStationCount(int usedStationCount) {
+        this.usedStationCount = usedStationCount;
+    }
+
+    @Override
+    public double getMinimumDistance() {
+        return minimumDistance;
+    }
+
+    public void setMinimumDistance(double minimumDistance) {
+        this.minimumDistance = minimumDistance;
+    }
+
+    @Override
+    public double getAzimuthalGap() {
+        return azimuthalGap;
+    }
+
+    public void setAzimuthalGap(double azimuthalGap) {
+        this.azimuthalGap = azimuthalGap;
+    }
+
+    @Override
+    @Nullable
+    public String getMagnitudeType() {
+        return magnitudeType;
+    }
+
+    public void setMagnitudeType(@Nullable String magnitudeType) {
+        this.magnitudeType = magnitudeType;
+    }
+
+    @Override
+    public double getMagnitudeUncertainty() {
+        return magnitudeUncertainty;
+    }
+
+    public void setMagnitudeUncertainty(double magnitudeUncertainty) {
+        this.magnitudeUncertainty = magnitudeUncertainty;
+    }
+
+    @Override
+    public int getMagnitudeStationCount() {
+        return magnitudeStationCount;
+    }
+
+    public void setMagnitudeStationCount(int magnitudeStationCount) {
+        this.magnitudeStationCount = magnitudeStationCount;
     }
 }

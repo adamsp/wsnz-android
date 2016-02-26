@@ -16,6 +16,8 @@
 
 package speakman.whatsshakingnz.model;
 
+import android.support.annotation.Nullable;
+
 /**
  * Created by Adam on 15-05-31.
  */
@@ -27,4 +29,17 @@ public interface Earthquake {
     double getMagnitude();
     double getDepth();
     String getId();
+    @Nullable String getEvaluationMethod();
+    @Nullable String getEvaluationStatus();
+    @Nullable String getEvaluationMode();
+    @Nullable String getEarthModel();
+    @Nullable String getDepthType();
+    double getOriginError();
+    int getUsedPhaseCount();
+    int getUsedStationCount();
+    double getMinimumDistance();
+    double getAzimuthalGap();
+    @Nullable String getMagnitudeType();
+    double getMagnitudeUncertainty();
+    int getMagnitudeStationCount();
 }

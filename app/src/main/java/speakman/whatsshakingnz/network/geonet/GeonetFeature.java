@@ -16,19 +16,18 @@
 
 package speakman.whatsshakingnz.network.geonet;
 
-import com.google.android.gms.maps.model.LatLng;
+import android.support.annotation.Nullable;
 
 import org.joda.time.DateTime;
 
 import speakman.whatsshakingnz.model.Earthquake;
-import speakman.whatsshakingnz.model.LocalPlace;
-import speakman.whatsshakingnz.utils.DistanceUtil;
 
 /**
  * Created by Adam on 15-05-31.
  */
 public class GeonetFeature implements Earthquake {
 
+    // RestKit parses the response JSON out into this object.
     static class Properties {
         double latitude;
         double longitude;
@@ -37,49 +36,20 @@ public class GeonetFeature implements Earthquake {
         DateTime origintime;
         DateTime modificationtime;
         String publicid;
+        String evaluationmethod;
+        String evaluationstatus;
+        String evaluationmode;
+        String earthmodel;
+        String depthtype;
+        double originerror;
+        int usedphasecount;
+        int usedstationcount;
+        double minimumdistance;
+        double azimuthalgap;
+        String magnitudetype;
+        double magnitudeuncertainty;
+        int magnitudestationcount;
     }
-
-//    {
-//        type: "Feature",
-//                id: "quake_search_v1.2015p407790",
-//                geometry: {
-//            type: "Point",
-//                    coordinates: [
-//            175.4685716,
-//                    -40.39407718
-//            ]
-//        },
-//            geometry_name: "origin_geom",
-//                    properties: {
-//            publicid: "2015p407790",
-//                    eventtype: null,
-//                    origintime: "2015-05-31T21:10:45.867Z",
-//                    modificationtime: "2015-05-31T21:14:43.188Z",
-//                    latitude: -40.39407718,
-//                    longitude: 175.4685716,
-//                    depth: 99.6875,
-//                    magnitude: 2.923555525,
-//                    evaluationmethod: "NonLinLoc",
-//                    evaluationstatus: null,
-//                    evaluationmode: "automatic",
-//                    earthmodel: "nz3drx",
-//                    depthtype: null,
-//                    originerror: 0.5916628805,
-//                    usedphasecount: 24,
-//                    usedstationcount: 24,
-//                    minimumdistance: 0.4863447969,
-//                    azimuthalgap: 155.9689617,
-//                    magnitudetype: "M",
-//                    magnitudeuncertainty: null,
-//                    magnitudestationcount: 18,
-//                    bbox: [
-//            175.4685716,
-//                    -40.39407718,
-//                    175.4685716,
-//                    -40.39407718
-//            ]
-//        }
-//    }
 
     Properties properties;
 
@@ -96,6 +66,77 @@ public class GeonetFeature implements Earthquake {
     @Override
     public String getId() {
         return properties == null ? null : properties.publicid;
+    }
+
+    @Nullable
+    @Override
+    public String getEvaluationMethod() {
+        return properties == null ? null : properties.evaluationmethod;
+    }
+
+    @Nullable
+    @Override
+    public String getEvaluationStatus() {
+        return properties == null ? null : properties.evaluationstatus;
+    }
+
+    @Nullable
+    @Override
+    public String getEvaluationMode() {
+        return properties == null ? null : properties.evaluationmode;
+    }
+
+    @Nullable
+    @Override
+    public String getEarthModel() {
+        return properties == null ? null : properties.earthmodel;
+    }
+
+    @Nullable
+    @Override
+    public String getDepthType() {
+        return properties == null ? null : properties.depthtype;
+    }
+
+    @Override
+    public double getOriginError() {
+        return properties == null ? 0 : properties.originerror;
+    }
+
+    @Override
+    public int getUsedPhaseCount() {
+        return properties == null ? 0 : properties.usedphasecount;
+    }
+
+    @Override
+    public int getUsedStationCount() {
+        return properties == null ? 0 : properties.usedstationcount;
+    }
+
+    @Override
+    public double getMinimumDistance() {
+        return properties == null ? 0 : properties.minimumdistance;
+    }
+
+    @Override
+    public double getAzimuthalGap() {
+        return properties == null ? 0 : properties.azimuthalgap;
+    }
+
+    @Nullable
+    @Override
+    public String getMagnitudeType() {
+        return properties == null ? null : properties.magnitudetype;
+    }
+
+    @Override
+    public double getMagnitudeUncertainty() {
+        return properties == null ? 0 : properties.magnitudeuncertainty;
+    }
+
+    @Override
+    public int getMagnitudeStationCount() {
+        return properties == null ? 0 : properties.magnitudestationcount;
     }
 
     public long getOriginTime() {
@@ -120,4 +161,5 @@ public class GeonetFeature implements Earthquake {
     public double getLongitude() {
         return properties == null ? 0 : properties.longitude;
     }
+    
 }

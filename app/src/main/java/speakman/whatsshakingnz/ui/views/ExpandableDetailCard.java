@@ -24,6 +24,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import org.joda.time.DateTime;
+
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.databinding.ExpandableDetailCardBinding;
 import speakman.whatsshakingnz.model.Earthquake;
@@ -57,9 +59,26 @@ public class ExpandableDetailCard extends CardView implements View.OnClickListen
     public void bindEarthquake(Earthquake earthquake) {
         binding.setEarthquakeModel(new EarthquakeOverviewViewModel(earthquake));
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 50; i++) {
-            sb.append("Testing\n");
-        }
+        this.appendDetail(sb, "ID", earthquake.getId(), true);
+        this.appendDetail(sb, "Origin Time", new DateTime(earthquake.getOriginTime()), true);
+        this.appendDetail(sb, "Updated Time", new DateTime(earthquake.getUpdatedTime()), true);
+        this.appendDetail(sb, "Latitude", earthquake.getLatitude(), true);
+        this.appendDetail(sb, "Longitude", earthquake.getLongitude(), true);
+        this.appendDetail(sb, "Depth (kilometers)", earthquake.getDepth(), true);
+        this.appendDetail(sb, "Magnitude", earthquake.getMagnitude(), true);
+        this.appendDetail(sb, "Evaluation Method", earthquake.getEvaluationMethod(), true);
+        this.appendDetail(sb, "Evaluation Status", earthquake.getEvaluationStatus(), true);
+        this.appendDetail(sb, "Evaluation Mode", earthquake.getEvaluationMode(), true);
+        this.appendDetail(sb, "Earth Model", earthquake.getEarthModel(), true);
+        this.appendDetail(sb, "Depth Type", earthquake.getDepthType(), true);
+        this.appendDetail(sb, "Origin Error", earthquake.getOriginError(), true);
+        this.appendDetail(sb, "Used Phase Count", earthquake.getUsedPhaseCount(), true);
+        this.appendDetail(sb, "Used Station Count", earthquake.getUsedStationCount(), true);
+        this.appendDetail(sb, "Minimum Distance", earthquake.getMinimumDistance(), true);
+        this.appendDetail(sb, "Azimuthal Gap", earthquake.getAzimuthalGap(), true);
+        this.appendDetail(sb, "Magnitude Type", earthquake.getMagnitudeType(), true);
+        this.appendDetail(sb, "Magnitude Uncertainty", earthquake.getMagnitudeUncertainty(), true);
+        this.appendDetail(sb, "Magnitude Station Count", earthquake.getMagnitudeStationCount(), false);
         detailText.setText(sb.toString());
     }
 
@@ -97,6 +116,48 @@ public class ExpandableDetailCard extends CardView implements View.OnClickListen
         expandIndicator.setVisibility(View.VISIBLE);
         detailText.setVisibility(View.GONE);
         expanded = false;
+    }
+
+    private void appendDetail(StringBuilder sb, String key, String value, boolean newLine) {
+        if (value == null) {
+            return;
+        }
+        sb.append(key);
+        sb.append(": ");
+        sb.append(value);
+        if (newLine) {
+            sb.append("\n");
+        }
+    }
+
+    private void appendDetail(StringBuilder sb, String key, DateTime value, boolean newLine) {
+        if (value == null) {
+            return;
+        }
+        sb.append(key);
+        sb.append(": ");
+        sb.append(value);
+        if (newLine) {
+            sb.append("\n");
+        }
+    }
+
+    private void appendDetail(StringBuilder sb, String key, int value, boolean newLine) {
+        sb.append(key);
+        sb.append(": ");
+        sb.append(value);
+        if (newLine) {
+            sb.append("\n");
+        }
+    }
+
+    private void appendDetail(StringBuilder sb, String key, double value, boolean newLine) {
+        sb.append(key);
+        sb.append(": ");
+        sb.append(value);
+        if (newLine) {
+            sb.append("\n");
+        }
     }
 
 }
