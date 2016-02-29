@@ -19,6 +19,7 @@
     xmlns:bind="http://schemas.android.com/apk/res-auto">
     <data>
         <variable name="earthquakeModel" type="speakman.whatsshakingnz.ui.viewmodel.EarthquakeOverviewViewModel"/>
+        <variable name="earthquakeDetail" type="speakman.whatsshakingnz.ui.viewmodel.EarthquakeExpandedDetailViewModel"/>
     </data>
     <ScrollView
         android:layout_width="match_parent"
@@ -42,6 +43,7 @@
             <TextView
                 android:id="@+id/expandable_detail_text"
                 android:visibility="gone"
+                android:text="@{earthquakeDetail.detail}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
