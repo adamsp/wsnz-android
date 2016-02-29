@@ -17,55 +17,19 @@
 package speakman.whatsshakingnz.ui.viewmodel;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.test.AndroidTestCase;
 
 import org.joda.time.DateTime;
 
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.model.Earthquake;
+import speakman.whatsshakingnz.model.TestEarthquake;
 
 /**
  * Created by Adam on 12/12/2015.
  */
 public class EarthquakeOverviewViewModelTests extends AndroidTestCase {
-
-    private static class TestEarthquake implements Earthquake {
-
-        @Override
-        public long getOriginTime() {
-            return 0;
-        }
-
-        @Override
-        public long getUpdatedTime() {
-            return 0;
-        }
-
-        @Override
-        public double getLatitude() {
-            return 0;
-        }
-
-        @Override
-        public double getLongitude() {
-            return 0;
-        }
-
-        @Override
-        public double getMagnitude() {
-            return 0;
-        }
-
-        @Override
-        public double getDepth() {
-            return 0;
-        }
-
-        @Override
-        public String getId() {
-            return null;
-        }
-    }
 
     public void testRoundedUpMagnitudeIsReturned() {
         Earthquake roundUpEarthquake = new TestEarthquake() {
