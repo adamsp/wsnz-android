@@ -31,7 +31,6 @@
             android:theme="@style/AppTheme.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -48,7 +47,12 @@
         <activity
             android:name=".ui.activities.MapActivity"
             android:label="@string/title_activity_map"
-            android:theme="@style/AppTheme.DetailActivity" />
+            android:theme="@style/AppTheme.MapActivity" />
+
+        <activity
+            android:name=".ui.activities.SettingsActivity"
+            android:label="@string/title_activity_map"
+            android:theme="@style/AppTheme.SettingsActivity" />
 
         <service
             android:name=".network.NetworkRunnerService"

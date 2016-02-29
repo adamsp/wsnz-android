@@ -122,6 +122,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.menu_action_google_licences:
                 LicensesFragment.displayGooglePlayServicesLicensesFragment(getFragmentManager(), true);
                 return true;
+            case R.id.menu_action_settings:
+                startActivity(SettingsActivity.createIntent(this));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

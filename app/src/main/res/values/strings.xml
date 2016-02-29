@@ -38,6 +38,11 @@
     <string name="dialog_title_google_licenses">Google Services licenses</string>
     <string name="dialog_title_open_source_licenses">Open Source licenses</string>
     <string name="dialog_button_close">Close</string>
+    <string name="preferences_notifications_title">Notifications enabled</string>
+    <string name="preferences_notifications_sound_title">Sound enabled</string>
+    <string name="preferences_notifications_vibrate_title">Vibration enabled</string>
+    <string name="preferences_notifications_summary_light_title">Light enabled</string>
+
     <plurals name="overview_time_passed_seconds">
         <item quantity="one">%d second ago</item>
         <item quantity="other">%d seconds ago</item>

@@ -38,5 +38,5 @@
 
     <style name="AppTheme.DetailActivity"/>
     <style name="AppTheme.MapActivity"/>
-
+    <style name="AppTheme.SettingsActivity"/>
 </resources>
