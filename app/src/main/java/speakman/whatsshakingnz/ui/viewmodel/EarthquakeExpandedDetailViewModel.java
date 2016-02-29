@@ -23,6 +23,9 @@ import android.text.style.StyleSpan;
 
 import org.joda.time.DateTime;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import speakman.whatsshakingnz.model.Earthquake;
 
 /**
@@ -32,6 +35,8 @@ public class EarthquakeExpandedDetailViewModel {
 
     private final Earthquake earthquake;
 
+    public static final DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
+
     public EarthquakeExpandedDetailViewModel(Earthquake earthquake) {
         this.earthquake = earthquake;
     }
@@ -39,8 +44,10 @@ public class EarthquakeExpandedDetailViewModel {
     public CharSequence getDetail() {
         SpannableStringBuilder sb = new SpannableStringBuilder();
         this.appendDetail(sb, "ID", earthquake.getId(), true);
-        this.appendDetail(sb, "Origin Time", new DateTime(earthquake.getOriginTime()), true);
-        this.appendDetail(sb, "Updated Time", new DateTime(earthquake.getUpdatedTime()), true);
+        long originTime = earthquake.getOriginTime();
+        this.appendDetail(sb, "Origin Time", originTime == 0 ? null : new DateTime(originTime), true);
+        long updatedTime = earthquake.getUpdatedTime();
+        this.appendDetail(sb, "Updated Time", updatedTime == 0 ? null : new DateTime(updatedTime), true);
         this.appendDetail(sb, "Latitude", earthquake.getLatitude(), true);
         this.appendDetail(sb, "Longitude", earthquake.getLongitude(), true);
         this.appendDetail(sb, "Depth (kilometers)", earthquake.getDepth(), true);
@@ -78,7 +85,7 @@ public class EarthquakeExpandedDetailViewModel {
             return;
         }
         appendKey(sb, key);
-        sb.append(value.toString());
+        sb.append(dateFormat.format(value.toDate()));
         if (newLine) {
             sb.append("\n");
         }
