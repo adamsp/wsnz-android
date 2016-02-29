@@ -42,6 +42,7 @@
                 android:layout_gravity="right"/>
             <TextView
                 android:id="@+id/expandable_detail_text"
+                android:padding="8dp"
                 android:visibility="gone"
                 android:text="@{earthquakeDetail.detail}"
                 android:layout_width="match_parent"
