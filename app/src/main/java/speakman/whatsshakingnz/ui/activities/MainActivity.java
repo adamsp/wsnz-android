@@ -179,6 +179,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void requestNewEarthquakes() {
-        startService(new Intent(this, NetworkRunnerService.class));
+        NetworkRunnerService.requestLatest(this);
     }
 }

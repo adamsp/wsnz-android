@@ -57,6 +57,15 @@
         <service
             android:name=".network.NetworkRunnerService"
             android:exported="false" />
+
+        <service
+            android:name=".network.SyncService"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

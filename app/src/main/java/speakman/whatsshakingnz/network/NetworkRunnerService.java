@@ -17,6 +17,7 @@
 package speakman.whatsshakingnz.network;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 
 import javax.inject.Inject;
@@ -33,6 +34,10 @@ import speakman.whatsshakingnz.model.realm.RealmEarthquake;
  * Created by Adam on 2/13/2016.
  */
 public class NetworkRunnerService extends IntentService {
+
+    public static void requestLatest(Context ctx) {
+        ctx.startService(new Intent(ctx, NetworkRunnerService.class));
+    }
 
     @Inject
     RequestManager requestManager;
