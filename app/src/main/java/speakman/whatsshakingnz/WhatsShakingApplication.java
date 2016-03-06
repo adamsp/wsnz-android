@@ -26,6 +26,7 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import speakman.whatsshakingnz.analytics.Forest;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
+import speakman.whatsshakingnz.network.SyncService;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;
 import speakman.whatsshakingnz.ui.activities.MapActivity;
@@ -51,6 +52,7 @@ public class WhatsShakingApplication extends Application {
         component = DaggerAppComponent.create();
         component.inject(this);
         setupRealm();
+        scheduleSync();
     }
 
     public void inject(NetworkRunnerService service) {
@@ -68,5 +70,9 @@ public class WhatsShakingApplication extends Application {
 
     private void setupRealm() {
         Realm.setDefaultConfiguration(realmConfiguration);
+    }
+
+    private void scheduleSync() {
+        SyncService.scheduleSync();
     }
 }

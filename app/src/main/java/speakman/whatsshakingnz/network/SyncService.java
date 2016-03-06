@@ -25,6 +25,16 @@ import com.google.android.gms.gcm.TaskParams;
  */
 public class SyncService extends GcmTaskService {
 
+    public static void scheduleSync() {
+
+    }
+
+    @Override
+    public void onInitializeTasks() {
+        super.onInitializeTasks();
+        SyncService.scheduleSync();
+    }
+
     @Override
     public int onRunTask(TaskParams taskParams) {
         NetworkRunnerService.requestLatest(this);
