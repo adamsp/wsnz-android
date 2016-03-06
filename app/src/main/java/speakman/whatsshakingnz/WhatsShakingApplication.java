@@ -45,8 +45,9 @@ public class WhatsShakingApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Timber.plant(Forest.uproot());
         instance = this;
+        Timber.plant(Forest.uproot());
+        Once.initialise(this);
         JodaTimeAndroid.init(this);
         component = DaggerAppComponent.create();
         component.inject(this);
