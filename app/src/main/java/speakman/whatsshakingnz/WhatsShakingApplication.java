@@ -73,6 +73,6 @@ public class WhatsShakingApplication extends Application {
     }
 
     private void scheduleSync() {
-        SyncService.scheduleSync();
+        SyncService.scheduleSync(this);
     }
 }
