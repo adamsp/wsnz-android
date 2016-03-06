@@ -18,6 +18,8 @@ package speakman.whatsshakingnz;
 
 import android.app.Application;
 
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import javax.inject.Inject;
@@ -25,6 +27,7 @@ import javax.inject.Inject;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import jonathanfinerty.once.Once;
+import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.analytics.Forest;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
 import speakman.whatsshakingnz.network.SyncService;
@@ -47,6 +50,7 @@ public class WhatsShakingApplication extends Application {
         super.onCreate();
         instance = this;
         Timber.plant(Forest.uproot());
+        Analytics.initialize(this);
         Once.initialise(this);
         JodaTimeAndroid.init(this);
         component = DaggerAppComponent.create();
