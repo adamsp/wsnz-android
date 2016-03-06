@@ -18,8 +18,6 @@ package speakman.whatsshakingnz;
 
 import android.app.Application;
 
-import com.crashlytics.android.Crashlytics;
-import io.fabric.sdk.android.Fabric;
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import javax.inject.Inject;
