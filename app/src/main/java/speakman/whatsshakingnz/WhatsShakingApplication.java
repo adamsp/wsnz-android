@@ -24,12 +24,10 @@ import javax.inject.Inject;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import jonathanfinerty.once.Once;
 import speakman.whatsshakingnz.analytics.Forest;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
 import speakman.whatsshakingnz.network.SyncService;
-import speakman.whatsshakingnz.ui.activities.DetailActivity;
-import speakman.whatsshakingnz.ui.activities.MainActivity;
-import speakman.whatsshakingnz.ui.activities.MapActivity;
 import timber.log.Timber;
 
 /**
@@ -37,6 +35,7 @@ import timber.log.Timber;
  */
 public class WhatsShakingApplication extends Application {
 
+    private static final String INIT_SYNC_ON_INSTALL = "speakman.whatsshakingnz.INIT_SYNC_ON_INSTALL";
     private static WhatsShakingApplication instance;
     private AppComponent component;
 
@@ -73,6 +72,10 @@ public class WhatsShakingApplication extends Application {
     }
 
     private void scheduleSync() {
-        SyncService.scheduleSync(this);
+        if (!Once.beenDone(Once.THIS_APP_INSTALL, INIT_SYNC_ON_INSTALL)) {
+            Timber.i("Scheduling background sync on first-install.");
+            SyncService.scheduleSync(this);
+            Once.markDone(INIT_SYNC_ON_INSTALL);
+        }
     }
 }
