@@ -24,12 +24,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.network.geonet.GeonetFeature;
 import speakman.whatsshakingnz.network.geonet.GeonetResponse;
 import speakman.whatsshakingnz.network.geonet.GeonetService;
+import timber.log.Timber;
 
 /**
  * Created by Adam on 15-05-31.
@@ -61,28 +63,55 @@ public class RequestManager {
         return Observable.create(new Observable.OnSubscribe<Earthquake>() {
             @Override
             public void call(Subscriber<? super Earthquake> subscriber) {
-                List<GeonetFeature> features;
-                do {
-                    features = getMostRecentEvents().getFeatures();
-                    for (GeonetFeature feature : features) {
-                        subscriber.onNext(feature);
+                String filter = null;
+                try {
+                    List<GeonetFeature> features;
+                    do {
+                        filter = getMostRecentEventsFilter();
+                        GeonetResponse response = service.getEarthquakes(filter, MAX_EVENTS_PER_REQUEST);
+                        features = response.getFeatures();
+                        for (GeonetFeature feature : features) {
+                            subscriber.onNext(feature);
+                        }
+                        if (features.size() > 0) {
+                            GeonetFeature lastFeature = features.get(features.size() - 1);
+                            timeStore.saveMostRecentUpdateTime(new DateTime(lastFeature.getUpdatedTime()));
+                        }
+                    } while (features.size() >= MAX_EVENTS_PER_REQUEST);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    if (e instanceof RetrofitError) {
+                        switch (((RetrofitError) e).getKind()) {
+                            case NETWORK: // IO Exception
+                                Timber.d(e, "Network error while contacting Geonet.");
+                                subscriber.onCompleted();
+                                break;
+                            case CONVERSION: // Deserialization exception
+                                Timber.e(e, "Unexpected error deserializing Geonet response using filter [[ %s ]]", filter);
+                                subscriber.onError(e);
+                                break;
+                            case HTTP: // Non-200 Status
+                                Timber.w(e, "Non-200 response from Geonet using filter [[ %s ]]", filter);
+                                subscriber.onError(e);
+                                break;
+                            case UNEXPECTED: // Internal error. Best practice is to re-throw so the app crashes.
+                                Timber.e(e, "Unexpected internal error in Retrofit using filter [[ %s ]]. Crashing application.", filter);
+                                throw e;
+                        }
+                    } else {
+                        Timber.e(e, "Unexpected error occurred while retrieving updated Earthquakes, using filter [[ %s ]]", filter);
+                        subscriber.onError(e);
                     }
-                    if (features.size() > 0) {
-                        GeonetFeature lastFeature = features.get(features.size() - 1);
-                        timeStore.saveMostRecentUpdateTime(new DateTime(lastFeature.getUpdatedTime()));
-                    }
-                } while (features.size() >= MAX_EVENTS_PER_REQUEST);
-                subscriber.onCompleted();
+                }
             }
         });
     }
 
-    private GeonetResponse getMostRecentEvents() {
+    private String getMostRecentEventsFilter() {
         DateTime mostRecentUpdateTime = timeStore.getMostRecentUpdateTime();
         if (mostRecentUpdateTime == null) {
             mostRecentUpdateTime = DateTime.now().minusDays(DAYS_BEFORE_TODAY);
         }
-        String filter = String.format(GeonetService.FILTER_FORMAT_MOST_RECENT_UPDATE, mostRecentUpdateTime.toString(updateTimeFormatter));
-        return service.getEarthquakes(filter, MAX_EVENTS_PER_REQUEST);
+        return String.format(GeonetService.FILTER_FORMAT_MOST_RECENT_UPDATE, mostRecentUpdateTime.toString(updateTimeFormatter));
     }
 }
