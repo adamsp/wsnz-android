@@ -68,7 +68,7 @@ public class NetworkRunnerService extends IntentService {
         }).doOnError(new Action1<Throwable>() {
             @Override
             public void call(Throwable throwable) {
-                realm.cancelTransaction();
+                realm.commitTransaction(); // We need to save everything that came through, even on error.
             }
         }).subscribe(new Action1<RealmEarthquake>() {
             @Override
