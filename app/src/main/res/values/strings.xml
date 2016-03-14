@@ -60,4 +60,14 @@
         <item quantity="other">%d days ago</item>
     </plurals>
 
+    <plurals name="notification_title">
+        <item quantity="one">%.1f magnitude earthquake detected</item>
+        <item quantity="other">%d large earthquakes detected</item>
+    </plurals>
+
+    <plurals name="notification_ticker">
+        <item quantity="one">%.1f magnitude earthquake detected</item>
+        <item quantity="other">%d large earthquakes detected</item>
+    </plurals>
+
 </resources>

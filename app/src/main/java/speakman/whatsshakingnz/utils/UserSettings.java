@@ -33,7 +33,11 @@ public interface UserSettings {
 
     boolean notificationLEDEnabled();
 
+    double minimumNotificationMagnitude();
+
     class UserSettingsImpl implements  UserSettings {
+
+        private static final double MINIMUM_NOTIFICATION_MAGNITUDE = 4.0;
 
         // These are carried over from v1. Not all are used in v2 (yet?) but are preserved here anyway.
         private static final String KEY_PREF_MIN_DISPLAY_MAGNITUDE = "pref_minDisplayMagnitude";
@@ -52,20 +56,29 @@ public interface UserSettings {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         }
 
+        @Override
         public boolean notificationsEnabled() {
             return sharedPreferences.getBoolean(KEY_PREF_ALLOW_BG_NOTIFICATIONS, true);
         }
 
+        @Override
         public boolean notificationSoundEnabled() {
             return sharedPreferences.getBoolean(KEY_PREF_BG_NOTIFICATIONS_SOUND, true);
         }
 
+        @Override
         public boolean notificationVibrationEnabled() {
             return sharedPreferences.getBoolean(KEY_PREF_BG_NOTIFICATIONS_VIBRATE, true);
         }
 
+        @Override
         public boolean notificationLEDEnabled() {
             return sharedPreferences.getBoolean(KEY_PREF_BG_NOTIFICATIONS_LIGHT, true);
+        }
+
+        @Override
+        public double minimumNotificationMagnitude() {
+            return MINIMUM_NOTIFICATION_MAGNITUDE;
         }
     }
 }

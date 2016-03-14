@@ -35,10 +35,18 @@ import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 import speakman.whatsshakingnz.ui.views.ExpandableDetailCard;
+import timber.log.Timber;
 
 public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback, RealmChangeListener {
 
     public static String EXTRA_EARTHQUAKE = "speakman.whatsshakingnz.ui.activities.DetailActivity.EXTRA_EARTHQUAKE";
+    public static String EXTRA_FROM_NOTIFICATION = "speakman.whatsshakingnz.ui.activities.DetailActivity.EXTRA_FROM_NOTIFICATION";
+
+    public static Intent createIntentFromNotification(Context ctx, Earthquake earthquake) {
+        Intent intent = createIntent(ctx, earthquake);
+        intent.putExtra(EXTRA_FROM_NOTIFICATION, true);
+        return intent;
+    }
 
     public static Intent createIntent(Context ctx, Earthquake earthquake) {
         Intent intent = new Intent(ctx, DetailActivity.class);
@@ -62,13 +70,23 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        refreshUI();
+        if (savedInstanceState == null && getIntent().getBooleanExtra(EXTRA_FROM_NOTIFICATION, false)) {
+            Timber.i("User clicked single-earthquake detail notification.");
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        Timber.i("User clicked single-earthquake detail notification.");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mapView.onResume();
+        refreshUI();
     }
 
     @Override

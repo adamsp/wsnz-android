@@ -21,6 +21,7 @@ import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import speakman.whatsshakingnz.network.RequestTimeStore;
+import speakman.whatsshakingnz.utils.NotificationUtil;
 import speakman.whatsshakingnz.utils.UserSettings;
 
 /**
@@ -41,5 +42,10 @@ public class AppModule {
     @Provides
     UserSettings provideUserSettings(Context ctx) {
         return new UserSettings.UserSettingsImpl(ctx);
+    }
+
+    @Provides
+    NotificationUtil provideNotificationUtil(Context ctx, UserSettings settings) {
+        return new NotificationUtil(ctx, settings);
     }
 }
