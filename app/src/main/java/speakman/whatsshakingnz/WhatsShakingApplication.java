@@ -62,6 +62,11 @@ public class WhatsShakingApplication extends Application {
         component.inject(service);
     }
 
+    public void inject(SyncService service) {
+        logInjection(service);
+        component.inject(service);
+    }
+
     public static WhatsShakingApplication getInstance() {
         return instance;
     }

@@ -21,6 +21,7 @@ import speakman.whatsshakingnz.dagger.AppScope;
 import speakman.whatsshakingnz.model.ModelModule;
 import speakman.whatsshakingnz.network.NetworkModule;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
+import speakman.whatsshakingnz.network.SyncService;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;
 import speakman.whatsshakingnz.ui.activities.MapActivity;
@@ -32,5 +33,6 @@ import speakman.whatsshakingnz.ui.activities.MapActivity;
 @Component(modules = { NetworkModule.class, ModelModule.class, AppModule.class })
 public interface AppComponent {
     void inject(NetworkRunnerService service);
+    void inject(SyncService service);
     void inject(WhatsShakingApplication application);
 }

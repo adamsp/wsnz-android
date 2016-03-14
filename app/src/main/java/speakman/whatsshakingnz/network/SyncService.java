@@ -23,6 +23,19 @@ import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.TaskParams;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import io.realm.Realm;
+import rx.functions.Action0;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import speakman.whatsshakingnz.WhatsShakingApplication;
+import speakman.whatsshakingnz.model.Earthquake;
+import speakman.whatsshakingnz.model.realm.RealmEarthquake;
+import speakman.whatsshakingnz.utils.UserSettings;
 import timber.log.Timber;
 
 /**
@@ -30,9 +43,10 @@ import timber.log.Timber;
  */
 public class SyncService extends GcmTaskService {
 
-    public static long SYNC_PERIOD_SECONDS = 60 * 60; // one hour
+    public static final long SYNC_PERIOD_SECONDS = 60 * 60; // one hour
+    public static final double MINIMUM_NOTIFICATION_MAGNITUDE = 4.0;
 
-    private static String PERIODIC_SYNC_TAG = "speakman.whatsshakingnz.network.SyncService.PERIODIC_SYNC";
+    private static final String PERIODIC_SYNC_TAG = "speakman.whatsshakingnz.network.SyncService.PERIODIC_SYNC";
 
     public static void scheduleSync(Context ctx) {
         Timber.d("Scheduling periodic sync.");
@@ -48,6 +62,14 @@ public class SyncService extends GcmTaskService {
         gcmNetworkManager.schedule(periodicTask);
     }
 
+    @Inject
+    RequestManager requestManager;
+
+    public SyncService() {
+        super();
+        WhatsShakingApplication.getInstance().inject(this);
+    }
+
     @Override
     public void onInitializeTasks() {
         super.onInitializeTasks();
@@ -60,8 +82,52 @@ public class SyncService extends GcmTaskService {
     public int onRunTask(TaskParams taskParams) {
         if (PERIODIC_SYNC_TAG.equals(taskParams.getTag())) {
             Timber.d("Requesting periodic sync.");
-            NetworkRunnerService.requestLatest(this);
+            requestNewEarthquakes();
         }
         return GcmNetworkManager.RESULT_SUCCESS;
+    }
+
+    private void requestNewEarthquakes() {
+        final List<RealmEarthquake> earthquakesToNotifyAbout = new ArrayList<>();
+        final Realm realm = Realm.getDefaultInstance();
+        requestManager.retrieveNewEarthquakes().map(new Func1<Earthquake, RealmEarthquake>() {
+            @Override
+            public RealmEarthquake call(Earthquake earthquake) {
+                return new RealmEarthquake(earthquake);
+            }
+        }).doOnSubscribe(new Action0() {
+            @Override
+            public void call() {
+                realm.beginTransaction();
+            }
+        }).doOnCompleted(new Action0() {
+            @Override
+            public void call() {
+                realm.commitTransaction();
+            }
+        }).doOnError(new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                realm.commitTransaction(); // We need to save everything that came through, even on error.
+            }
+        }).subscribe(new Action1<RealmEarthquake>() {
+            @Override
+            public void call(RealmEarthquake realmEarthquake) {
+                realmEarthquake = realm.copyToRealmOrUpdate(realmEarthquake);
+                if (realmEarthquake.getMagnitude() > MINIMUM_NOTIFICATION_MAGNITUDE) {
+                    earthquakesToNotifyAbout.add(realmEarthquake);
+                }
+            }
+        });
+        realm.close();
+        notifyUserAboutEarthquakes(earthquakesToNotifyAbout);
+    }
+
+    private void notifyUserAboutEarthquakes(List<? extends Earthquake> earthquakes) {
+        UserSettings settings = new UserSettings(this);
+        if (!settings.notificationsEnabled() || earthquakes.size() == 0) {
+            return;
+        }
+        // Else notify
     }
 }
