@@ -24,12 +24,15 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.model.Earthquake;
+import speakman.whatsshakingnz.model.LocalPlace;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;
 
@@ -53,7 +56,13 @@ public class NotificationUtil {
         String tickerText, titleText, contentText;
         tickerText = context.getResources().getQuantityString(R.plurals.notification_ticker, 1, earthquake.getMagnitude());
         titleText = context.getResources().getQuantityString(R.plurals.notification_title, 1, earthquake.getMagnitude());
-        contentText = "This is content text";
+
+        LatLng earthquakeLocation = new LatLng(earthquake.getLatitude(), earthquake.getLongitude());
+        LocalPlace nearestTown = DistanceUtil.getClosestPlace(earthquakeLocation);
+        double distanceToNearestTown = DistanceUtil.distanceBetweenPlaces(nearestTown.location, earthquakeLocation);
+        DistanceUtil.Direction directionToNearestTown = DistanceUtil.getDirection(nearestTown.location, earthquakeLocation);
+        contentText = context.getString(R.string.notification_content_single_location,
+                distanceToNearestTown, directionToNearestTown, nearestTown.name);
 
         Notification.Builder builder = new Notification.Builder(context);
         buildCommonNotificationElements(builder);
@@ -81,7 +90,7 @@ public class NotificationUtil {
         String tickerText, titleText, contentText;
         tickerText = context.getResources().getQuantityString(R.plurals.notification_ticker, earthquakes.size(), earthquakes.size());
         titleText = context.getResources().getQuantityString(R.plurals.notification_title, earthquakes.size(), earthquakes.size());
-        contentText = "This is content text";
+        contentText = context.getString(R.string.notification_content_multiple_locations);
 
         Notification.Builder builder = new Notification.Builder(context);
         buildCommonNotificationElements(builder);

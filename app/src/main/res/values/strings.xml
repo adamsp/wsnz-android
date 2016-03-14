@@ -42,6 +42,8 @@
     <string name="preferences_notifications_sound_title">Sound enabled</string>
     <string name="preferences_notifications_vibrate_title">Vibration enabled</string>
     <string name="preferences_notifications_summary_light_title">Light enabled</string>
+    <string name="notification_content_single_location">%1$.0f km %2$s of %3$s</string>
+    <string name="notification_content_multiple_locations">Multiple locations</string>
 
     <plurals name="overview_time_passed_seconds">
         <item quantity="one">%d second ago</item>
@@ -61,13 +63,13 @@
     </plurals>
 
     <plurals name="notification_title">
-        <item quantity="one">%.1f magnitude earthquake detected</item>
-        <item quantity="other">%d large earthquakes detected</item>
+        <item quantity="one">%.1f earthquake detected</item>
+        <item quantity="other">%d significant earthquakes detected</item>
     </plurals>
 
     <plurals name="notification_ticker">
-        <item quantity="one">%.1f magnitude earthquake detected</item>
-        <item quantity="other">%d large earthquakes detected</item>
+        <item quantity="one">%.1f earthquake detected</item>
+        <item quantity="other">%d significant earthquakes detected</item>
     </plurals>
 
 </resources>
