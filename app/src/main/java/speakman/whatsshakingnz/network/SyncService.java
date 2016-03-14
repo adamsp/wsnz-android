@@ -16,7 +16,10 @@
 
 package speakman.whatsshakingnz.network;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
@@ -28,6 +31,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.Lazy;
 import io.realm.Realm;
 import rx.functions.Action0;
 import rx.functions.Action1;
@@ -35,6 +39,7 @@ import rx.functions.Func1;
 import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
+import speakman.whatsshakingnz.utils.NotificationUtil;
 import speakman.whatsshakingnz.utils.UserSettings;
 import timber.log.Timber;
 
@@ -44,7 +49,6 @@ import timber.log.Timber;
 public class SyncService extends GcmTaskService {
 
     public static final long SYNC_PERIOD_SECONDS = 60 * 60; // one hour
-    public static final double MINIMUM_NOTIFICATION_MAGNITUDE = 4.0;
 
     private static final String PERIODIC_SYNC_TAG = "speakman.whatsshakingnz.network.SyncService.PERIODIC_SYNC";
 
@@ -67,6 +71,9 @@ public class SyncService extends GcmTaskService {
 
     @Inject
     UserSettings userSettings;
+
+    @Inject
+    Lazy<NotificationUtil> notificationUtil;
 
     public SyncService() {
         super();
@@ -117,7 +124,7 @@ public class SyncService extends GcmTaskService {
             @Override
             public void call(RealmEarthquake realmEarthquake) {
                 realmEarthquake = realm.copyToRealmOrUpdate(realmEarthquake);
-                if (realmEarthquake.getMagnitude() > MINIMUM_NOTIFICATION_MAGNITUDE) {
+                if (realmEarthquake.getMagnitude() > userSettings.minimumNotificationMagnitude()) {
                     earthquakesToNotifyAbout.add(realmEarthquake);
                 }
             }
@@ -127,10 +134,18 @@ public class SyncService extends GcmTaskService {
 
     }
 
-    private void notifyUserAboutEarthquakes(List<? extends Earthquake> earthquakes) {
+    private void notifyUserAboutEarthquakes(@NonNull List<? extends Earthquake> earthquakes) {
         if (!userSettings.notificationsEnabled() || earthquakes.size() == 0) {
             return;
         }
-        // Else notify
+        Notification notification;
+        if (earthquakes.size() == 1) {
+            notification = notificationUtil.get().notificationForSingleEarthquake(earthquakes.get(0));
+        } else {
+            notification = notificationUtil.get().notificationForMultipleEarthquakes(earthquakes);
+        }
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(NotificationUtil.NOTIFICATION_ID, notification);
+        Timber.d("Showing notification for %d earthquakes", earthquakes.size());
     }
 }
