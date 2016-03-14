@@ -21,6 +21,7 @@ import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import speakman.whatsshakingnz.network.RequestTimeStore;
+import speakman.whatsshakingnz.utils.UserSettings;
 
 /**
  * Created by Adam on 15-06-13.
@@ -35,5 +36,10 @@ public class AppModule {
     @Provides
     Context provideApplicationContext() {
         return WhatsShakingApplication.getInstance();
+    }
+
+    @Provides
+    UserSettings provideUserSettings(Context ctx) {
+        return new UserSettings.UserSettingsImpl(ctx);
     }
 }

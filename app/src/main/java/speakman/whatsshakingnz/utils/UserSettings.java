@@ -23,37 +23,49 @@ import android.preference.PreferenceManager;
 /**
  * Created by Adam on 2/29/2016.
  */
-public class UserSettings {
+public interface UserSettings {
 
-    // These are carried over from v1. Not all are used in v2 (yet?) but are preserved here anyway.
-    private static final String KEY_PREF_MIN_DISPLAY_MAGNITUDE = "pref_minDisplayMagnitude";
-    private static final String KEY_PREF_MIN_HIGHLIGHT_MAGNITUDE = "pref_minHighlightMagnitude";
-    private static final String KEY_PREF_NUM_QUAKES_TO_SHOW = "pref_numQuakesToShow";
-    private static final String KEY_PREF_BG_NOTIFICATIONS_FREQ = "pref_backgroundNotificationsFrequency";
-    private static final String KEY_PREF_ALLOW_BG_NOTIFICATIONS = "pref_allowBackgroundNotifications";
-    private static final String KEY_PREF_BG_NOTIFICATIONS_SOUND = "pref_backgroundNotificationsSound";
-    private static final String KEY_PREF_BG_NOTIFICATIONS_VIBRATE = "pref_backgroundNotificationsVibrate";
-    private static final String KEY_PREF_BG_NOTIFICATIONS_LIGHT = "pref_backgroundNotificationsLight";
-    private static final String KEY_PREF_BG_NOTIFICATIONS_REVIEWED_ONLY = "pref_backgroundNotificationsReviewed";
+    boolean notificationsEnabled();
 
-    private SharedPreferences sharedPreferences;
-    public UserSettings(Context context) {
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    }
+    boolean notificationSoundEnabled();
 
-    public boolean notificationsEnabled() {
-        return sharedPreferences.getBoolean(KEY_PREF_ALLOW_BG_NOTIFICATIONS, true);
-    }
+    boolean notificationVibrationEnabled();
 
-    public boolean notificationSoundEnabled() {
-        return sharedPreferences.getBoolean(KEY_PREF_BG_NOTIFICATIONS_SOUND, true);
-    }
+    boolean notificationLEDEnabled();
 
-    public boolean notificationVibrationEnabled() {
-        return sharedPreferences.getBoolean(KEY_PREF_BG_NOTIFICATIONS_VIBRATE, true);
-    }
+    class UserSettingsImpl implements  UserSettings {
 
-    public boolean notificationLEDEnabled() {
-        return sharedPreferences.getBoolean(KEY_PREF_BG_NOTIFICATIONS_LIGHT, true);
+        // These are carried over from v1. Not all are used in v2 (yet?) but are preserved here anyway.
+        private static final String KEY_PREF_MIN_DISPLAY_MAGNITUDE = "pref_minDisplayMagnitude";
+        private static final String KEY_PREF_MIN_HIGHLIGHT_MAGNITUDE = "pref_minHighlightMagnitude";
+        private static final String KEY_PREF_NUM_QUAKES_TO_SHOW = "pref_numQuakesToShow";
+        private static final String KEY_PREF_BG_NOTIFICATIONS_FREQ = "pref_backgroundNotificationsFrequency";
+        private static final String KEY_PREF_ALLOW_BG_NOTIFICATIONS = "pref_allowBackgroundNotifications";
+        private static final String KEY_PREF_BG_NOTIFICATIONS_SOUND = "pref_backgroundNotificationsSound";
+        private static final String KEY_PREF_BG_NOTIFICATIONS_VIBRATE = "pref_backgroundNotificationsVibrate";
+        private static final String KEY_PREF_BG_NOTIFICATIONS_LIGHT = "pref_backgroundNotificationsLight";
+        private static final String KEY_PREF_BG_NOTIFICATIONS_REVIEWED_ONLY = "pref_backgroundNotificationsReviewed";
+
+        private SharedPreferences sharedPreferences;
+
+        public UserSettingsImpl(Context context) {
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        }
+
+        public boolean notificationsEnabled() {
+            return sharedPreferences.getBoolean(KEY_PREF_ALLOW_BG_NOTIFICATIONS, true);
+        }
+
+        public boolean notificationSoundEnabled() {
+            return sharedPreferences.getBoolean(KEY_PREF_BG_NOTIFICATIONS_SOUND, true);
+        }
+
+        public boolean notificationVibrationEnabled() {
+            return sharedPreferences.getBoolean(KEY_PREF_BG_NOTIFICATIONS_VIBRATE, true);
+        }
+
+        public boolean notificationLEDEnabled() {
+            return sharedPreferences.getBoolean(KEY_PREF_BG_NOTIFICATIONS_LIGHT, true);
+        }
     }
 }

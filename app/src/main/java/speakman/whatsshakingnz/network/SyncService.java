@@ -65,6 +65,9 @@ public class SyncService extends GcmTaskService {
     @Inject
     RequestManager requestManager;
 
+    @Inject
+    UserSettings userSettings;
+
     public SyncService() {
         super();
         WhatsShakingApplication.getInstance().inject(this);
@@ -121,11 +124,11 @@ public class SyncService extends GcmTaskService {
         });
         realm.close();
         notifyUserAboutEarthquakes(earthquakesToNotifyAbout);
+
     }
 
     private void notifyUserAboutEarthquakes(List<? extends Earthquake> earthquakes) {
-        UserSettings settings = new UserSettings(this);
-        if (!settings.notificationsEnabled() || earthquakes.size() == 0) {
+        if (!userSettings.notificationsEnabled() || earthquakes.size() == 0) {
             return;
         }
         // Else notify
