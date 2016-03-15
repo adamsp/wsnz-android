@@ -18,6 +18,7 @@ package speakman.whatsshakingnz.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -81,6 +82,10 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // If we're looking at a new Earthquake, we need can't animate back to the old one!
+            getWindow().setSharedElementReturnTransition(null);
+        }
         logNotificationClick();
         if (earthquake != null) {
             earthquake.removeChangeListener(this);
