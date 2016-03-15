@@ -43,12 +43,22 @@
         <activity
             android:name=".ui.activities.DetailActivity"
             android:label="@string/title_activity_detail"
-            android:theme="@style/AppTheme.DetailActivity" />
+            android:theme="@style/AppTheme.DetailActivity"
+            android:parentActivityName=".ui.activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="speakman.whatsshakingnz.ui.activities.MainActivity" />
+        </activity>
 
         <activity
             android:name=".ui.activities.MapActivity"
             android:label="@string/title_activity_map"
-            android:theme="@style/AppTheme.MapActivity" />
+            android:theme="@style/AppTheme.MapActivity"
+            android:parentActivityName="speakman.whatsshakingnz.ui.activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="speakman.whatsshakingnz.ui.activities.MainActivity" />
+        </activity>
 
         <activity
             android:name=".ui.activities.SettingsActivity"

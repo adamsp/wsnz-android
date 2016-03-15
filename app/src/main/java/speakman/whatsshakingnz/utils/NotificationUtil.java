@@ -73,11 +73,13 @@ public class NotificationUtil {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             builder.setShowWhen(true);
         }
+
         Intent notificationIntent = DetailActivity.createIntentFromNotification(context, earthquake);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                | Intent.FLAG_ACTIVITY_NEW_TASK);
-        builder.setContentIntent(PendingIntent.getActivity(context, 0, notificationIntent, 0));
+        Intent backIntent = new Intent(context, MainActivity.class);
+        backIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        final PendingIntent pendingIntent = PendingIntent.getActivities(context, 0,
+                new Intent[] {backIntent, notificationIntent}, PendingIntent.FLAG_ONE_SHOT);
+        builder.setContentIntent(pendingIntent);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             return builder.build();
         } else {

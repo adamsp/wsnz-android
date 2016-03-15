@@ -45,6 +45,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     public static Intent createIntentFromNotification(Context ctx, Earthquake earthquake) {
         Intent intent = createIntent(ctx, earthquake);
         intent.putExtra(EXTRA_FROM_NOTIFICATION, true);
+        // Ensure we update the activity if it's already on the top.
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         return intent;
     }
 
@@ -71,7 +73,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (savedInstanceState == null && getIntent().getBooleanExtra(EXTRA_FROM_NOTIFICATION, false)) {
-            Timber.i("User clicked single-earthquake detail notification.");
+            logNotificationClick();
         }
     }
 
@@ -79,7 +81,12 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        Timber.i("User clicked single-earthquake detail notification.");
+        logNotificationClick();
+        if (earthquake != null) {
+            earthquake.removeChangeListener(this);
+        }
+        earthquake = null;
+        refreshUI();
     }
 
     @Override
@@ -154,5 +161,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         Earthquake earthquake = getEarthquake();
         expandableDetailCard.bindEarthquake(earthquake);
         mapView.getMapAsync(this);
+    }
+
+    private void logNotificationClick() {
+        Timber.i("User clicked single-earthquake detail notification.");
     }
 }
