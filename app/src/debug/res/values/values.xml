@@ -16,7 +16,5 @@
   -->
 
 <resources>
-    <item name="map_center_lat" type="string" format="float">-41.0</item>
-    <item name="map_center_long" type="string" format="float">172.0</item>
-    <item name="debug_features_enabled" type="bool">false</item>
+    <item name="debug_features_enabled" type="bool">true</item>
 </resources>

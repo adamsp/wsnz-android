@@ -30,4 +30,14 @@
         android:title="@string/menu_action_google_licenses"
         android:orderInCategory="100"
         app:showAsAction="never"/>
+    <item android:id="@+id/menu_action_show_single_notif"
+          android:title="Show Single Notification"
+          android:orderInCategory="100"
+          android:visible="@bool/debug_features_enabled"
+          app:showAsAction="never"/>
+    <item android:id="@+id/menu_action_show_multi_notif"
+          android:title="Show Multi Notification"
+          android:orderInCategory="100"
+          android:visible="@bool/debug_features_enabled"
+          app:showAsAction="never"/>
 </menu>

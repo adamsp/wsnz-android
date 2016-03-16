@@ -35,4 +35,5 @@ public interface AppComponent {
     void inject(NetworkRunnerService service);
     void inject(SyncService service);
     void inject(WhatsShakingApplication application);
+    void inject(MainActivity activity);
 }

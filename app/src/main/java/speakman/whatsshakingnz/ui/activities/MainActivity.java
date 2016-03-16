@@ -16,6 +16,8 @@
 
 package speakman.whatsshakingnz.ui.activities;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -38,11 +40,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.Lazy;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
+import speakman.whatsshakingnz.BuildConfig;
 import speakman.whatsshakingnz.R;
+import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
@@ -50,6 +57,7 @@ import speakman.whatsshakingnz.ui.DividerItemDecoration;
 import speakman.whatsshakingnz.ui.EarthquakeListAdapter;
 import speakman.whatsshakingnz.ui.LicensesFragment;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
+import speakman.whatsshakingnz.utils.NotificationUtil;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, RealmChangeListener {
@@ -70,9 +78,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private List<Marker> mapMarkers = new ArrayList<>();
     private RealmResults<RealmEarthquake> earthquakes;
 
+    @Inject
+    Lazy<NotificationUtil> notiticationUtil;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((WhatsShakingApplication) getApplication()).inject(this);
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.activity_main_toolbar));
         realm = Realm.getDefaultInstance();
@@ -140,6 +152,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.menu_action_settings:
                 startActivity(SettingsActivity.createIntent(this));
                 return true;
+            case R.id.menu_action_show_single_notif:
+                showSingleNotif();
+                return true;
+            case R.id.menu_action_show_multi_notif:
+                showMultiNotif();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -200,4 +218,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void logNotificationClick() {
         Timber.i("User clicked multi-earthquake detail notification.");
     }
+
+//region Debug Features
+    private void showSingleNotif() {
+        if(!BuildConfig.DEBUG) {
+            return;
+        }
+        List<? extends Earthquake> earthquakes = getEarthquakes();
+        if (earthquakes != null && earthquakes.size() > 0) {
+            Notification notification = notiticationUtil.get().notificationForSingleEarthquake(earthquakes.get(0));
+            NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            mgr.notify(NotificationUtil.NOTIFICATION_ID, notification);
+        }
+    }
+
+    private void showMultiNotif() {
+        if(!BuildConfig.DEBUG) {
+            return;
+        }
+        List<? extends Earthquake> earthquakes = getEarthquakes();
+        if (earthquakes != null && earthquakes.size() > 0) {
+            Notification notification = notiticationUtil.get().notificationForMultipleEarthquakes(earthquakes);
+            NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            mgr.notify(NotificationUtil.NOTIFICATION_ID, notification);
+        }
+    }
+//endregion
 }

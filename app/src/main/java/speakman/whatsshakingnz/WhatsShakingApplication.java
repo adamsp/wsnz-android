@@ -29,6 +29,7 @@ import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.analytics.Forest;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
 import speakman.whatsshakingnz.network.SyncService;
+import speakman.whatsshakingnz.ui.activities.MainActivity;
 import timber.log.Timber;
 
 /**
@@ -65,6 +66,11 @@ public class WhatsShakingApplication extends Application {
     public void inject(SyncService service) {
         logInjection(service);
         component.inject(service);
+    }
+
+    public void inject(MainActivity mainActivity) {
+        logInjection(mainActivity);
+        component.inject(mainActivity);
     }
 
     public static WhatsShakingApplication getInstance() {
