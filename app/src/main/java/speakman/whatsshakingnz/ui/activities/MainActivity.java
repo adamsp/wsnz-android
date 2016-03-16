@@ -16,6 +16,7 @@
 
 package speakman.whatsshakingnz.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,8 +50,19 @@ import speakman.whatsshakingnz.ui.DividerItemDecoration;
 import speakman.whatsshakingnz.ui.EarthquakeListAdapter;
 import speakman.whatsshakingnz.ui.LicensesFragment;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, RealmChangeListener {
+
+    public static String EXTRA_FROM_NOTIFICATION = "speakman.whatsshakingnz.ui.activities.MainActivity.EXTRA_FROM_NOTIFICATION";
+    public static Intent createIntentFromNotification(Context ctx) {
+        Intent intent = new Intent(ctx, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(EXTRA_FROM_NOTIFICATION, true);
+        return intent;
+    }
 
     private Realm realm;
     private MapView map;
@@ -75,6 +87,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         dataAdapter.updateList(realm.allObjectsSorted(RealmEarthquake.class, "originTime", Sort.DESCENDING));
         map.getMapAsync(this);
         requestNewEarthquakes();
+        if (savedInstanceState == null && getIntent().getBooleanExtra(EXTRA_FROM_NOTIFICATION, false)) {
+            logNotificationClick();
+        }
     }
 
     @Override
@@ -180,5 +195,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void requestNewEarthquakes() {
         NetworkRunnerService.requestLatest(this);
+    }
+
+    private void logNotificationClick() {
+        Timber.i("User clicked multi-earthquake detail notification.");
     }
 }
