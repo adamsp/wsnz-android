@@ -22,15 +22,17 @@ import android.support.annotation.Nullable;
 
 import org.joda.time.DateTime;
 
+import speakman.whatsshakingnz.network.NotificationTimeStore;
 import speakman.whatsshakingnz.network.RequestTimeStore;
 
 /**
  * Created by Adam on 15-06-07.
  */
-public class InternalPreferences implements RequestTimeStore {
+public class InternalPreferences implements RequestTimeStore, NotificationTimeStore {
 
     private static final String PREFERENCES_FILENAME = "speakman.whatsshakingnz.InternalPreferences.PREFERENCES_FILENAME";
     private static final String KEY_MOST_RECENT_REQUEST_TIME = "speakman.whatsshakingnz.InternalPreferences.KEY_MOST_RECENT_REQUEST_TIME";
+    private static final String KEY_MOST_RECENTLY_SEEN_TIME = "speakman.whatsshakingnz.InternalPreferences.KEY_MOST_RECENTLY_SEEN_TIME";
 
     private SharedPreferences sharedPrefs;
 
@@ -52,6 +54,25 @@ public class InternalPreferences implements RequestTimeStore {
     public DateTime getMostRecentUpdateTime() {
         if (sharedPrefs.contains(KEY_MOST_RECENT_REQUEST_TIME)) {
             return new DateTime(sharedPrefs.getLong(KEY_MOST_RECENT_REQUEST_TIME, 0));
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void saveMostRecentlySeenEventOriginTime(@Nullable DateTime dateTime) {
+        if (dateTime == null) {
+            sharedPrefs.edit().remove(KEY_MOST_RECENTLY_SEEN_TIME).apply();
+        } else {
+            sharedPrefs.edit().putLong(KEY_MOST_RECENTLY_SEEN_TIME, dateTime.getMillis()).apply();
+        }
+    }
+
+    @Nullable
+    @Override
+    public DateTime getMostRecentlySeenEventOriginTime() {
+        if (sharedPrefs.contains(KEY_MOST_RECENTLY_SEEN_TIME)) {
+            return new DateTime(sharedPrefs.getLong(KEY_MOST_RECENTLY_SEEN_TIME, 0));
         } else {
             return null;
         }
