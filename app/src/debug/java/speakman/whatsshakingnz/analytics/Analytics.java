@@ -17,7 +17,11 @@
 package speakman.whatsshakingnz.analytics;
 
 import android.app.Application;
+import android.support.annotation.NonNull;
 
+import java.util.List;
+
+import speakman.whatsshakingnz.model.Earthquake;
 import timber.log.Timber;
 
 /**
@@ -26,5 +30,33 @@ import timber.log.Timber;
 public class Analytics {
     public static void initialize(Application app) {
         Timber.d("{analytics disabled} Not enabling any analytics platforms");
+    }
+
+    public static void logMainPageViewedFromNotification() {
+        Timber.d("Logging earthquake view from notification");
+    }
+
+    public static void logEarthquakeViewFromNotification(@NonNull Earthquake earthquake) {
+        Timber.d("Logging earthquake view from notification for event with id { %s }", earthquake.getId());
+    }
+
+    public static void logEarthquakeSelectedOnMap(@NonNull Earthquake earthquake) {
+        Timber.d("Logging earthquake selected on map for event with id { %s }", earthquake.getId());
+    }
+
+    public static void logEarthquakeSelectedInList(@NonNull Earthquake earthquake) {
+        Timber.d("Logging earthquake selected in list for event with id { %s }", earthquake.getId());
+    }
+
+    public static void logDetailViewExpanded(@NonNull Earthquake earthquake) {
+        Timber.d("Logging earthquake detail view expansion for event with id { %s }", earthquake.getId());
+    }
+
+    public static void logNotificationShownForEarthquake(@NonNull Earthquake earthquake) {
+        Timber.d("Logging notification shown for event with id { %s }", earthquake.getId());
+    }
+
+    public static void logNotificationShownForEarthquakes(@NonNull List<? extends Earthquake> earthquakes) {
+        Timber.d("Logging notification shown for { %d } earthquakes.", earthquakes.size());
     }
 }

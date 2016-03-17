@@ -17,11 +17,17 @@
 package speakman.whatsshakingnz.analytics;
 
 import android.app.Application;
+import android.support.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
+import com.crashlytics.android.answers.CustomEvent;
+
+import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
+import speakman.whatsshakingnz.model.Earthquake;
 import timber.log.Timber;
 
 /**
@@ -36,5 +42,57 @@ public class Analytics {
                 .debuggable(true)
                 .build();
         Fabric.with(fabric);
+    }
+
+    public static void logMainPageViewedFromNotification() {
+        Timber.d("Logging earthquake view from notification");
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName("Earthquake List viewed from Notification")
+                .putContentType("list-view"));
+    }
+
+    public static void logEarthquakeViewFromNotification(@NonNull Earthquake earthquake) {
+        Timber.d("Logging earthquake view from notification for event with id { %s }", earthquake.getId());
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName("Earthquake viewed from Notification")
+                .putContentType("earthquake-view")
+                .putCustomAttribute("source", "notification")
+                .putContentId(earthquake.getId()));
+    }
+
+    public static void logEarthquakeSelectedOnMap(@NonNull Earthquake earthquake) {
+        Timber.d("Logging earthquake selected on map for event with id { %s }", earthquake.getId());
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName("Earthquake viewed")
+                .putContentType("earthquake-view")
+                .putCustomAttribute("source", "map")
+                .putContentId(earthquake.getId()));
+    }
+
+    public static void logEarthquakeSelectedInList(@NonNull Earthquake earthquake) {
+        Timber.d("Logging earthquake selected in list for event with id { %s }", earthquake.getId());
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName("Earthquake viewed")
+                .putContentType("earthquake-view")
+                .putCustomAttribute("source", "list")
+                .putContentId(earthquake.getId()));
+    }
+
+    public static void logDetailViewExpanded(@NonNull Earthquake earthquake) {
+        Timber.d("Logging earthquake detail view expansion for event with id { %s }", earthquake.getId());
+        Answers.getInstance().logCustom(new CustomEvent("Earthquake Detail Expanded")
+                .putCustomAttribute("earthquake-id", earthquake.getId()));
+    }
+
+    public static void logNotificationShownForEarthquake(@NonNull Earthquake earthquake) {
+        Timber.d("Logging notification shown for event with id { %s }", earthquake.getId());
+        Answers.getInstance().logCustom(new CustomEvent("Notification Shown")
+                .putCustomAttribute("earthquake-id", earthquake.getId()));
+    }
+
+    public static void logNotificationShownForEarthquakes(@NonNull List<? extends Earthquake> earthquakes) {
+        Timber.d("Logging notification shown for { %d } earthquakes.", earthquakes.size());
+        Answers.getInstance().logCustom(new CustomEvent("Notification Shown")
+                .putCustomAttribute("earthquakes-count", earthquakes.size()));
     }
 }
