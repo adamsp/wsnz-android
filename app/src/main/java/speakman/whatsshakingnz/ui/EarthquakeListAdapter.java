@@ -16,15 +16,10 @@
 
 package speakman.whatsshakingnz.ui;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.os.Build;
-import android.support.v4.app.ActivityOptionsCompat;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
@@ -33,20 +28,24 @@ import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.databinding.RowEarthquakeBinding;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
-import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 
 /**
  * Created by Adam on 15-10-12.
  */
-public class EarthquakeListAdapter extends RecyclerView.Adapter<EarthquakeListViewModel.ViewHolder> implements EarthquakeListViewModel.ViewHolder.OnClickListener {
+public class EarthquakeListAdapter extends RecyclerView.Adapter<EarthquakeListViewModel.ViewHolder> {
 
     private List<RealmEarthquake> earthquakes;
+    private EarthquakeListViewModel.ViewHolder.OnClickListener earthquakeClickListener;
+
+    public EarthquakeListAdapter(@NonNull EarthquakeListViewModel.ViewHolder.OnClickListener clickListener) {
+        this.earthquakeClickListener = clickListener;
+    }
 
     @Override
     public EarthquakeListViewModel.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RowEarthquakeBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.row_earthquake, parent, false);
-        return new EarthquakeListViewModel.ViewHolder(binding, this);
+        return new EarthquakeListViewModel.ViewHolder(binding, this.earthquakeClickListener);
     }
 
     @Override
@@ -59,22 +58,6 @@ public class EarthquakeListAdapter extends RecyclerView.Adapter<EarthquakeListVi
     @Override
     public int getItemCount() {
         return earthquakes == null ? 0 : earthquakes.size();
-    }
-
-    @Override
-    public void onClick(View v, Earthquake earthquake) {
-        Context ctx = v.getContext();
-        ActivityOptionsCompat options = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && ctx instanceof Activity) {
-            options = ActivityOptionsCompat.
-                    makeSceneTransitionAnimation((Activity) ctx, v, v.getTransitionName());
-        }
-        Intent intent = DetailActivity.createIntent(ctx, earthquake);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && options != null) {
-            ctx.startActivity(intent, options.toBundle());
-        } else {
-            ctx.startActivity(intent);
-        }
     }
 
     public void updateList(List<RealmEarthquake> earthquakes) {

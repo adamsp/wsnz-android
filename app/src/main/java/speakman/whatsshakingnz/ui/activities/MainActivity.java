@@ -29,6 +29,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -52,6 +53,7 @@ import io.realm.Sort;
 import speakman.whatsshakingnz.BuildConfig;
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.WhatsShakingApplication;
+import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
@@ -60,10 +62,11 @@ import speakman.whatsshakingnz.ui.DividerItemDecoration;
 import speakman.whatsshakingnz.ui.EarthquakeListAdapter;
 import speakman.whatsshakingnz.ui.LicensesFragment;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
+import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 import speakman.whatsshakingnz.utils.NotificationUtil;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, RealmChangeListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, RealmChangeListener, EarthquakeListViewModel.ViewHolder.OnClickListener {
 
     public static String EXTRA_FROM_NOTIFICATION = "speakman.whatsshakingnz.ui.activities.MainActivity.EXTRA_FROM_NOTIFICATION";
     public static Intent createIntentFromNotification(Context ctx) {
@@ -96,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         realm = Realm.getDefaultInstance();
         map = ((MapView)findViewById(R.id.activity_main_map));
         map.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
-        dataAdapter = new EarthquakeListAdapter();
+        dataAdapter = new EarthquakeListAdapter(this);
         RecyclerView mainList = (RecyclerView) findViewById(R.id.activity_main_list);
         mainList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         mainList.setHasFixedSize(true);
@@ -211,6 +214,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         storeMostRecentEventOriginTime();
     }
 
+    @Override
+    public void onEarthquakeClick(View v, Earthquake earthquake) {
+        Analytics.logEarthquakeSelectedInList(earthquake);
+        ActivityOptionsCompat options = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            options = ActivityOptionsCompat.
+                    makeSceneTransitionAnimation(this, v, v.getTransitionName());
+        }
+        Intent intent = DetailActivity.createIntent(this, earthquake);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && options != null) {
+            startActivity(intent, options.toBundle());
+        } else {
+            startActivity(intent);
+        }
+    }
+
     private List<RealmEarthquake> getEarthquakes() {
         if (earthquakes == null) {
             earthquakes = realm.allObjectsSorted(RealmEarthquake.class, RealmEarthquake.FIELD_NAME_ORIGIN_TIME, Sort.DESCENDING);
@@ -232,6 +251,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void logNotificationClick() {
         Timber.i("User clicked multi-earthquake detail notification.");
+        Analytics.logMainPageViewedFromNotification();
     }
 
     private void cancelNotifications() {

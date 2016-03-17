@@ -40,6 +40,7 @@ import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import speakman.whatsshakingnz.WhatsShakingApplication;
+import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.utils.NotificationUtil;
@@ -159,9 +160,12 @@ public class SyncService extends GcmTaskService {
         }
         Notification notification;
         if (earthquakes.size() == 1) {
-            notification = notificationUtil.get().notificationForSingleEarthquake(earthquakes.get(0));
+            Earthquake earthquake = earthquakes.get(0);
+            notification = notificationUtil.get().notificationForSingleEarthquake(earthquake);
+            Analytics.logNotificationShownForEarthquake(earthquake);
         } else {
             notification = notificationUtil.get().notificationForMultipleEarthquakes(earthquakes);
+            Analytics.logNotificationShownForEarthquakes(earthquakes);
         }
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NotificationUtil.NOTIFICATION_ID, notification);

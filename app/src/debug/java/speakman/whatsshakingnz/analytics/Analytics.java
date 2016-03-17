@@ -28,16 +28,16 @@ import timber.log.Timber;
  * Created by Adam on 2016-03-06.
  */
 public class Analytics {
-    public static void initialize(Application app) {
+    public static void initialize(@SuppressWarnings("UnusedParameters") Application app) {
         Timber.d("{analytics disabled} Not enabling any analytics platforms");
     }
 
     public static void logMainPageViewedFromNotification() {
-        Timber.d("Logging earthquake view from notification");
+        Timber.d("Logging earthquake list shown from notification");
     }
 
     public static void logEarthquakeViewFromNotification(@NonNull Earthquake earthquake) {
-        Timber.d("Logging earthquake view from notification for event with id { %s }", earthquake.getId());
+        Timber.d("Logging earthquake viewed from notification for event with id { %s }", earthquake.getId());
     }
 
     public static void logEarthquakeSelectedOnMap(@NonNull Earthquake earthquake) {

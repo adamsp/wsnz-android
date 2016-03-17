@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import speakman.whatsshakingnz.R;
+import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
@@ -170,5 +171,6 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
 
     private void logNotificationClick() {
         Timber.i("User clicked single-earthquake detail notification.");
+        Analytics.logEarthquakeViewFromNotification(getEarthquake());
     }
 }

@@ -43,6 +43,7 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import speakman.whatsshakingnz.R;
+import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
@@ -156,6 +157,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             selectedEarthquake = clickedEarthquake;
             detailView.bindEarthquake(selectedEarthquake);
             showDetailView();
+            logEarthquakeClick(selectedEarthquake);
         }
         return true;
     }
@@ -195,5 +197,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private float getDetailViewAnimationTranslation() {
         return detailView.getMeasuredHeight() + ((CardView.LayoutParams) detailView.getLayoutParams()).bottomMargin;
+    }
+
+    private void logEarthquakeClick(Earthquake earthquake) {
+        Analytics.logEarthquakeSelectedOnMap(earthquake);
     }
 }

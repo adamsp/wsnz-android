@@ -31,7 +31,7 @@ public class EarthquakeListViewModel extends EarthquakeOverviewViewModel {
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public interface OnClickListener {
-            void onClick(View v, Earthquake earthquake);
+            void onEarthquakeClick(View v, Earthquake earthquake);
         }
 
         public RowEarthquakeBinding binding;
@@ -44,7 +44,7 @@ public class EarthquakeListViewModel extends EarthquakeOverviewViewModel {
         }
 
         public void onClick(View v) {
-            this.clickListener.onClick(v, this.binding.getEarthquakeModel().getEarthquake());
+            this.clickListener.onEarthquakeClick(v, this.binding.getEarthquakeModel().getEarthquake());
         }
     }
 

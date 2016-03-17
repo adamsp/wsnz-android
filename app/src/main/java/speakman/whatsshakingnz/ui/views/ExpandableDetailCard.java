@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import speakman.whatsshakingnz.R;
+import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.databinding.ExpandableDetailCardBinding;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeExpandedDetailViewModel;
@@ -39,6 +40,7 @@ public class ExpandableDetailCard extends CardView implements View.OnClickListen
     private TextView detailText;
     private ExpandableDetailCardBinding binding;
     private boolean expanded;
+    private Earthquake earthquake;
 
     public ExpandableDetailCard(Context context) {
         super(context);
@@ -63,6 +65,7 @@ public class ExpandableDetailCard extends CardView implements View.OnClickListen
     }
 
     public void bindEarthquake(Earthquake earthquake) {
+        this.earthquake = earthquake;
         binding.setEarthquakeModel(new EarthquakeOverviewViewModel(earthquake));
         binding.setEarthquakeDetail(new EarthquakeExpandedDetailViewModel(earthquake));
     }
@@ -88,6 +91,7 @@ public class ExpandableDetailCard extends CardView implements View.OnClickListen
         expanded = true;
         expandIndicator.setVisibility(View.GONE);
         detailText.setVisibility(View.VISIBLE);
+        Analytics.logDetailViewExpanded(earthquake);
     }
 
     private void collapse() {

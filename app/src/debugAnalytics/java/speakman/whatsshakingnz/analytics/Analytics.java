@@ -45,14 +45,14 @@ public class Analytics {
     }
 
     public static void logMainPageViewedFromNotification() {
-        Timber.d("Logging earthquake view from notification");
+        Timber.d("Logging earthquake list shown from notification");
         Answers.getInstance().logContentView(new ContentViewEvent()
                 .putContentName("Earthquake List viewed from Notification")
                 .putContentType("list-view"));
     }
 
     public static void logEarthquakeViewFromNotification(@NonNull Earthquake earthquake) {
-        Timber.d("Logging earthquake view from notification for event with id { %s }", earthquake.getId());
+        Timber.d("Logging earthquake viewed from notification for event with id { %s }", earthquake.getId());
         Answers.getInstance().logContentView(new ContentViewEvent()
                 .putContentName("Earthquake viewed from Notification")
                 .putContentType("earthquake-view")
