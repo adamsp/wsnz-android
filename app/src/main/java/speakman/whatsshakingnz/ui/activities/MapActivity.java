@@ -187,7 +187,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private List<? extends Earthquake> getEarthquakes() {
         if (earthquakes == null) {
-            earthquakes = realm.allObjectsSorted(RealmEarthquake.class, "originTime", Sort.DESCENDING);
+            earthquakes = realm.allObjectsSorted(RealmEarthquake.class, RealmEarthquake.FIELD_NAME_ORIGIN_TIME, Sort.DESCENDING);
             earthquakes.addChangeListener(this);
         }
         return earthquakes;

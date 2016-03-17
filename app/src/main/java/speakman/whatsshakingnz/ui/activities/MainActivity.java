@@ -96,15 +96,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         realm = Realm.getDefaultInstance();
         map = ((MapView)findViewById(R.id.activity_main_map));
         map.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
+        dataAdapter = new EarthquakeListAdapter();
         RecyclerView mainList = (RecyclerView) findViewById(R.id.activity_main_list);
         mainList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
         mainList.setHasFixedSize(true);
         mainList.setLayoutManager(new LinearLayoutManager(this));
-        dataAdapter = new EarthquakeListAdapter();
         mainList.setAdapter(dataAdapter);
-        dataAdapter.updateList(realm.allObjectsSorted(RealmEarthquake.class, "originTime", Sort.DESCENDING));
+        dataAdapter.updateList(getEarthquakes());
         map.getMapAsync(this);
-        requestNewEarthquakes();
+        requestForegroundSync();
         if (savedInstanceState == null && getIntent().getBooleanExtra(EXTRA_FROM_NOTIFICATION, false)) {
             logNotificationClick();
         }
@@ -211,16 +211,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         storeMostRecentEventOriginTime();
     }
 
-    private List<? extends Earthquake> getEarthquakes() {
+    private List<RealmEarthquake> getEarthquakes() {
         if (earthquakes == null) {
-            earthquakes = realm.allObjectsSorted(RealmEarthquake.class, "originTime", Sort.DESCENDING);
+            earthquakes = realm.allObjectsSorted(RealmEarthquake.class, RealmEarthquake.FIELD_NAME_ORIGIN_TIME, Sort.DESCENDING);
             earthquakes.addChangeListener(this);
             storeMostRecentEventOriginTime();
         }
         return earthquakes;
     }
 
-    private void requestNewEarthquakes() {
+    private void requestForegroundSync() {
         NetworkRunnerService.requestLatest(this);
     }
 
