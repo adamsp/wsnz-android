@@ -26,6 +26,8 @@ import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.TaskParams;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,7 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import io.realm.Realm;
+import io.realm.RealmResults;
 import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -51,6 +54,8 @@ public class SyncService extends GcmTaskService {
     public static final long SYNC_PERIOD_SECONDS = 60 * 60; // one hour
 
     private static final String PERIODIC_SYNC_TAG = "speakman.whatsshakingnz.network.SyncService.PERIODIC_SYNC";
+
+    private boolean shouldNotify;
 
     public static void scheduleSync(Context ctx) {
         Timber.d("Scheduling periodic sync.");
@@ -71,6 +76,9 @@ public class SyncService extends GcmTaskService {
 
     @Inject
     UserSettings userSettings;
+
+    @Inject
+    Lazy<NotificationTimeStore> notificationTimeStore;
 
     @Inject
     Lazy<NotificationUtil> notificationUtil;
@@ -98,7 +106,7 @@ public class SyncService extends GcmTaskService {
     }
 
     private void requestNewEarthquakes() {
-        final List<RealmEarthquake> earthquakesToNotifyAbout = new ArrayList<>();
+        final double minimumNotificationMagnitude = userSettings.minimumNotificationMagnitude();
         final Realm realm = Realm.getDefaultInstance();
         requestManager.retrieveNewEarthquakes().map(new Func1<Earthquake, RealmEarthquake>() {
             @Override
@@ -124,14 +132,25 @@ public class SyncService extends GcmTaskService {
             @Override
             public void call(RealmEarthquake realmEarthquake) {
                 realmEarthquake = realm.copyToRealmOrUpdate(realmEarthquake);
-                if (realmEarthquake.getMagnitude() > userSettings.minimumNotificationMagnitude()) {
-                    earthquakesToNotifyAbout.add(realmEarthquake);
+                if (realmEarthquake.getMagnitude() > minimumNotificationMagnitude) {
+                    // Only notify if there are new notify-able events in *this* sync.
+                    // If we just checked "are there unseen notify-able events?" every sync, we'd
+                    // end up (in some cases) firing a notification every sync until the user
+                    // gets too annoyed and uninstalls the app!
+                    shouldNotify = true;
                 }
             }
         });
+        DateTime mostRecentlySeenEventOriginTime = notificationTimeStore.get().getMostRecentlySeenEventOriginTime();
+        if (shouldNotify && mostRecentlySeenEventOriginTime != null) {
+            RealmResults<RealmEarthquake> earthquakesToNotifyAbout = realm
+                    .where(RealmEarthquake.class)
+                    .greaterThan(RealmEarthquake.FIELD_NAME_ORIGIN_TIME, mostRecentlySeenEventOriginTime.getMillis())
+                    .greaterThan(RealmEarthquake.FIELD_NAME_MAGNITUDE, minimumNotificationMagnitude)
+                    .findAll();
+            notifyUserAboutEarthquakes(earthquakesToNotifyAbout);
+        }
         realm.close();
-        notifyUserAboutEarthquakes(earthquakesToNotifyAbout);
-
     }
 
     private void notifyUserAboutEarthquakes(@NonNull List<? extends Earthquake> earthquakes) {

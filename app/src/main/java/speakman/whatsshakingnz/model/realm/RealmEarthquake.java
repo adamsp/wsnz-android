@@ -27,6 +27,9 @@ import speakman.whatsshakingnz.model.Earthquake;
  */
 public class RealmEarthquake extends RealmObject implements Earthquake {
 
+    public static final String FIELD_NAME_ORIGIN_TIME = "originTime";
+    public static final String FIELD_NAME_MAGNITUDE = "magnitude";
+
     @PrimaryKey
     private String id;
 
