@@ -37,6 +37,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +55,7 @@ import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
+import speakman.whatsshakingnz.network.NotificationTimeStore;
 import speakman.whatsshakingnz.ui.DividerItemDecoration;
 import speakman.whatsshakingnz.ui.EarthquakeListAdapter;
 import speakman.whatsshakingnz.ui.LicensesFragment;
@@ -80,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Inject
     Lazy<NotificationUtil> notiticationUtil;
+
+    @Inject
+    NotificationTimeStore notificationTimeStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -201,18 +207,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onChange() {
         dataAdapter.notifyDataSetChanged();
         map.getMapAsync(this);
+        storeMostRecentEventOriginTime();
     }
 
     private List<? extends Earthquake> getEarthquakes() {
         if (earthquakes == null) {
             earthquakes = realm.allObjectsSorted(RealmEarthquake.class, "originTime", Sort.DESCENDING);
             earthquakes.addChangeListener(this);
+            storeMostRecentEventOriginTime();
         }
         return earthquakes;
     }
 
     private void requestNewEarthquakes() {
         NetworkRunnerService.requestLatest(this);
+    }
+
+    private void storeMostRecentEventOriginTime() {
+        if (earthquakes != null && earthquakes.size() > 0) {
+            notificationTimeStore.saveMostRecentlySeenEventOriginTime(new DateTime(earthquakes.first().getOriginTime()));
+        }
     }
 
     private void logNotificationClick() {

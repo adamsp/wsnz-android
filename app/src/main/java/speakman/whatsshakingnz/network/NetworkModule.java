@@ -16,6 +16,8 @@
 
 package speakman.whatsshakingnz.network;
 
+import android.content.Context;
+
 import com.google.gson.GsonBuilder;
 
 import org.joda.time.DateTime;
@@ -24,6 +26,7 @@ import dagger.Module;
 import dagger.Provides;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
+import speakman.whatsshakingnz.InternalPreferences;
 import speakman.whatsshakingnz.dagger.AppScope;
 import speakman.whatsshakingnz.network.geonet.GeonetDateTimeAdapter;
 import speakman.whatsshakingnz.network.geonet.GeonetService;
@@ -46,5 +49,10 @@ public class NetworkModule {
                         .create()))
                 .setEndpoint("http://wfs.geonet.org.nz")
                 .build();
+    }
+
+    @Provides
+    NotificationTimeStore provideNotificationTimeStore(Context context) {
+        return new InternalPreferences(context);
     }
 }
