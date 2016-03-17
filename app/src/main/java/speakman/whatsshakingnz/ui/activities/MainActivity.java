@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onResume() {
         super.onResume();
         map.onResume();
+        cancelNotifications();
     }
 
     @Override
@@ -231,6 +232,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void logNotificationClick() {
         Timber.i("User clicked multi-earthquake detail notification.");
+    }
+
+    private void cancelNotifications() {
+        NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mgr.cancelAll();
     }
 
 //region Debug Features
