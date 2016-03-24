@@ -26,14 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:fitsSystemWindows="true"
         tools:context=".ui.activities.MapActivity">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/activity_map_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"/>
 
         <FrameLayout
             android:layout_width="match_parent"
