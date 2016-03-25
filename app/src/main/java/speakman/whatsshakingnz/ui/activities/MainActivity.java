@@ -95,7 +95,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         ((WhatsShakingApplication) getApplication()).inject(this);
         setContentView(R.layout.activity_main);
-        setSupportActionBar((Toolbar) findViewById(R.id.activity_main_toolbar));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+        }
         realm = Realm.getDefaultInstance();
         map = ((MapView)findViewById(R.id.activity_main_map));
         map.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
