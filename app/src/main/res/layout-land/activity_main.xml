@@ -37,12 +37,22 @@
         map:uiZoomControls="false"
         map:uiZoomGestures="false"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/activity_main_list"
-        android:background="@android:color/white"
-        android:layout_gravity="left"
-        android:layout_width="240dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"/>
+    <FrameLayout
+        android:fitsSystemWindows="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/activity_main_toolbar"
+            android:background="@android:color/transparent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_width="match_parent"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/activity_main_list"
+            android:background="@android:color/white"
+            android:layout_gravity="left"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"/>
+    </FrameLayout>
 
 </FrameLayout>
