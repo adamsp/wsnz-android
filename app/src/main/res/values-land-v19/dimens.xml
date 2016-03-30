@@ -15,8 +15,6 @@
   -->
 
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="activity_main_list_top_padding">0dp</dimen>
+    <!-- 24dp status bar + 8dp top padding -->
+    <dimen name="activity_main_list_top_padding">32dp</dimen>
 </resources>

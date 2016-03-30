@@ -27,6 +27,7 @@
      layout files."
     -->
     <LinearLayout
+        android:background="@android:color/white"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:transitionName="earthquake_detail"

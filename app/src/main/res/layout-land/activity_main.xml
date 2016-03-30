@@ -46,13 +46,16 @@
             android:background="@android:color/transparent"
             android:layout_height="?attr/actionBarSize"
             android:layout_width="match_parent"/>
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/activity_main_list"
-            android:background="@android:color/white"
-            android:layout_gravity="left"
-            android:layout_width="240dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"/>
     </FrameLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/activity_main_list"
+        android:fitsSystemWindows="true"
+        android:clipToPadding="false"
+        android:layout_gravity="left"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/activity_main_list_top_padding"
+        android:layout_marginLeft="8dp"/>
 
 </FrameLayout>
