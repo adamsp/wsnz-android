@@ -24,11 +24,11 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="72dp">
+        android:layout_height="@dimen/list_row_height">
 
         <TextView
-            android:layout_width="72dp"
-            android:layout_height="match_parent"
+            android:layout_width="@dimen/list_row_height"
+            android:layout_height="@dimen/list_row_height"
             android:text="@{earthquakeModel.magnitude}"
             android:textSize="34sp"
             android:textColor="@color/main_theme_primary_text"
