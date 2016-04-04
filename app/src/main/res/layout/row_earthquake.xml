@@ -50,6 +50,8 @@
                 android:textColor="@color/main_theme_primary_text"
                 android:textSize="20sp"
                 android:gravity="center_vertical"
+                android:lines="1"
+                android:ellipsize="end"
                 tools:text="Auckland"/>
 
             <LinearLayout
@@ -79,6 +81,8 @@
                     android:textColor="@color/main_theme_secondary_text"
                     android:textSize="16sp"
                     android:gravity="center_vertical|left"
+                    android:lines="1"
+                    android:ellipsize="end"
                     android:text="@{earthquakeModel.getTimePassedSinceOccurrence(context)}"
                     tools:text="35 mins ago"/>
 

@@ -57,6 +57,7 @@
                 android:textColor="@color/main_theme_primary_text"
                 android:textSize="20sp"
                 android:gravity="center_vertical"
+                android:lines="1"
                 android:ellipsize="end"
                 tools:text="Auckland"/>
             <TextView
@@ -66,6 +67,7 @@
                 android:textSize="14sp"
                 android:textColor="@color/main_theme_primary_text"
                 android:gravity="center_vertical"
+                android:lines="1"
                 android:ellipsize="end"
                 tools:text="35km south east"/>
             <TextView
@@ -76,6 +78,7 @@
                 android:textSize="14sp"
                 android:gravity="center_vertical|left"
                 android:text="@{earthquakeModel.getTimePassedSinceOccurrence(context)}"
+                android:lines="1"
                 android:ellipsize="end"
                 tools:text="35 mins ago"/>
 
