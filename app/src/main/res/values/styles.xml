@@ -31,4 +31,9 @@
 
     <style name="AppTheme" parent="BaseAppTheme"/>
     <style name="AppTheme.SettingsActivity"/>
+
+    <style name="ElevatedListStyle">
+        <item name="android:background">@drawable/elevated_list_background</item>
+    </style>
+
 </resources>
