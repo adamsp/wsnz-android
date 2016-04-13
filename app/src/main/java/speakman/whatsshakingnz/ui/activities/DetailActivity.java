@@ -21,7 +21,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -40,6 +42,26 @@ import speakman.whatsshakingnz.ui.views.ExpandableDetailCard;
 import timber.log.Timber;
 
 public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback, RealmChangeListener {
+
+    static class DetailCardGravityController implements ExpandableDetailCard.OnDetailExpandListener {
+        @Override
+        public void onExpand(ExpandableDetailCard card) {
+            if (card.getLayoutParams() instanceof FrameLayout.LayoutParams) {
+                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) card.getLayoutParams();
+                layoutParams.gravity = Gravity.CENTER;
+                card.setLayoutParams(layoutParams);
+            }
+        }
+
+        @Override
+        public void onCollape(ExpandableDetailCard card) {
+            if (card.getLayoutParams() instanceof FrameLayout.LayoutParams) {
+                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) card.getLayoutParams();
+                layoutParams.gravity = Gravity.BOTTOM;
+                card.setLayoutParams(layoutParams);
+            }
+        }
+    }
 
     public static String EXTRA_EARTHQUAKE = "speakman.whatsshakingnz.ui.activities.DetailActivity.EXTRA_EARTHQUAKE";
     public static String EXTRA_FROM_NOTIFICATION = "speakman.whatsshakingnz.ui.activities.DetailActivity.EXTRA_FROM_NOTIFICATION";
@@ -73,6 +95,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         realm = Realm.getDefaultInstance();
         setContentView(R.layout.activity_detail);
         expandableDetailCard = (ExpandableDetailCard) findViewById(R.id.activity_map_detail_card);
+        expandableDetailCard.setOnDetailExpandListener(new DetailCardGravityController());
         mapView = (MapView) findViewById(R.id.activity_detail_map);
         mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         if (savedInstanceState == null && getIntent().getBooleanExtra(EXTRA_FROM_NOTIFICATION, false)) {
@@ -85,7 +108,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         super.onNewIntent(intent);
         setIntent(intent);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // If we're looking at a new Earthquake, we need can't animate back to the old one!
+            // If we're looking at a new Earthquake, we can't animate back to the old one!
             getWindow().setSharedElementReturnTransition(null);
         }
         logNotificationClick();
@@ -167,6 +190,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     private void refreshUI() {
         Earthquake earthquake = getEarthquake();
         expandableDetailCard.bindEarthquake(earthquake);
+        expandableDetailCard.setForegroundGravity(Gravity.CENTER_VERTICAL);
         mapView.getMapAsync(this);
     }
 

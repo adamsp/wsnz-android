@@ -36,11 +36,17 @@ import speakman.whatsshakingnz.ui.viewmodel.EarthquakeOverviewViewModel;
  */
 public class ExpandableDetailCard extends CardView implements View.OnClickListener {
 
+    public interface OnDetailExpandListener {
+        void onExpand(ExpandableDetailCard card);
+        void onCollape(ExpandableDetailCard card);
+    }
+
     private View expandIndicator;
     private TextView detailText;
     private ExpandableDetailCardBinding binding;
     private boolean expanded;
     private Earthquake earthquake;
+    private OnDetailExpandListener listener;
 
     public ExpandableDetailCard(Context context) {
         super(context);
@@ -87,10 +93,17 @@ public class ExpandableDetailCard extends CardView implements View.OnClickListen
         return false;
     }
 
+    public void setOnDetailExpandListener(OnDetailExpandListener listener) {
+        this.listener = listener;
+    }
+
     private void expand() {
         expanded = true;
         expandIndicator.setVisibility(View.GONE);
         detailText.setVisibility(View.VISIBLE);
+        if (listener != null) {
+            listener.onExpand(this);
+        }
         Analytics.logDetailViewExpanded(earthquake);
     }
 
@@ -98,5 +111,8 @@ public class ExpandableDetailCard extends CardView implements View.OnClickListen
         expandIndicator.setVisibility(View.VISIBLE);
         detailText.setVisibility(View.GONE);
         expanded = false;
+        if (listener != null) {
+            listener.onCollape(this);
+        }
     }
 }

@@ -17,5 +17,5 @@
 
 <resources>
     <!-- 24dp status bar + 8dp top padding -->
-    <dimen name="detail_card_top_margin">32dp</dimen>
+    <dimen name="detail_card_status_bar_padding">24dp</dimen>
 </resources>
