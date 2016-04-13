@@ -113,8 +113,7 @@ public class NotificationUtil {
     }
 
     private void buildCommonNotificationElements(Notification.Builder builder) {
-        // TODO Change icon from placeholder
-//        builder.setSmallIcon(R.drawable.ic_expand_less_black_36dp);
+        builder.setSmallIcon(R.drawable.ic_notification_small);
         builder.setAutoCancel(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setColor(context.getResources().getColor(R.color.notification_accent));
