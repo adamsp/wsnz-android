@@ -140,7 +140,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         int count = Math.min(10, earthquakes.size());
         for (int i = 0; i < count; i++) {
             Earthquake earthquake = earthquakes.get(i);
-            MarkerOptions markerOptions = MapMarkerOptionsFactory.getMarkerOptions(earthquake);
+            MarkerOptions markerOptions = MapMarkerOptionsFactory.getMarkerOptions(earthquake, this);
             Marker marker = googleMap.addMarker(markerOptions);
             mapMarkers.add(marker);
             markerEarthquakeMap.put(marker.getId(), earthquake);

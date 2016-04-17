@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         List<? extends Earthquake> earthquakes = getEarthquakes();
         int count = Math.min(10, earthquakes.size());
         for (int i = 0; i < count; i++) {
-            MarkerOptions markerOptions = MapMarkerOptionsFactory.getMarkerOptions(earthquakes.get(i));
+            MarkerOptions markerOptions = MapMarkerOptionsFactory.getMarkerOptions(earthquakes.get(i), this);
             Marker marker = googleMap.addMarker(markerOptions);
             mapMarkers.add(marker);
         }

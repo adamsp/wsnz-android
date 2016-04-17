@@ -170,7 +170,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         if (mapMarker != null) {
             mapMarker.remove();
         }
-        MarkerOptions markerOptions = MapMarkerOptionsFactory.getMarkerOptions(getEarthquake());
+        MarkerOptions markerOptions = MapMarkerOptionsFactory.getMarkerOptions(getEarthquake(), this);
         mapMarker = googleMap.addMarker(markerOptions);
     }
 
