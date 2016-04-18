@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private MapView map;
     private EarthquakeListAdapter dataAdapter;
     private List<Marker> mapMarkers = new ArrayList<>();
+    private View emptyListView;
     private RealmResults<RealmEarthquake> earthquakes;
 
     @Inject
@@ -106,7 +107,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mainList.setHasFixedSize(true);
         mainList.setLayoutManager(new LinearLayoutManager(this));
         mainList.setAdapter(dataAdapter);
-        dataAdapter.updateList(getEarthquakes());
+        emptyListView = findViewById(R.id.activity_main_list_empty_view);
+        List<RealmEarthquake> earthquakes = getEarthquakes();
+        if (earthquakes != null && earthquakes.size() > 0) {
+            emptyListView.setVisibility(View.GONE);
+        }
+        dataAdapter.updateList(earthquakes);
         map.getMapAsync(this);
         requestForegroundSync();
         if (savedInstanceState == null && getIntent().getBooleanExtra(EXTRA_FROM_NOTIFICATION, false)) {
@@ -213,6 +219,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         dataAdapter.notifyDataSetChanged();
         map.getMapAsync(this);
         storeMostRecentEventOriginTime();
+        if (this.earthquakes != null && this.earthquakes.size() > 0) {
+            emptyListView.setVisibility(View.GONE);
+        }
     }
 
     @Override
