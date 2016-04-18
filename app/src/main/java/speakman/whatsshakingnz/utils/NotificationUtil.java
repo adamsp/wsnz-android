@@ -76,7 +76,6 @@ public class NotificationUtil {
 
         Intent notificationIntent = DetailActivity.createIntentFromNotification(context, earthquake);
         Intent backIntent = new Intent(context, MainActivity.class);
-        backIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         final PendingIntent pendingIntent = PendingIntent.getActivities(context, 0,
                 new Intent[] {backIntent, notificationIntent}, PendingIntent.FLAG_ONE_SHOT);
         builder.setContentIntent(pendingIntent);
