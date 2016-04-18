@@ -44,7 +44,7 @@
         android:layout_height="match_parent"
         android:paddingTop="@dimen/detail_card_status_bar_padding">
         <speakman.whatsshakingnz.ui.views.ExpandableDetailCard
-            android:id="@+id/activity_map_detail_card"
+            android:id="@+id/activity_detail_detail_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"

@@ -14,44 +14,39 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-    <data>
-        <variable name="earthquakeModel" type="speakman.whatsshakingnz.ui.viewmodel.EarthquakeOverviewViewModel"/>
-    </data>
-    <LinearLayout
+    tools:context=".ui.activities.MapActivity"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/activity_map_map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".ui.activities.MapActivity">
+        map:cameraTargetLat="@string/map_center_lat"
+        map:cameraTargetLng="@string/map_center_long"
+        map:cameraZoom="4.5"
+        map:mapType="normal"
+        map:uiTiltGestures="false"/>
 
-        <FrameLayout
+    <!-- This seeming superfluous layout is used to apply padding for the transparent status bar. -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/detail_card_status_bar_padding">
+        <speakman.whatsshakingnz.ui.views.ExpandableDetailCard
+            android:id="@+id/activity_map_detail_card"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_margin="8dp"
+            card_view:cardCornerRadius="2dp"
+            android:transitionName="earthquake_detail"
+            card_view:cardElevation="2dp"/>
 
-            <com.google.android.gms.maps.MapView
-                android:id="@+id/activity_map_map"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                map:cameraTargetLat="@string/map_center_lat"
-                map:cameraTargetLng="@string/map_center_long"
-                map:cameraZoom="4.5"
-                map:mapType="normal"
-                map:uiTiltGestures="false"/>
-
-            <speakman.whatsshakingnz.ui.views.ExpandableDetailCard
-                android:id="@+id/activity_map_detail_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_margin="8dp"
-                card_view:cardCornerRadius="2dp"
-                android:transitionName="earthquake_detail"
-                card_view:cardElevation="2dp"/>
-
-        </FrameLayout>
-    </LinearLayout>
-</layout>
+    </FrameLayout>
+</FrameLayout>

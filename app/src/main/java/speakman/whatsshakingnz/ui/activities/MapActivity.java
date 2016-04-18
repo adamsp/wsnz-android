@@ -76,6 +76,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         realm = Realm.getDefaultInstance();
         detailView = (ExpandableDetailCard) findViewById(R.id.activity_map_detail_card);
         detailView.setVisibility(View.INVISIBLE);
+        detailView.setOnDetailExpandListener(new DetailActivity.DetailCardGravityController());
         mapView = (MapView) findViewById(R.id.activity_map_map);
         mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         refreshUI();

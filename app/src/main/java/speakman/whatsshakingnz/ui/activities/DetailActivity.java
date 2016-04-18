@@ -94,7 +94,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         }
         realm = Realm.getDefaultInstance();
         setContentView(R.layout.activity_detail);
-        expandableDetailCard = (ExpandableDetailCard) findViewById(R.id.activity_map_detail_card);
+        expandableDetailCard = (ExpandableDetailCard) findViewById(R.id.activity_detail_detail_card);
         expandableDetailCard.setOnDetailExpandListener(new DetailCardGravityController());
         mapView = (MapView) findViewById(R.id.activity_detail_map);
         mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
