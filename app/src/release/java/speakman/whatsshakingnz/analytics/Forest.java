@@ -16,6 +16,10 @@
 
 package speakman.whatsshakingnz.analytics;
 
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
+
 import timber.log.Timber;
 
 /**
@@ -26,7 +30,13 @@ public class Forest {
         return new Timber.Tree() {
             @Override
             protected void log(int priority, String tag, String message, Throwable t) {
-                // TODO Add Crashlytics logging
+                if (priority < Log.WARN) {
+                    return;
+                }
+                Crashlytics.log(priority, tag, message);
+                if (t != null) {
+                    Crashlytics.logException(t);
+                }
             }
         };
     }
