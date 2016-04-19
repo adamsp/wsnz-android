@@ -48,29 +48,51 @@
             android:layout_width="match_parent"/>
     </FrameLayout>
 
-    <android.support.v7.widget.RecyclerView
-        style="@style/ElevatedListStyle"
-        android:id="@+id/activity_main_list"
-        android:fitsSystemWindows="true"
-        android:clipToPadding="false"
-        android:layout_gravity="left"
-        android:layout_width="240dp"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/activity_main_list_top_padding"
-        android:layout_marginLeft="8dp"/>
-
-    <TextView
-        style="@style/ElevatedListStyle"
-        android:id="@+id/activity_main_list_empty_view"
-        android:background="@android:color/white"
-        android:layout_gravity="left"
-        android:layout_width="240dp"
+    <!--
+    We are required to use two LinearLayouts here to get the effect of the views only filling
+    one third of the screen. When the "loading" view is hidden, the list becomes visible.
+    Note that we have to use different linear layouts because of the requirement for top padding
+    on the parent container for the loading view, but *not* on the parent container for the list
+    view - the list must manage its own padding so that it doesn't clip when it scrolls off the top.
+    Note that we set clipToPadding=false on the container layouts so we can maintain our shadow.
+     -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="@dimen/activity_main_list_top_padding"
-        android:textSize="16sp"
-        android:text="@string/activity_main_list_loading"/>
+        android:orientation="horizontal"
+        android:clipToPadding="false"
+        android:paddingLeft="8dp"
+        android:weightSum="3">
+        <android.support.v7.widget.RecyclerView
+            style="@style/ElevatedListStyle"
+            android:id="@+id/activity_main_list"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/activity_main_list_top_padding"
+            android:fitsSystemWindows="true"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/activity_main_list_top_padding"
+        android:paddingLeft="8dp"
+        android:paddingBottom="8dp"
+        android:weightSum="3">
+        <TextView
+            style="@style/ElevatedListStyle"
+            android:id="@+id/activity_main_list_empty_view"
+            android:background="@android:color/white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:text="@string/activity_main_list_loading"/>
+    </LinearLayout>
 
 </FrameLayout>
