@@ -86,6 +86,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private RealmResults<RealmEarthquake> earthquakes;
 
     @Inject
+    MapMarkerOptionsFactory mapMarkerOptionsFactory;
+
+    @Inject
     Lazy<NotificationUtil> notiticationUtil;
 
     @Inject
@@ -196,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         List<? extends Earthquake> earthquakes = getEarthquakes();
         int count = Math.min(10, earthquakes.size());
         for (int i = 0; i < count; i++) {
-            MarkerOptions markerOptions = MapMarkerOptionsFactory.getMarkerOptions(earthquakes.get(i), this);
+            MarkerOptions markerOptions = mapMarkerOptionsFactory.getMarkerOptions(earthquakes.get(i));
             Marker marker = googleMap.addMarker(markerOptions);
             mapMarkers.add(marker);
         }

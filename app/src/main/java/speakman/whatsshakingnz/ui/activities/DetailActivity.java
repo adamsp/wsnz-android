@@ -31,9 +31,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import javax.inject.Inject;
+
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import speakman.whatsshakingnz.R;
+import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
@@ -86,14 +89,19 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     private Marker mapMarker;
     private ExpandableDetailCard expandableDetailCard;
 
+    @Inject
+    MapMarkerOptionsFactory mapMarkerOptionsFactory;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
-        realm = Realm.getDefaultInstance();
+        ((WhatsShakingApplication) getApplication()).inject(this);
         setContentView(R.layout.activity_detail);
+        mapMarkerOptionsFactory = new MapMarkerOptionsFactory(this);
+        realm = Realm.getDefaultInstance();
         expandableDetailCard = (ExpandableDetailCard) findViewById(R.id.activity_detail_detail_card);
         expandableDetailCard.setOnDetailExpandListener(new DetailCardGravityController());
         mapView = (MapView) findViewById(R.id.activity_detail_map);
@@ -170,7 +178,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         if (mapMarker != null) {
             mapMarker.remove();
         }
-        MarkerOptions markerOptions = MapMarkerOptionsFactory.getMarkerOptions(getEarthquake(), this);
+        MarkerOptions markerOptions = mapMarkerOptionsFactory.getMarkerOptions(getEarthquake());
         mapMarker = googleMap.addMarker(markerOptions);
     }
 

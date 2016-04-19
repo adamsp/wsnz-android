@@ -16,6 +16,7 @@
 
 package speakman.whatsshakingnz.ui.maps;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -23,6 +24,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.text.TextPaint;
 import android.util.TypedValue;
 
@@ -31,6 +34,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.model.Earthquake;
 
@@ -38,16 +44,33 @@ import speakman.whatsshakingnz.model.Earthquake;
  * Created by Adam on 1/3/2016.
  */
 public class MapMarkerOptionsFactory {
-    public static MarkerOptions getMarkerOptions(Earthquake earthquake, Context ctx) {
+    private Context ctx;
+    private Map<String, BitmapDescriptor> iconCache;
+    public MapMarkerOptionsFactory(Context ctx) {
+        this.ctx = ctx;
+        /*
+        Have considered using an LRU Cache or similar for this however the effective upper bound on
+        the number of entries for this is likely to be around 50 - we'll see at most ten magnitudes
+        for every number, and earthquakes over magnitude 5 are rare, so 5x10 = 50.
+         */
+        this.iconCache = new HashMap<>();
+    }
+
+    public MarkerOptions getMarkerOptions(@NonNull Earthquake earthquake) {
         return new MarkerOptions()
-                .icon(getIconForQuake(earthquake, ctx))
+                .icon(getIconForQuake(earthquake))
                 .position(new LatLng(earthquake.getLatitude(), earthquake.getLongitude()));
     }
 
-    private static BitmapDescriptor getIconForQuake(Earthquake earthquake, Context ctx) {
+    private BitmapDescriptor getIconForQuake(Earthquake earthquake) {
+        @SuppressLint("DefaultLocale") String magnitude = String.format("%.1f", earthquake.getMagnitude());
+        BitmapDescriptor cachedIcon = iconCache.get(magnitude);
+        if (cachedIcon != null) {
+            return cachedIcon;
+        }
         Resources res = ctx.getResources();
         // Set up the colour for our marker image
-        Drawable marker = res.getDrawable(R.drawable.map_marker);
+        Drawable marker = ContextCompat.getDrawable(ctx, R.drawable.map_marker);
         int markerWidth = marker.getIntrinsicWidth();
         int markerHeight = marker.getIntrinsicHeight();
 
@@ -56,7 +79,6 @@ public class MapMarkerOptionsFactory {
         Rect textBounds = new Rect();
         float fontSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14, res.getDisplayMetrics());
         textPaint.setTextSize(fontSize);
-        String magnitude = String.format("%.1f", earthquake.getMagnitude());
         textPaint.getTextBounds(magnitude, 0, magnitude.length(), textBounds);
         textBounds.offsetTo(markerWidth / 3 - textBounds.width() / 2, // text will be on left third of marker
                 markerHeight - markerHeight / 2 - textBounds.height()); // this aligns it in top 1/3 of our marker
@@ -69,6 +91,7 @@ public class MapMarkerOptionsFactory {
         canvas.drawText(magnitude, textBounds.left, textBounds.bottom, textPaint);
 
         BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(bmp);
+        iconCache.put(magnitude, icon);
         return icon;
     }
 }

@@ -38,11 +38,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import speakman.whatsshakingnz.R;
+import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
@@ -66,12 +69,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private List<Marker> mapMarkers = new ArrayList<>();
     private Map<String, Earthquake> markerEarthquakeMap = new HashMap<>();
 
+    @Inject
+    MapMarkerOptionsFactory mapMarkerOptionsFactory;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
+        ((WhatsShakingApplication) getApplication()).inject(this);
         setContentView(R.layout.activity_map);
         realm = Realm.getDefaultInstance();
         detailView = (ExpandableDetailCard) findViewById(R.id.activity_map_detail_card);
@@ -141,7 +148,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         int count = Math.min(10, earthquakes.size());
         for (int i = 0; i < count; i++) {
             Earthquake earthquake = earthquakes.get(i);
-            MarkerOptions markerOptions = MapMarkerOptionsFactory.getMarkerOptions(earthquake, this);
+            MarkerOptions markerOptions = mapMarkerOptionsFactory.getMarkerOptions(earthquake);
             Marker marker = googleMap.addMarker(markerOptions);
             mapMarkers.add(marker);
             markerEarthquakeMap.put(marker.getId(), earthquake);
