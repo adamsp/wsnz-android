@@ -25,7 +25,8 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:transitionName="earthquake_detail"
-        android:layout_height="@dimen/list_row_height">
+        android:layout_height="@dimen/list_row_height"
+        android:foreground="?attr/selectableItemBackground">
 
         <TextView
             android:layout_width="@dimen/list_row_height"
