@@ -15,7 +15,8 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="UnusedResources">
     <!-- http://www.materialpalette.com/red/blue -->
     <color name="main_theme_primary">#F44336</color>
     <color name="main_theme_primary_dark">#D32F2F</color>

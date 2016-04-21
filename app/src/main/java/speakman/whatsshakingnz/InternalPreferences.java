@@ -34,7 +34,7 @@ public class InternalPreferences implements RequestTimeStore, NotificationTimeSt
     private static final String KEY_MOST_RECENT_REQUEST_TIME = "speakman.whatsshakingnz.InternalPreferences.KEY_MOST_RECENT_REQUEST_TIME";
     private static final String KEY_MOST_RECENTLY_SEEN_TIME = "speakman.whatsshakingnz.InternalPreferences.KEY_MOST_RECENTLY_SEEN_TIME";
 
-    private SharedPreferences sharedPrefs;
+    private final SharedPreferences sharedPrefs;
 
     public InternalPreferences(Context ctx) {
         sharedPrefs = ctx.getSharedPreferences(PREFERENCES_FILENAME, Context.MODE_PRIVATE);

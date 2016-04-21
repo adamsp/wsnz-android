@@ -66,8 +66,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private RealmResults<RealmEarthquake> earthquakes;
     private Realm realm;
     private MapView mapView;
-    private List<Marker> mapMarkers = new ArrayList<>();
-    private Map<String, Earthquake> markerEarthquakeMap = new HashMap<>();
+    private final List<Marker> mapMarkers = new ArrayList<>();
+    private final Map<String, Earthquake> markerEarthquakeMap = new HashMap<>();
 
     @Inject
     MapMarkerOptionsFactory mapMarkerOptionsFactory;
@@ -82,9 +82,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_map);
         realm = Realm.getDefaultInstance();
         detailView = (ExpandableDetailCard) findViewById(R.id.activity_map_detail_card);
+        assert detailView != null;
         detailView.setVisibility(View.INVISIBLE);
         detailView.setOnDetailExpandListener(new DetailActivity.DetailCardGravityController());
         mapView = (MapView) findViewById(R.id.activity_map_map);
+        assert mapView != null;
         mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         refreshUI();
     }
@@ -128,6 +130,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onBackPressed() {
         if (detailView.onBackPressed()) {
+            //noinspection UnnecessaryReturnStatement
             return;
         } else if (selectedEarthquake == null) {
             super.onBackPressed();

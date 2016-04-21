@@ -16,6 +16,7 @@
 
 package speakman.whatsshakingnz.ui.viewmodel;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 
@@ -33,10 +34,10 @@ import speakman.whatsshakingnz.utils.DistanceUtil;
  */
 public class EarthquakeOverviewViewModel {
 
-    private Earthquake earthquake;
-    private LocalPlace nearestTown;
-    private double distanceToNearestTown;
-    private DistanceUtil.Direction directionToNearestTown;
+    private final Earthquake earthquake;
+    private final LocalPlace nearestTown;
+    private final double distanceToNearestTown;
+    private final DistanceUtil.Direction directionToNearestTown;
     public EarthquakeOverviewViewModel(Earthquake earthquake) {
         this.earthquake = earthquake;
         LatLng earthquakeLocation = new LatLng(earthquake.getLatitude(), earthquake.getLongitude());
@@ -49,6 +50,7 @@ public class EarthquakeOverviewViewModel {
         return earthquake;
     }
 
+    @SuppressLint("DefaultLocale")
     public String getMagnitude() {
         return String.format("%.1f", earthquake.getMagnitude());
     }

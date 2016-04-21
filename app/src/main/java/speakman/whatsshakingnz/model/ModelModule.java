@@ -20,7 +20,6 @@ import android.content.Context;
 
 import dagger.Module;
 import dagger.Provides;
-import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import speakman.whatsshakingnz.dagger.AppScope;
 
@@ -33,10 +32,9 @@ public class ModelModule {
     @AppScope
     @Provides
     RealmConfiguration provideRealmConfiguration(Context context) {
-        RealmConfiguration config = new RealmConfiguration.Builder(context)
+        return new RealmConfiguration.Builder(context)
                 .deleteRealmIfMigrationNeeded()
                 .build();
-        return config;
     }
 
 }

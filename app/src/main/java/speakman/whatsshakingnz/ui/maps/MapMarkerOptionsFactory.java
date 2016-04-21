@@ -44,8 +44,8 @@ import speakman.whatsshakingnz.model.Earthquake;
  * Created by Adam on 1/3/2016.
  */
 public class MapMarkerOptionsFactory {
-    private Context ctx;
-    private Map<String, BitmapDescriptor> iconCache;
+    private final Context ctx;
+    private final Map<String, BitmapDescriptor> iconCache;
     public MapMarkerOptionsFactory(Context ctx) {
         this.ctx = ctx;
         /*

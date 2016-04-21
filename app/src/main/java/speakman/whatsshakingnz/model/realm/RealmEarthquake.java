@@ -25,6 +25,7 @@ import speakman.whatsshakingnz.model.Earthquake;
 /**
  * Created by Adam on 15-06-21.
  */
+@SuppressWarnings("unused")
 public class RealmEarthquake extends RealmObject implements Earthquake {
 
     public static final String FIELD_NAME_ORIGIN_TIME = "originTime";

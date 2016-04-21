@@ -48,7 +48,8 @@
                 map:uiZoomControls="false"
                 map:uiZoomGestures="false"
                 android:fitsSystemWindows="true"
-                app:layout_collapseMode="parallax"/>
+                app:layout_collapseMode="parallax"
+                tools:targetApi="lollipop" />
             <android.support.v7.widget.Toolbar
                 android:id="@+id/activity_main_toolbar"
                 android:layout_height="?attr/actionBarSize"

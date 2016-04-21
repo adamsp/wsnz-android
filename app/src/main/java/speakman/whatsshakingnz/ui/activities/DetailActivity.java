@@ -66,8 +66,8 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         }
     }
 
-    public static String EXTRA_EARTHQUAKE = "speakman.whatsshakingnz.ui.activities.DetailActivity.EXTRA_EARTHQUAKE";
-    public static String EXTRA_FROM_NOTIFICATION = "speakman.whatsshakingnz.ui.activities.DetailActivity.EXTRA_FROM_NOTIFICATION";
+    private static final String EXTRA_EARTHQUAKE = "speakman.whatsshakingnz.ui.activities.DetailActivity.EXTRA_EARTHQUAKE";
+    private static final String EXTRA_FROM_NOTIFICATION = "speakman.whatsshakingnz.ui.activities.DetailActivity.EXTRA_FROM_NOTIFICATION";
 
     public static Intent createIntentFromNotification(Context ctx, Earthquake earthquake) {
         Intent intent = createIntent(ctx, earthquake);
@@ -105,6 +105,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         expandableDetailCard = (ExpandableDetailCard) findViewById(R.id.activity_detail_detail_card);
         expandableDetailCard.setOnDetailExpandListener(new DetailCardGravityController());
         mapView = (MapView) findViewById(R.id.activity_detail_map);
+        assert mapView != null;
         mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         if (savedInstanceState == null && getIntent().getBooleanExtra(EXTRA_FROM_NOTIFICATION, false)) {
             logNotificationClick();

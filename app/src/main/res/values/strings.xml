@@ -22,9 +22,7 @@
     <string name="menu_action_google_licenses">Google Licenses</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="title_activity_map">MapActivity</string>
-    <string name="activity_main_list_loading">Loading...</string>
-    <string name="activity_detail_header_magnitude">Magnitude</string>
-    <string name="activity_detail_header_depth">Depth</string>
+    <string name="activity_main_list_loading">Loading…</string>
     <string name="direction_north">North</string>
     <string name="direction_north_east">North East</string>
     <string name="direction_east">East</string>
@@ -44,6 +42,14 @@
     <string name="preferences_notifications_summary_light_title">Light enabled</string>
     <string name="notification_content_single_location">%1$.0f km %2$s of %3$s</string>
     <string name="notification_content_multiple_locations">Multiple locations</string>
+
+    <!-- Accessibility -->
+    <string name="acc_detail_card_detail_indicator">There is more detail available about this earthquake</string>
+
+
+    <!-- Debug -->
+    <string name="menu_action_debug_notification_single">Show Single Notification</string>
+    <string name="menu_action_debug_notification_multi">Show Multi Notification</string>
 
     <plurals name="overview_time_passed_seconds">
         <item quantity="one">%d second ago</item>

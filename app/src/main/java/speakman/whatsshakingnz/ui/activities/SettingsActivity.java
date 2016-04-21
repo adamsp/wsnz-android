@@ -36,6 +36,7 @@ public class SettingsActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Android Studio is very upset that I'm not using a preference fragment here.
+        //noinspection deprecation
         addPreferencesFromResource(R.xml.preferences);
     }
 }

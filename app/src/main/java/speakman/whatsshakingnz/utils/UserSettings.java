@@ -35,6 +35,7 @@ public interface UserSettings {
 
     double minimumNotificationMagnitude();
 
+    @SuppressWarnings("unused")
     class UserSettingsImpl implements  UserSettings {
 
         private static final double MINIMUM_NOTIFICATION_MAGNITUDE = 4.0;
@@ -50,7 +51,7 @@ public interface UserSettings {
         private static final String KEY_PREF_BG_NOTIFICATIONS_LIGHT = "pref_backgroundNotificationsLight";
         private static final String KEY_PREF_BG_NOTIFICATIONS_REVIEWED_ONLY = "pref_backgroundNotificationsReviewed";
 
-        private SharedPreferences sharedPreferences;
+        private final SharedPreferences sharedPreferences;
 
         public UserSettingsImpl(Context context) {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);

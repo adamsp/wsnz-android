@@ -34,6 +34,7 @@ public class SquareAppBarLayout extends AppBarLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        //noinspection SuspiciousNameCombination
         super.onMeasure(widthMeasureSpec, widthMeasureSpec);
     }
 }

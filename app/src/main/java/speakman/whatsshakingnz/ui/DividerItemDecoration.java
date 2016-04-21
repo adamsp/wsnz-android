@@ -19,34 +19,46 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import speakman.whatsshakingnz.R;
 
+@SuppressWarnings("WeakerAccess")
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     private static final int[] ATTRS = new int[]{
             android.R.attr.listDivider
     };
     public static final int HORIZONTAL_LIST = LinearLayoutManager.HORIZONTAL;
     public static final int VERTICAL_LIST = LinearLayoutManager.VERTICAL;
-    private Drawable mDivider;
+
+    @IntDef({HORIZONTAL_LIST, VERTICAL_LIST})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface DividerOrientation {}
+
+    private final Drawable mDivider;
     private int mOrientation;
-    public DividerItemDecoration(Context context, int orientation) {
+    @SuppressWarnings("SameParameterValue")
+    public DividerItemDecoration(Context context, @DividerOrientation int orientation) {
         final TypedArray a = context.obtainStyledAttributes(ATTRS);
         mDivider = ContextCompat.getDrawable(context, R.drawable.list_divider);
         a.recycle();
         setOrientation(orientation);
     }
-    public void setOrientation(int orientation) {
+    public void setOrientation(@DividerOrientation int orientation) {
         if (orientation != HORIZONTAL_LIST && orientation != VERTICAL_LIST) {
             throw new IllegalArgumentException("invalid orientation");
         }
         mOrientation = orientation;
     }
+    @SuppressWarnings("deprecation")
     @Override
     public void onDraw(Canvas c, RecyclerView parent) {
         if (mOrientation == VERTICAL_LIST) {
@@ -85,6 +97,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
             mDivider.draw(c);
         }
     }
+    @SuppressWarnings("deprecation")
     @Override
     public void getItemOffsets(Rect outRect, int itemPosition, RecyclerView parent) {
         if (mOrientation == VERTICAL_LIST) {

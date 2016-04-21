@@ -45,6 +45,7 @@ import speakman.whatsshakingnz.R;
  * Created by Adam Speakman on 24/09/13.
  * http://speakman.net.nz
  */
+@SuppressWarnings("SameParameterValue")
 public class LicensesFragment extends DialogFragment {
 
     private AsyncTask<Void, Void, String> mLicenseLoader;
@@ -91,6 +92,7 @@ public class LicensesFragment extends DialogFragment {
      *
      * @param fm A fragment manager instance used to display this LicensesFragment.
      */
+    @SuppressWarnings("unused")
     public static void displayLicensesFragment(FragmentManager fm) {
         FragmentTransaction ft = fm.beginTransaction();
         Fragment prev = fm.findFragmentByTag(FRAGMENT_TAG);

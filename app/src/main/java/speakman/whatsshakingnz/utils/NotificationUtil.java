@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -115,11 +116,11 @@ public class NotificationUtil {
         builder.setSmallIcon(R.drawable.ic_notification_small);
         builder.setAutoCancel(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setColor(context.getResources().getColor(R.color.notification_accent));
+            builder.setColor(ContextCompat.getColor(context, R.color.notification_accent));
             builder.setVisibility(Notification.VISIBILITY_PUBLIC);
         }
         if (userSettings.notificationLEDEnabled()) {
-            builder.setLights(context.getResources().getColor(R.color.notification_light), 300, 1000);
+            builder.setLights(ContextCompat.getColor(context, R.color.notification_light), 300, 1000);
         }
         if (userSettings.notificationSoundEnabled()) {
             builder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);

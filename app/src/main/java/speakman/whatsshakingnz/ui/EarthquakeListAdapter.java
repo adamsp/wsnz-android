@@ -36,7 +36,7 @@ import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 public class EarthquakeListAdapter extends RecyclerView.Adapter<EarthquakeListViewModel.ViewHolder> {
 
     private List<RealmEarthquake> earthquakes;
-    private EarthquakeListViewModel.ViewHolder.OnClickListener earthquakeClickListener;
+    private final EarthquakeListViewModel.ViewHolder.OnClickListener earthquakeClickListener;
 
     public EarthquakeListAdapter(@NonNull EarthquakeListViewModel.ViewHolder.OnClickListener clickListener) {
         this.earthquakeClickListener = clickListener;

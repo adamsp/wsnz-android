@@ -13,12 +13,10 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<FrameLayout
+<merge
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context=".ui.activities.MainActivity">
 
     <com.google.android.gms.maps.MapView
@@ -35,7 +33,8 @@
         map:uiScrollGestures="false"
         map:uiTiltGestures="false"
         map:uiZoomControls="false"
-        map:uiZoomGestures="false"/>
+        map:uiZoomGestures="false"
+        tools:targetApi="lollipop" />
 
     <FrameLayout
         android:fitsSystemWindows="true"
@@ -95,4 +94,4 @@
             android:text="@string/activity_main_list_loading"/>
     </LinearLayout>
 
-</FrameLayout>
+</merge>

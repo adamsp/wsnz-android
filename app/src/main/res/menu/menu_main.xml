@@ -31,12 +31,12 @@
         android:orderInCategory="100"
         app:showAsAction="never"/>
     <item android:id="@+id/menu_action_show_single_notif"
-          android:title="Show Single Notification"
+          android:title="@string/menu_action_debug_notification_single"
           android:orderInCategory="100"
           android:visible="@bool/debug_features_enabled"
           app:showAsAction="never"/>
     <item android:id="@+id/menu_action_show_multi_notif"
-          android:title="Show Multi Notification"
+          android:title="@string/menu_action_debug_notification_multi"
           android:orderInCategory="100"
           android:visible="@bool/debug_features_enabled"
           app:showAsAction="never"/>

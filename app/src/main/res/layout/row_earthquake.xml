@@ -26,7 +26,8 @@
         android:layout_width="match_parent"
         android:transitionName="earthquake_detail"
         android:layout_height="@dimen/list_row_height"
-        android:foreground="?attr/selectableItemBackground">
+        android:foreground="?attr/selectableItemBackground"
+        tools:targetApi="lollipop">
 
         <TextView
             android:layout_width="@dimen/list_row_height"
@@ -74,7 +75,8 @@
                     android:text=" — "
                     android:textSize="16sp"
                     android:textColor="@color/main_theme_secondary_text"
-                    android:gravity="center_vertical"/>
+                    android:gravity="center_vertical"
+                    tools:ignore="HardcodedText" />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

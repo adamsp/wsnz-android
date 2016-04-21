@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -68,7 +69,7 @@ import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, RealmChangeListener, EarthquakeListViewModel.ViewHolder.OnClickListener {
 
-    public static String EXTRA_FROM_NOTIFICATION = "speakman.whatsshakingnz.ui.activities.MainActivity.EXTRA_FROM_NOTIFICATION";
+    public static final String EXTRA_FROM_NOTIFICATION = "speakman.whatsshakingnz.ui.activities.MainActivity.EXTRA_FROM_NOTIFICATION";
     public static Intent createIntentFromNotification(Context ctx) {
         Intent intent = new Intent(ctx, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Realm realm;
     private MapView map;
     private EarthquakeListAdapter dataAdapter;
-    private List<Marker> mapMarkers = new ArrayList<>();
+    private final List<Marker> mapMarkers = new ArrayList<>();
     private View emptyListView;
     private RealmResults<RealmEarthquake> earthquakes;
 
@@ -100,16 +101,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ((WhatsShakingApplication) getApplication()).inject(this);
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.activity_main_toolbar));
-        getSupportActionBar().setTitle(R.string.activity_main_title);
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
+            bar.setTitle(R.string.activity_main_title);
+        }
         realm = Realm.getDefaultInstance();
         map = ((MapView)findViewById(R.id.activity_main_map));
+        assert map != null;
         map.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         dataAdapter = new EarthquakeListAdapter(this);
         RecyclerView mainList = (RecyclerView) findViewById(R.id.activity_main_list);
-        mainList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
-        mainList.setHasFixedSize(true);
-        mainList.setLayoutManager(new LinearLayoutManager(this));
-        mainList.setAdapter(dataAdapter);
+        if (mainList != null) {
+            mainList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+            mainList.setHasFixedSize(true);
+            mainList.setLayoutManager(new LinearLayoutManager(this));
+            mainList.setAdapter(dataAdapter);
+        }
         emptyListView = findViewById(R.id.activity_main_list_empty_view);
         List<RealmEarthquake> earthquakes = getEarthquakes();
         if (earthquakes != null && earthquakes.size() > 0) {

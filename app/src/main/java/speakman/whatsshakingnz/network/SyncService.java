@@ -28,7 +28,6 @@ import com.google.android.gms.gcm.TaskParams;
 
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;

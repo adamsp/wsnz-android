@@ -37,8 +37,8 @@ public class EarthquakeListViewModel extends EarthquakeOverviewViewModel {
             void onEarthquakeClick(View v, Earthquake earthquake);
         }
 
-        public RowEarthquakeBinding binding;
-        private OnClickListener clickListener;
+        public final RowEarthquakeBinding binding;
+        private final OnClickListener clickListener;
         public ViewHolder(RowEarthquakeBinding binding, OnClickListener clickListener) {
             super(binding.getRoot());
             this.binding = binding;

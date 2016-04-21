@@ -31,6 +31,7 @@ import speakman.whatsshakingnz.model.Earthquake;
 /**
  * Created by Adam on 2/29/2016.
  */
+@SuppressWarnings("SameParameterValue")
 public class EarthquakeExpandedDetailViewModel {
 
     private final Earthquake earthquake;
