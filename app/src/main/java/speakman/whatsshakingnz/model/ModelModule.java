@@ -33,7 +33,6 @@ public class ModelModule {
     @Provides
     RealmConfiguration provideRealmConfiguration(Context context) {
         return new RealmConfiguration.Builder(context)
-                .deleteRealmIfMigrationNeeded()
                 .build();
     }
 
