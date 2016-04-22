@@ -18,6 +18,8 @@ package speakman.whatsshakingnz;
 
 import android.app.Application;
 
+import com.squareup.leakcanary.LeakCanary;
+
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import javax.inject.Inject;
@@ -50,6 +52,7 @@ public class WhatsShakingApplication extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        LeakCanary.install(this);
         Timber.plant(Forest.uproot());
         Analytics.initialize(this);
         Once.initialise(this);
