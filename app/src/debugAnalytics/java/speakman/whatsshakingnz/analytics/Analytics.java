@@ -51,6 +51,23 @@ public class Analytics {
                 .putContentType("list-view"));
     }
 
+
+    public static void logMainPageMapClicked() {
+        Timber.d("Logging map clicked on main page");
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName("Map viewed")
+                .putContentType("map-view")
+                .putCustomAttribute("source", "main-map"));
+    }
+
+    public static void logMainPageMapMarkerClicked() {
+        Timber.d("Logging map marker clicked on main page");
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName("Map viewed")
+                .putContentType("map-view")
+                .putCustomAttribute("source", "main-map-marker"));
+    }
+
     public static void logEarthquakeViewFromNotification(@NonNull Earthquake earthquake) {
         Timber.d("Logging earthquake viewed from notification for event with id { %s }", earthquake.getId());
         Answers.getInstance().logContentView(new ContentViewEvent()

@@ -36,6 +36,14 @@ public class Analytics {
         Timber.d("Logging earthquake list shown from notification");
     }
 
+    public static void logMainPageMapClicked() {
+        Timber.d("Logging map clicked on main page");
+    }
+
+    public static void logMainPageMapMarkerClicked() {
+        Timber.d("Logging map marker clicked on main page");
+    }
+
     public static void logEarthquakeViewFromNotification(@NonNull Earthquake earthquake) {
         Timber.d("Logging earthquake viewed from notification for event with id { %s }", earthquake.getId());
     }

@@ -62,12 +62,13 @@ import speakman.whatsshakingnz.network.NotificationTimeStore;
 import speakman.whatsshakingnz.ui.DividerItemDecoration;
 import speakman.whatsshakingnz.ui.EarthquakeListAdapter;
 import speakman.whatsshakingnz.ui.LicensesFragment;
+import speakman.whatsshakingnz.ui.maps.IgnoreClicksMapMarkerClickListener;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 import speakman.whatsshakingnz.utils.NotificationUtil;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, RealmChangeListener, EarthquakeListViewModel.ViewHolder.OnClickListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, RealmChangeListener, EarthquakeListViewModel.ViewHolder.OnClickListener {
 
     public static final String EXTRA_FROM_NOTIFICATION = "speakman.whatsshakingnz.ui.activities.MainActivity.EXTRA_FROM_NOTIFICATION";
     public static Intent createIntentFromNotification(Context ctx) {
@@ -200,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         googleMap.setOnMapClickListener(this);
+        googleMap.setOnMarkerClickListener(this);
         for (Marker marker : mapMarkers) {
             marker.remove();
         }
@@ -214,14 +216,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapClick(LatLng latLng) {
-        Intent intent = MapActivity.createIntent(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(this, map, map.getTransitionName());
-            startActivity(intent, options.toBundle());
-        } else {
-            startActivity(intent);
-        }
+        Analytics.logMainPageMapClicked();
+        navigateToMapActivity();
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        Analytics.logMainPageMapMarkerClicked();
+        navigateToMapActivity();
+        return true;
     }
 
     @Override
@@ -244,6 +247,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         Intent intent = DetailActivity.createIntent(this, earthquake);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && options != null) {
+            startActivity(intent, options.toBundle());
+        } else {
+            startActivity(intent);
+        }
+    }
+
+    private void navigateToMapActivity() {
+        Intent intent = MapActivity.createIntent(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ActivityOptionsCompat options = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(this, map, map.getTransitionName());
             startActivity(intent, options.toBundle());
         } else {
             startActivity(intent);

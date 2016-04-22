@@ -40,6 +40,7 @@ import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
+import speakman.whatsshakingnz.ui.maps.IgnoreClicksMapMarkerClickListener;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 import speakman.whatsshakingnz.ui.views.ExpandableDetailCard;
 import timber.log.Timber;
@@ -176,6 +177,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.getUiSettings().setMapToolbarEnabled(false);
+        googleMap.setOnMarkerClickListener(new IgnoreClicksMapMarkerClickListener());
         if (mapMarker != null) {
             mapMarker.remove();
         }
