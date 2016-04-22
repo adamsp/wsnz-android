@@ -59,11 +59,12 @@ public class MapMarkerOptionsFactory {
     public MarkerOptions getMarkerOptions(@NonNull Earthquake earthquake) {
         return new MarkerOptions()
                 .icon(getIconForQuake(earthquake))
+                .title(getMagnitudeForEarthquake(earthquake) + " magnitude")
                 .position(new LatLng(earthquake.getLatitude(), earthquake.getLongitude()));
     }
 
     private BitmapDescriptor getIconForQuake(Earthquake earthquake) {
-        @SuppressLint("DefaultLocale") String magnitude = String.format("%.1f", earthquake.getMagnitude());
+        String magnitude = getMagnitudeForEarthquake(earthquake);
         BitmapDescriptor cachedIcon = iconCache.get(magnitude);
         if (cachedIcon != null) {
             return cachedIcon;
@@ -93,5 +94,10 @@ public class MapMarkerOptionsFactory {
         BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(bmp);
         iconCache.put(magnitude, icon);
         return icon;
+    }
+
+    @SuppressLint("DefaultLocale")
+    private String getMagnitudeForEarthquake(Earthquake earthquake) {
+        return String.format("%.1f", earthquake.getMagnitude());
     }
 }
