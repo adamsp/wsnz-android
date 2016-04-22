@@ -29,12 +29,7 @@
         map:cameraTargetLng="@string/map_center_long"
         map:cameraZoom="4.5"
         map:mapType="normal"
-        map:uiCompass="false"
-        map:uiRotateGestures="false"
-        map:uiScrollGestures="false"
-        map:uiTiltGestures="false"
-        map:uiZoomControls="false"
-        map:uiZoomGestures="false"/>
+        map:uiTiltGestures="false"/>
 
     <!-- This seeming superfluous layout is used to apply padding for the transparent status bar. -->
     <FrameLayout
@@ -47,8 +42,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_margin="8dp"
-            card_view:cardCornerRadius="2dp"
             android:transitionName="earthquake_detail"
+            card_view:cardCornerRadius="2dp"
             card_view:cardElevation="2dp"
             tools:targetApi="lollipop" />
     </FrameLayout>
