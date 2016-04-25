@@ -28,6 +28,21 @@ android {
         enabled = true
     }
 
+    Properties properties = new Properties()
+    // This key is associated with both debug and release keys. Only usable when the app is signed with one of my keystores.
+    File releasePropsFile = rootProject.file('.signing/release.properties')
+    if (releasePropsFile.exists()) {
+        /*
+        The release.properties file should look like this:
+        mapsApiKey=...
+        keystoreFile=path/to/keystore
+        keystorePassword=...
+        keyAlias=...
+        keyPassword=...
+         */
+        properties.load(new FileInputStream(releasePropsFile))
+    }
+
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
         applicationId "speakman.whatsshakingnz"
@@ -35,7 +50,20 @@ android {
         targetSdkVersion 23
         versionCode 5
         versionName "2.0.0-beta1"
+        manifestPlaceholders = [ mapsApiKey: properties['mapsApiKey'] ]
     }
+
+    signingConfigs {
+        release {
+            if (properties['keystoreFile'] != null) {
+                storeFile rootProject.file(properties['keystoreFile'])
+                storePassword properties['keystorePassword']
+                keyAlias properties['keyAlias']
+                keyPassword properties['keyPassword']
+            }
+        }
+    }
+
     buildTypes {
         debug {
             debuggable true
@@ -50,6 +78,7 @@ android {
         }
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
