@@ -46,6 +46,20 @@ public class Analytics {
                 .putContentType("list-view"));
     }
 
+    public static void logMainPageMapClicked() {
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName("Map viewed")
+                .putContentType("map-view")
+                .putCustomAttribute("source", "main-map"));
+    }
+
+    public static void logMainPageMapMarkerClicked() {
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName("Map viewed")
+                .putContentType("map-view")
+                .putCustomAttribute("source", "main-map-marker"));
+    }
+
     public static void logEarthquakeViewFromNotification(@NonNull Earthquake earthquake) {
         Answers.getInstance().logContentView(new ContentViewEvent()
                 .putContentName("Earthquake viewed from Notification")
