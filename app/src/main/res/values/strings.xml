@@ -40,12 +40,13 @@
     <string name="preferences_notifications_sound_title">Sound enabled</string>
     <string name="preferences_notifications_vibrate_title">Vibration enabled</string>
     <string name="preferences_notifications_summary_light_title">Light enabled</string>
+    <string name="preferences_notifications_minimum_magnitude">Notify for earthquakes above</string>
+    <string name="preferences_display_minimum_magnitude">Minimum magnitude to display</string>
     <string name="notification_content_single_location">%1$.0f km %2$s of %3$s</string>
     <string name="notification_content_multiple_locations">Multiple locations</string>
 
     <!-- Accessibility -->
     <string name="acc_detail_card_detail_indicator">There is more detail available about this earthquake</string>
-
 
     <!-- Debug -->
     <string name="menu_action_debug_notification_single">Show Single Notification</string>

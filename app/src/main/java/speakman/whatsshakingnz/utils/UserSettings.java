@@ -35,14 +35,17 @@ public interface UserSettings {
 
     double minimumNotificationMagnitude();
 
+    double minimumDisplayMagnitude();
+
     @SuppressWarnings("unused")
     class UserSettingsImpl implements  UserSettings {
 
-        private static final double MINIMUM_NOTIFICATION_MAGNITUDE = 4.0;
+        private static final double DEFAULT_MINIMUM_NOTIFICATION_MAGNITUDE = 4.0;
+        private static final double DEFAULT_MINIMUM_DISPLAY_MAGNITUDE = 0.0;
 
         // These are carried over from v1. Not all are used in v2 (yet?) but are preserved here anyway.
         private static final String KEY_PREF_MIN_DISPLAY_MAGNITUDE = "pref_minDisplayMagnitude";
-        private static final String KEY_PREF_MIN_HIGHLIGHT_MAGNITUDE = "pref_minHighlightMagnitude";
+        private static final String KEY_PREF_MIN_NOTIFICATION_MAGNITUDE = "pref_minHighlightMagnitude";
         private static final String KEY_PREF_NUM_QUAKES_TO_SHOW = "pref_numQuakesToShow";
         private static final String KEY_PREF_BG_NOTIFICATIONS_FREQ = "pref_backgroundNotificationsFrequency";
         private static final String KEY_PREF_ALLOW_BG_NOTIFICATIONS = "pref_allowBackgroundNotifications";
@@ -79,7 +82,22 @@ public interface UserSettings {
 
         @Override
         public double minimumNotificationMagnitude() {
-            return MINIMUM_NOTIFICATION_MAGNITUDE;
+            int stored = sharedPreferences.getInt(KEY_PREF_MIN_NOTIFICATION_MAGNITUDE, -1);
+            if (stored <= 0) {
+                return DEFAULT_MINIMUM_NOTIFICATION_MAGNITUDE;
+            } else {
+                return stored / 10.0f;
+            }
+        }
+
+        @Override
+        public double minimumDisplayMagnitude() {
+            int stored = sharedPreferences.getInt(KEY_PREF_MIN_DISPLAY_MAGNITUDE, -1);
+            if (stored <= 0) {
+                return DEFAULT_MINIMUM_DISPLAY_MAGNITUDE;
+            } else {
+                return stored / 10.0f;
+            }
         }
     }
 }

@@ -15,7 +15,8 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:seekbar="http://schemas.android.com/apk/res/speakman.whatsshakingnz">
 
     <SwitchPreference
         android:defaultValue="true"
@@ -39,5 +40,22 @@
         android:key="pref_backgroundNotificationsLED"
         android:title="@string/preferences_notifications_summary_light_title"
         android:dependency="pref_allowBackgroundNotifications"/>
+
+    <speakman.whatsshakingnz.ui.preference.SeekBarPreference
+        android:key="pref_minHighlightMagnitude"
+        seekbar:seekBarMin="30"
+        android:defaultValue="40"
+        android:max="50"
+        android:title="@string/preferences_notifications_minimum_magnitude"
+        android:dependency="pref_allowBackgroundNotifications"
+        seekbar:seekBarUseDecimal="true"/>
+
+    <speakman.whatsshakingnz.ui.preference.SeekBarPreference
+        android:key="pref_minDisplayMagnitude"
+        seekbar:seekBarMin="0"
+        android:defaultValue="0"
+        android:max="40"
+        android:title="@string/preferences_display_minimum_magnitude"
+        seekbar:seekBarUseDecimal="true"/>
 
 </PreferenceScreen>
