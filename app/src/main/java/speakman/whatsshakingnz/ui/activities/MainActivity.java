@@ -62,7 +62,6 @@ import speakman.whatsshakingnz.network.NotificationTimeStore;
 import speakman.whatsshakingnz.ui.DividerItemDecoration;
 import speakman.whatsshakingnz.ui.EarthquakeListAdapter;
 import speakman.whatsshakingnz.ui.LicensesFragment;
-import speakman.whatsshakingnz.ui.maps.IgnoreClicksMapMarkerClickListener;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 import speakman.whatsshakingnz.utils.NotificationUtil;

@@ -29,7 +29,6 @@ android {
     }
 
     Properties properties = new Properties()
-    // This key is associated with both debug and release keys. Only usable when the app is signed with one of my keystores.
     File releasePropsFile = rootProject.file('.signing/release.properties')
     if (releasePropsFile.exists()) {
         /*
