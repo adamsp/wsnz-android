@@ -65,11 +65,14 @@ import speakman.whatsshakingnz.ui.LicensesFragment;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 import speakman.whatsshakingnz.utils.NotificationUtil;
+import speakman.whatsshakingnz.utils.UserSettings;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, RealmChangeListener, EarthquakeListViewModel.ViewHolder.OnClickListener {
 
     public static final String EXTRA_FROM_NOTIFICATION = "speakman.whatsshakingnz.ui.activities.MainActivity.EXTRA_FROM_NOTIFICATION";
+    private static final int ACTIVITY_REQUEST_CODE_SETTINGS = 1;
+
     public static Intent createIntentFromNotification(Context ctx) {
         Intent intent = new Intent(ctx, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -95,6 +98,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Inject
     NotificationTimeStore notificationTimeStore;
 
+    @Inject
+    UserSettings userSettings;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,16 +124,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mainList.setAdapter(dataAdapter);
         }
         emptyListView = findViewById(R.id.activity_main_list_empty_view);
-        List<RealmEarthquake> earthquakes = getEarthquakes();
-        if (earthquakes != null && earthquakes.size() > 0) {
-            emptyListView.setVisibility(View.GONE);
-        }
-        dataAdapter.updateList(earthquakes);
-        map.getMapAsync(this);
         requestForegroundSync();
         if (savedInstanceState == null && getIntent().getBooleanExtra(EXTRA_FROM_NOTIFICATION, false)) {
             logNotificationClick();
         }
+        getEarthquakesAsync();
     }
 
     @Override
@@ -177,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 LicensesFragment.displayGooglePlayServicesLicensesFragment(getFragmentManager(), true);
                 return true;
             case R.id.menu_action_settings:
-                startActivity(SettingsActivity.createIntent(this));
+                navigateToSettingsActivity();
                 return true;
             case R.id.menu_action_show_single_notif:
                 showSingleNotif();
@@ -197,6 +198,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == SettingsActivity.RESULT_CODE_SETTING_CHANGED) {
+            getEarthquakesAsync();
+        }
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         googleMap.setOnMapClickListener(this);
@@ -204,12 +213,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         for (Marker marker : mapMarkers) {
             marker.remove();
         }
-        List<? extends Earthquake> earthquakes = getEarthquakes();
-        int count = Math.min(10, earthquakes.size());
-        for (int i = 0; i < count; i++) {
-            MarkerOptions markerOptions = mapMarkerOptionsFactory.getMarkerOptions(earthquakes.get(i));
-            Marker marker = googleMap.addMarker(markerOptions);
-            mapMarkers.add(marker);
+        if (earthquakes != null && earthquakes.size() > 0) {
+            int count = Math.min(10, earthquakes.size());
+            for (int i = 0; i < count; i++) {
+                MarkerOptions markerOptions = mapMarkerOptionsFactory.getMarkerOptions(earthquakes.get(i));
+                Marker marker = googleMap.addMarker(markerOptions);
+                mapMarkers.add(marker);
+            }
         }
     }
 
@@ -252,6 +262,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void navigateToSettingsActivity() {
+        startActivityForResult(SettingsActivity.createIntent(this), ACTIVITY_REQUEST_CODE_SETTINGS);
+    }
+
     private void navigateToMapActivity() {
         Intent intent = MapActivity.createIntent(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -263,13 +277,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private List<RealmEarthquake> getEarthquakes() {
-        if (earthquakes == null) {
-            earthquakes = realm.allObjectsSorted(RealmEarthquake.class, RealmEarthquake.FIELD_NAME_ORIGIN_TIME, Sort.DESCENDING);
-            earthquakes.addChangeListener(this);
-            storeMostRecentEventOriginTime();
+    private void getEarthquakesAsync() {
+        if (earthquakes != null) {
+            earthquakes.removeChangeListener(this);
         }
-        return earthquakes;
+        earthquakes = realm.where(RealmEarthquake.class).greaterThanOrEqualTo(RealmEarthquake.FIELD_NAME_MAGNITUDE, userSettings.minimumDisplayMagnitude())
+                    .findAllSortedAsync(RealmEarthquake.FIELD_NAME_ORIGIN_TIME, Sort.DESCENDING);
+        earthquakes.addChangeListener(this);
+        dataAdapter.updateList(earthquakes);
     }
 
     private void requestForegroundSync() {
@@ -297,7 +312,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(!BuildConfig.DEBUG) {
             return;
         }
-        List<? extends Earthquake> earthquakes = getEarthquakes();
         if (earthquakes != null && earthquakes.size() > 0) {
             Notification notification = notiticationUtil.get().notificationForSingleEarthquake(earthquakes.get(0));
             NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -309,7 +323,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(!BuildConfig.DEBUG) {
             return;
         }
-        List<? extends Earthquake> earthquakes = getEarthquakes();
         if (earthquakes != null && earthquakes.size() > 0) {
             Notification notification = notiticationUtil.get().notificationForMultipleEarthquakes(earthquakes);
             NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
