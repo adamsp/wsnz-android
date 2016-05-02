@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
 import speakman.whatsshakingnz.R;
+import speakman.whatsshakingnz.analytics.Analytics;
 
 /**
  * Created by Adam on 2/29/2016.
@@ -58,5 +59,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         setResult(RESULT_CODE_SETTING_CHANGED);
+        Object value = sharedPreferences.getAll().get(key);
+        Analytics.logPreferenceChange(key, value == null ? "null" : value.toString());
     }
 }

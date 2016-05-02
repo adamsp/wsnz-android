@@ -98,4 +98,10 @@ public class Analytics {
         Answers.getInstance().logCustom(new CustomEvent("Notification Shown")
                 .putCustomAttribute("earthquakes-count", earthquakes.size()));
     }
+
+    public static void logPreferenceChange(@NonNull String key, @NonNull String value) {
+        Answers.getInstance().logCustom(new CustomEvent("Preference Change")
+                .putCustomAttribute("preference-key", key)
+                .putCustomAttribute("preference-value", value));
+    }
 }

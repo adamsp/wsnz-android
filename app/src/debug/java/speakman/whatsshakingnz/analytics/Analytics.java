@@ -67,4 +67,8 @@ public class Analytics {
     public static void logNotificationShownForEarthquakes(@NonNull List<? extends Earthquake> earthquakes) {
         Timber.d("Logging notification shown for { %d } earthquakes.", earthquakes.size());
     }
+
+    public static void logPreferenceChange(@NonNull String key, @NonNull String value) {
+        Timber.d("Logging preference change for key { %s } and value { %s }", key, value);
+    }
 }
