@@ -110,16 +110,17 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
     @Override
     public void onProgressChanged(SeekBar seek, int value, boolean fromTouch) {
         currentValue = value + minValue;
-        persistInt(currentValue);
         setProgressText(currentValue);
-        callChangeListener(currentValue);
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seek) { }
 
     @Override
-    public void onStopTrackingTouch(SeekBar seek) { }
+    public void onStopTrackingTouch(SeekBar seek) {
+        callChangeListener(currentValue);
+        persistInt(currentValue);
+    }
 
     private void setProgressText(int value) {
         @SuppressLint("DefaultLocale")
