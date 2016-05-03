@@ -23,10 +23,8 @@ import android.text.style.StyleSpan;
 
 import org.joda.time.DateTime;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
 import speakman.whatsshakingnz.model.Earthquake;
+import speakman.whatsshakingnz.utils.DateTimeFormatters;
 
 /**
  * Created by Adam on 2/29/2016.
@@ -35,8 +33,6 @@ import speakman.whatsshakingnz.model.Earthquake;
 public class EarthquakeExpandedDetailViewModel {
 
     private final Earthquake earthquake;
-
-    public static final DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
 
     public EarthquakeExpandedDetailViewModel(Earthquake earthquake) {
         this.earthquake = earthquake;
@@ -86,7 +82,7 @@ public class EarthquakeExpandedDetailViewModel {
             return;
         }
         appendKey(sb, key);
-        sb.append(dateFormat.format(value.toDate()));
+        sb.append(DateTimeFormatters.mediumDateTimeDisplayFormat.format(value.toDate()));
         if (newLine) {
             sb.append("\n");
         }

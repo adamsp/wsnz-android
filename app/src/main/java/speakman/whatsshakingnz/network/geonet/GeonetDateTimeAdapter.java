@@ -22,19 +22,17 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
+
+import speakman.whatsshakingnz.utils.DateTimeFormatters;
 
 /**
  * Created by Adam on 15-06-07.
  */
 public class GeonetDateTimeAdapter extends TypeAdapter<DateTime> {
 
-    public static final DateTimeFormatter readFormatter = ISODateTimeFormat.dateTimeParser();
-    public static final DateTimeFormatter writeFormatter = ISODateTimeFormat.dateTime().withChronology(ISOChronology.getInstanceUTC());
+
 
     @Override
     public void write(JsonWriter writer, DateTime value) throws IOException {
@@ -42,7 +40,7 @@ public class GeonetDateTimeAdapter extends TypeAdapter<DateTime> {
             writer.nullValue();
             return;
         }
-        String dateTime = value.toString(writeFormatter);
+        String dateTime = value.toString(DateTimeFormatters.networkDateTimeWriteFormatter);
         writer.value(dateTime);
     }
 
@@ -53,6 +51,6 @@ public class GeonetDateTimeAdapter extends TypeAdapter<DateTime> {
             return null;
         }
         String dateTime = reader.nextString();
-        return DateTime.parse(dateTime, readFormatter);
+        return DateTime.parse(dateTime, DateTimeFormatters.networkDateTimeReadFormatter);
     }
 }

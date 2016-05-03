@@ -17,8 +17,6 @@
 package speakman.whatsshakingnz.network;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import java.util.List;
 
@@ -31,6 +29,7 @@ import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.network.geonet.GeonetFeature;
 import speakman.whatsshakingnz.network.geonet.GeonetResponse;
 import speakman.whatsshakingnz.network.geonet.GeonetService;
+import speakman.whatsshakingnz.utils.DateTimeFormatters;
 import timber.log.Timber;
 
 /**
@@ -38,14 +37,6 @@ import timber.log.Timber;
  */
 public class RequestManager {
 
-    /*
-    This requires an extra "S" on the end (ie, 4 'milliseconds' values). This 4th place will
-    always be populated with a 0. This is an unfortunate requirement of the API - if we don't
-    supply this extra 0, it treats the 'greater than' as 'greater than or equal to', when
-    requesting events with an updated time greater than the most recently seen event.
-    This is discussed here: https://github.com/GeoNet/help/issues/5
-     */
-    static final DateTimeFormatter updateTimeFormatter =  DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSZ");
     public static final int MAX_EVENTS_PER_REQUEST = 50;
     public static final int DAYS_BEFORE_TODAY = 7;
 
@@ -112,6 +103,6 @@ public class RequestManager {
         if (mostRecentUpdateTime == null) {
             mostRecentUpdateTime = DateTime.now().minusDays(DAYS_BEFORE_TODAY);
         }
-        return String.format(GeonetService.FILTER_FORMAT_MOST_RECENT_UPDATE, mostRecentUpdateTime.toString(updateTimeFormatter));
+        return String.format(GeonetService.FILTER_FORMAT_MOST_RECENT_UPDATE, mostRecentUpdateTime.toString(DateTimeFormatters.requestQueryUpdateTimeFormatter));
     }
 }

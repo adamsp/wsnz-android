@@ -37,6 +37,7 @@ import speakman.whatsshakingnz.network.geonet.GeonetDateTimeAdapter;
 import speakman.whatsshakingnz.network.geonet.GeonetFeature;
 import speakman.whatsshakingnz.network.geonet.GeonetResponse;
 import speakman.whatsshakingnz.network.geonet.GeonetService;
+import speakman.whatsshakingnz.utils.DateTimeFormatters;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -56,7 +57,7 @@ public class RequestManagerTest extends AndroidTestCase {
     private RequestTimeStore mockedRequestTimeStore;
 
     private String updateTimeToFilterString(DateTime updateTime) {
-        return String.format(GeonetService.FILTER_FORMAT_MOST_RECENT_UPDATE, updateTime.toString(RequestManager.updateTimeFormatter));
+        return String.format(GeonetService.FILTER_FORMAT_MOST_RECENT_UPDATE, updateTime.toString(DateTimeFormatters.requestQueryUpdateTimeFormatter));
     }
 
     @Override
@@ -92,7 +93,8 @@ public class RequestManagerTest extends AndroidTestCase {
 
         DateTime now = DateTime.now();
         LocalDate today = now.toLocalDate();
-        String argumentDate = argumentCaptor.getValue().substring("modificationtime>".length(), "modificationtime>".length() + now.toString(RequestManager.updateTimeFormatter).length());
+        String argumentDate = argumentCaptor.getValue().substring("modificationtime>".length(), "modificationtime>".length()
+                + now.toString(DateTimeFormatters.requestQueryUpdateTimeFormatter).length());
         LocalDate requestedDate = new DateTime(argumentDate).toLocalDate();
         // We want to ensure that the request was for DAYS_BEFORE_TODAY days ago.
         assertEquals(RequestManager.DAYS_BEFORE_TODAY, Days.daysBetween(requestedDate, today).getDays());

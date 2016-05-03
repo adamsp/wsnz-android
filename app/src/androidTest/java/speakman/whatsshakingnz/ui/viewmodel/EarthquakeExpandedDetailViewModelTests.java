@@ -23,6 +23,7 @@ import org.joda.time.DateTime;
 
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.TestEarthquake;
+import speakman.whatsshakingnz.utils.DateTimeFormatters;
 
 /**
  * Created by Adam on 2/29/2016.
@@ -81,6 +82,6 @@ public class EarthquakeExpandedDetailViewModelTests extends AndroidTestCase {
         EarthquakeExpandedDetailViewModel detailViewModel = new EarthquakeExpandedDetailViewModel(dateTestEarthquake);
         String detail = detailViewModel.getDetail().toString();
         assertTrue(detail.contains("Origin Time"));
-        assertTrue(detail.contains(EarthquakeExpandedDetailViewModel.dateFormat.format(now.toDate())));
+        assertTrue(detail.contains(DateTimeFormatters.mediumDateTimeDisplayFormat.format(now.toDate())));
     }
 }
