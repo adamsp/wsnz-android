@@ -51,11 +51,14 @@ import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 import speakman.whatsshakingnz.ui.views.ExpandableDetailCard;
+import speakman.whatsshakingnz.utils.UserSettings;
 
 /**
  * Created by Adam on 1/20/2016.
  */
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, RealmChangeListener {
+
+    private static final int MAX_EARTHQUAKES_TO_DISPLAY = 10;
 
     public static Intent createIntent(Context ctx) {
         return new Intent(ctx, MapActivity.class);
@@ -71,6 +74,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Inject
     MapMarkerOptionsFactory mapMarkerOptionsFactory;
+
+    @Inject
+    UserSettings userSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +94,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapView = (MapView) findViewById(R.id.activity_map_map);
         assert mapView != null;
         mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
-        refreshUI();
+        getEarthquakesAsync();
     }
 
     @Override
@@ -147,8 +153,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         for (Marker marker : mapMarkers) {
             marker.remove();
         }
-        List<? extends Earthquake> earthquakes = getEarthquakes();
-        int count = Math.min(10, earthquakes.size());
+        int count = Math.min(MAX_EARTHQUAKES_TO_DISPLAY, earthquakes.size());
         for (int i = 0; i < count; i++) {
             Earthquake earthquake = earthquakes.get(i);
             MarkerOptions markerOptions = mapMarkerOptionsFactory.getMarkerOptions(earthquake);
@@ -199,12 +204,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapView.getMapAsync(this);
     }
 
-    private List<? extends Earthquake> getEarthquakes() {
-        if (earthquakes == null) {
-            earthquakes = realm.allObjectsSorted(RealmEarthquake.class, RealmEarthquake.FIELD_NAME_ORIGIN_TIME, Sort.DESCENDING);
-            earthquakes.addChangeListener(this);
+    private void getEarthquakesAsync() {
+        if (earthquakes != null) {
+            earthquakes.removeChangeListener(this);
         }
-        return earthquakes;
+        earthquakes = realm.where(RealmEarthquake.class).greaterThanOrEqualTo(RealmEarthquake.FIELD_NAME_MAGNITUDE, userSettings.minimumDisplayMagnitude())
+                .findAllSortedAsync(RealmEarthquake.FIELD_NAME_ORIGIN_TIME, Sort.DESCENDING);
+        earthquakes.addChangeListener(this);
     }
 
     private float getDetailViewAnimationTranslation() {
