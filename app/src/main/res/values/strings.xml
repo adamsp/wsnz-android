@@ -51,6 +51,7 @@
     <!-- Debug -->
     <string name="menu_action_debug_notification_single">Show Single Notification</string>
     <string name="menu_action_debug_notification_multi">Show Multi Notification</string>
+    <string name="menu_action_debug_trigger_exception">Trigger Exception</string>
 
     <plurals name="overview_time_passed_seconds">
         <item quantity="one">%d second ago</item>

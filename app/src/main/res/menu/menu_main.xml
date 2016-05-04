@@ -40,4 +40,9 @@
           android:orderInCategory="100"
           android:visible="@bool/debug_features_enabled"
           app:showAsAction="never"/>
+    <item android:id="@+id/menu_action_trigger_exception"
+          android:title="@string/menu_action_debug_trigger_exception"
+          android:orderInCategory="100"
+          android:visible="@bool/debug_features_enabled"
+          app:showAsAction="never"/>
 </menu>

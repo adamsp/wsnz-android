@@ -186,6 +186,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             case R.id.menu_action_show_multi_notif:
                 showMultiNotif();
                 return true;
+            case R.id.menu_action_trigger_exception:
+                triggerFatalException();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -328,6 +331,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             mgr.notify(NotificationUtil.NOTIFICATION_ID, notification);
         }
+    }
+
+    private void triggerFatalException() {
+        throw new RuntimeException("Manually triggered debug exception");
     }
 //endregion
 }
