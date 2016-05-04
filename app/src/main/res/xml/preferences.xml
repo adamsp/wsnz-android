@@ -45,7 +45,7 @@
         android:key="pref_minHighlightMagnitude"
         seekbar:seekBarMin="30"
         android:defaultValue="40"
-        android:max="50"
+        android:max="60"
         android:title="@string/preferences_notifications_minimum_magnitude"
         android:dependency="pref_allowBackgroundNotifications"
         seekbar:seekBarUseDecimal="true"/>

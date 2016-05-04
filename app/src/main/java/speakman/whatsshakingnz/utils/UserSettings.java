@@ -40,7 +40,7 @@ public interface UserSettings {
     @SuppressWarnings("unused")
     class UserSettingsImpl implements  UserSettings {
 
-        private static final double DEFAULT_MINIMUM_NOTIFICATION_MAGNITUDE = 4.0;
+        private static final double DEFAULT_MINIMUM_NOTIFICATION_MAGNITUDE = 4.5;
         private static final double DEFAULT_MINIMUM_DISPLAY_MAGNITUDE = 0.0;
 
         // These are carried over from v1. Not all are used in v2 (yet?) but are preserved here anyway.
