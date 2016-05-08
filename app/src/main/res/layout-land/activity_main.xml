@@ -1,0 +1,97 @@
+<!--
+  ~ Copyright 2016 Adam Speakman
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.activities.MainActivity">
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/activity_main_map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:transitionName="map_view"
+        map:cameraTargetLat="@string/map_center_lat"
+        map:cameraTargetLng="@string/map_center_long"
+        map:cameraZoom="4.5"
+        map:mapType="normal"
+        map:uiCompass="false"
+        map:uiRotateGestures="false"
+        map:uiScrollGestures="false"
+        map:uiTiltGestures="false"
+        map:uiZoomControls="false"
+        map:uiZoomGestures="false"
+        tools:targetApi="lollipop" />
+
+    <FrameLayout
+        android:fitsSystemWindows="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/activity_main_toolbar"
+            android:background="@android:color/transparent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_width="match_parent"/>
+    </FrameLayout>
+
+    <!--
+    We are required to use two LinearLayouts here to get the effect of the views only filling
+    one third of the screen. When the "loading" view is hidden, the list becomes visible.
+    Note that we have to use different linear layouts because of the requirement for top padding
+    on the parent container for the loading view, but *not* on the parent container for the list
+    view - the list must manage its own padding so that it doesn't clip when it scrolls off the top.
+    Note that we set clipToPadding=false on the container layouts so we can maintain our shadow.
+     -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:clipToPadding="false"
+        android:paddingLeft="8dp"
+        android:weightSum="3">
+        <android.support.v7.widget.RecyclerView
+            style="@style/ElevatedListStyle"
+            android:id="@+id/activity_main_list"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/activity_main_list_top_padding"
+            android:fitsSystemWindows="true"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/activity_main_list_top_padding"
+        android:paddingLeft="8dp"
+        android:paddingBottom="8dp"
+        android:weightSum="3">
+        <TextView
+            style="@style/ElevatedListStyle"
+            android:id="@+id/activity_main_list_empty_view"
+            android:background="@android:color/white"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:text="@string/activity_main_list_loading"/>
+    </LinearLayout>
+
+</merge>

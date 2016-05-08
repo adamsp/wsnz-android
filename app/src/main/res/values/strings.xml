@@ -1,0 +1,83 @@
+<!--
+  ~ Copyright 2015 Adam Speakman
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <string name="app_name">What\'s Shaking, NZ?</string>
+    <string name="activity_main_title">@string/app_name</string>
+    <string name="menu_action_settings">Settings</string>
+    <string name="menu_action_licenses">Open Source Licenses</string>
+    <string name="menu_action_google_licenses">Google Licenses</string>
+    <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_map">MapActivity</string>
+    <string name="activity_main_list_loading">Loading…</string>
+    <string name="direction_north">North</string>
+    <string name="direction_north_east">North East</string>
+    <string name="direction_east">East</string>
+    <string name="direction_south_east">South East</string>
+    <string name="direction_south">South</string>
+    <string name="direction_south_west">South West</string>
+    <string name="direction_west">West</string>
+    <string name="direction_north_west">North West</string>
+    <string name="overview_distance_direction_format">%1$.0f km %2$s</string>
+    <string name="overview_time_passed_now">now</string>
+    <string name="dialog_title_google_licenses">Google Services licenses</string>
+    <string name="dialog_title_open_source_licenses">Open Source licenses</string>
+    <string name="dialog_button_close">Close</string>
+    <string name="preferences_notifications_title">Notifications enabled</string>
+    <string name="preferences_notifications_sound_title">Sound enabled</string>
+    <string name="preferences_notifications_vibrate_title">Vibration enabled</string>
+    <string name="preferences_notifications_summary_light_title">Light enabled</string>
+    <string name="preferences_notifications_minimum_magnitude">Notify for earthquakes above</string>
+    <string name="preferences_display_minimum_magnitude">Minimum magnitude to display</string>
+    <string name="notification_content_single_location">%1$.0f km %2$s of %3$s</string>
+    <string name="notification_content_multiple_locations">Multiple locations</string>
+
+    <!-- Accessibility -->
+    <string name="acc_detail_card_detail_indicator">There is more detail available about this earthquake</string>
+
+    <!-- Debug -->
+    <string name="menu_action_debug_notification_single">Show Single Notification</string>
+    <string name="menu_action_debug_notification_multi">Show Multi Notification</string>
+    <string name="menu_action_debug_trigger_exception">Trigger Exception</string>
+
+    <plurals name="overview_time_passed_seconds">
+        <item quantity="one">%d second ago</item>
+        <item quantity="other">%d seconds ago</item>
+    </plurals>
+    <plurals name="overview_time_passed_minutes">
+        <item quantity="one">%d minute ago</item>
+        <item quantity="other">%d minutes ago</item>
+    </plurals>
+    <plurals name="overview_time_passed_hours">
+        <item quantity="one">%d hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+    <plurals name="overview_time_passed_days">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+
+    <plurals name="notification_title">
+        <item quantity="one">%.1f earthquake detected</item>
+        <item quantity="other">%d significant earthquakes detected</item>
+    </plurals>
+
+    <plurals name="notification_ticker">
+        <item quantity="one">%.1f earthquake detected</item>
+        <item quantity="other">%d significant earthquakes detected</item>
+    </plurals>
+
+</resources>

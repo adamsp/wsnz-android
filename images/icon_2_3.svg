@@ -7,15 +7,17 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="200"
-   height="200"
+   width="96"
+   height="96"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.1 r9760"
-   sodipodi:docname="icon.svg">
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="icon_2_3.svg"
+   inkscape:export-filename="/Users/Adam/Development/Code/wsnz-android/images/drawable-xxhdpi/ic_notification_small.png"
+   inkscape:export-xdpi="67.5"
+   inkscape:export-ydpi="67.5">
   <defs
      id="defs4">
     <linearGradient
@@ -40,35 +42,25 @@
          offset="1"
          id="stop3809" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3813"
-       id="linearGradient5269"
-       x1="113.57143"
-       y1="15.357142"
-       x2="113.57143"
-       y2="160.48241"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(0,864.86218)" />
   </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#000000"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.94901961"
+     inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4"
-     inkscape:cx="22.857142"
-     inkscape:cy="75.899316"
+     inkscape:zoom="5.0455015"
+     inkscape:cx="48"
+     inkscape:cy="40.18503"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1276"
-     inkscape:window-height="756"
-     inkscape:window-x="4"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1">
+     inkscape:window-width="1833"
+     inkscape:window-height="1160"
+     inkscape:window-x="0"
+     inkscape:window-y="1"
+     inkscape:window-maximized="0">
     <inkscape:grid
        type="xygrid"
        id="grid2991"
@@ -93,10 +85,10 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-852.36218)">
+     transform="translate(0,-956.36218)">
     <path
-       style="fill:none;stroke:url(#linearGradient5269);stroke-width:10;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m -20,969.86218 70,0 15,-30 20,80.00002 30,-135.00002 25,110 10,-25 85,0"
+       style="fill:none;stroke:#ffffff;stroke-width:6.06910896;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 3.9999301,1014.9831 12.4837639,0 9.103664,-18.20731 12.138218,48.55281 18.207328,-81.93291 15.172773,66.76021 6.069109,-15.1728 14.825284,0"
        id="path2987"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccc" />

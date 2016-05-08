@@ -1,3 +1,0 @@
-<WakefulIntentService
-    listener="speakman.whatsshakingnz.geonet.GeonetAlarmListener"
-    />

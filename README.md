@@ -1,28 +1,28 @@
 What's Shaking, NZ? for Android
 ============
-This is an app for monitoring quakes all around New Zealand. For more details see the website at http://www.whatsshaking.co.nz
+This is an app for monitoring quakes all around New Zealand.
 
-You can download the app from Google Play here: https://play.google.com/store/apps/details?id=speakman.whatsshakingnz
+<a href="https://play.google.com/store/apps/details?id=speakman.whatsshakingnz">
+  <img alt="Get it on Google Play"
+       src="https://developer.android.com/images/brand/en_generic_rgb_wo_45.png" />
+</a>
 
-You will need a Google Maps API key to run this app, you can get that here: https://developers.google.com/android/maps-api-signup
+## 2.0
 
-## Acquiring the code
+Version 2.0 is in the works. You will need Android Studio 1.3 and updated build tools to build and run this.
 
-This project uses Git Submodules. Clone the code using whatever method you normally do - if you used the Github application, you should not need to do anything further, it should have pulled all the required code for you, including the ActionBarSherlock submodule.
+## License
 
-If you cloned by running `git clone git://github.com/adamsp/wsnz-android.git` command, you also need to do the following:
+    Copyright 2015 Adam Speakman
 
-```
-cd wsnz-android/
-git submodule init
-git submodule update
-```
-	
-This will download the required ActionBarSherlock library. This references a fork (https://github.com/adamsp/ActionBarSherlock) of the offical ABS project that has the Maps version of the Android support library: https://github.com/petedoyle/android-support-v4-googlemaps
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
 
-## Eclipse
+       http://www.apache.org/licenses/LICENSE-2.0
 
-Some issues when importing the existing code into Eclipse:
-- You will probably need to specify a different workspace to the directory the code is in (ie, clone to C:/code/wsnz-android and specify workspace C:/Users/username/workspace) before you can succesfully use the File -> New -> Project -> Android -> Android Project from Existing Code option. See these links for details: http://stackoverflow.com/questions/4054216/opening-existing-project-from-source-control and http://stackoverflow.com/questions/5784652/eclipse-invalid-project-description-when-creating-new-project-from-existing-so?lq=1 and http://code.google.com/p/android/issues/detail?id=8431
-- You will probably need to specify the correct version of Android for the library and the project, after importing into Eclipse. Right-click the project in Eclipse -> Properties -> Android, and select Google APIs 15. You may need to do this for both.
-- Make sure you're using Java 1.6 to compile with. I had troubles at one point where Eclipse decided to compile against Java 1.5.
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.

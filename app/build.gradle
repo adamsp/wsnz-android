@@ -1,0 +1,118 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://maven.fabric.io/public' }
+    }
+    dependencies {
+        // the latest version of the android-apt plugin
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        //noinspection GradleDynamicVersion
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
+apply plugin: 'com.neenbedankt.android-apt'
+
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion '23.0.2'
+    dataBinding {
+        enabled = true
+    }
+
+    Properties properties = new Properties()
+    File releasePropsFile = rootProject.file('.signing/release.properties')
+    if (releasePropsFile.exists()) {
+        /*
+        The release.properties file should look like this:
+        mapsApiKey=...
+        keystoreFile=path/to/keystore
+        keystorePassword=...
+        keyAlias=...
+        keyPassword=...
+         */
+        properties.load(new FileInputStream(releasePropsFile))
+    }
+
+    defaultConfig {
+        vectorDrawables.useSupportLibrary = true
+        applicationId "speakman.whatsshakingnz"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 9
+        versionName "2.0.0"
+        manifestPlaceholders = [ mapsApiKey: properties['mapsApiKey'] ]
+    }
+
+    signingConfigs {
+        release {
+            if (properties['keystoreFile'] != null) {
+                storeFile rootProject.file(properties['keystoreFile'])
+                storePassword properties['keystorePassword']
+                keyAlias properties['keyAlias']
+                keyPassword properties['keyPassword']
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            //noinspection GroovyAssignabilityCheck
+            signingConfig signingConfigs.debug
+            ext.enableCrashlytics = false
+        }
+        debugAnalytics {
+            debuggable true
+            //noinspection GroovyAssignabilityCheck
+            signingConfig signingConfigs.debug
+        }
+        release {
+            minifyEnabled false
+            //noinspection GroovyAssignabilityCheck
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:recyclerview-v7:23.3.0'
+    compile 'com.android.support:design:23.3.0'
+    compile 'com.android.support:cardview-v7:23.3.0'
+    compile 'com.android.support:support-vector-drawable:23.3.0'
+    compile 'com.google.android.gms:play-services-maps:8.4.0'
+    compile 'com.google.android.gms:play-services-gcm:8.4.0'
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'io.reactivex:rxjava:1.1.1'
+    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'net.danlew:android.joda:2.9.2'
+    compile 'io.realm:realm-android:0.87.4'
+    compile 'com.google.dagger:dagger:2.0.2'
+    compile 'com.jakewharton.timber:timber:4.1.0'
+    compile 'com.jonathanfinerty.once:once:0.5.0'
+    apt 'com.google.dagger:dagger-compiler:2.0.2'
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+    androidTestCompile('org.mockito:mockito-core:1.10.19') {
+        exclude group: 'org.hamcrest'
+    }
+    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
+    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+        transitive = true;
+    }
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
+    debugAnalyticsCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
+}
