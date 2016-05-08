@@ -23,8 +23,8 @@ import android.content.Intent;
 import javax.inject.Inject;
 
 import io.realm.Realm;
+import rx.Subscriber;
 import rx.functions.Action0;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.model.Earthquake;
@@ -60,19 +60,19 @@ public class NetworkRunnerService extends IntentService {
             public void call() {
                 realm.beginTransaction();
             }
-        }).doOnCompleted(new Action0() {
+        }).subscribe(new Subscriber<RealmEarthquake>() {
             @Override
-            public void call() {
+            public void onCompleted() {
                 realm.commitTransaction();
             }
-        }).doOnError(new Action1<Throwable>() {
+
             @Override
-            public void call(Throwable throwable) {
+            public void onError(Throwable e) {
                 realm.commitTransaction(); // We need to save everything that came through, even on error.
             }
-        }).subscribe(new Action1<RealmEarthquake>() {
+
             @Override
-            public void call(RealmEarthquake realmEarthquake) {
+            public void onNext(RealmEarthquake realmEarthquake) {
                 realm.copyToRealmOrUpdate(realmEarthquake);
             }
         });
