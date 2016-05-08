@@ -31,9 +31,6 @@ import speakman.whatsshakingnz.utils.DateTimeFormatters;
  * Created by Adam on 15-06-07.
  */
 public class GeonetDateTimeAdapter extends TypeAdapter<DateTime> {
-
-
-
     @Override
     public void write(JsonWriter writer, DateTime value) throws IOException {
         if (value == null) {
