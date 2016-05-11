@@ -18,37 +18,34 @@ package speakman.whatsshakingnz.network;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.joda.time.DateTime;
 
 import dagger.Module;
 import dagger.Provides;
-import retrofit.RestAdapter;
-import retrofit.converter.GsonConverter;
+import okhttp3.OkHttpClient;
 import speakman.whatsshakingnz.InternalPreferences;
 import speakman.whatsshakingnz.dagger.AppScope;
 import speakman.whatsshakingnz.network.geonet.GeonetDateTimeAdapter;
-import speakman.whatsshakingnz.network.geonet.GeonetService;
 
 /**
  * Created by Adam on 15-06-13.
  */
 @Module
 public class NetworkModule {
-    @Provides
-    GeonetService provideGeonetService(RestAdapter restAdapter) {
-        return restAdapter.create(GeonetService.class);
+
+    @AppScope @Provides
+    OkHttpClient provideOkHttp() {
+        return new OkHttpClient();
     }
 
     @AppScope @Provides
-    RestAdapter provideRestAdapter() {
-        return new RestAdapter.Builder()
-                .setConverter(new GsonConverter(new GsonBuilder()
-                        .registerTypeAdapter(DateTime.class, new GeonetDateTimeAdapter())
-                        .create()))
-                .setEndpoint("http://wfs.geonet.org.nz")
-                .build();
+    Gson provideGson() {
+        return new GsonBuilder()
+                .registerTypeAdapter(DateTime.class, new GeonetDateTimeAdapter())
+                .create();
     }
 
     @Provides
