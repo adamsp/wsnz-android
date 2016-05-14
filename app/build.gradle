@@ -47,8 +47,8 @@ android {
         applicationId "speakman.whatsshakingnz"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 11
-        versionName "2.0.2-beta1"
+        versionCode 12
+        versionName "2.0.2"
         manifestPlaceholders = [ mapsApiKey: properties['mapsApiKey'] ]
     }
 
