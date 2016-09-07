@@ -28,6 +28,10 @@ import speakman.whatsshakingnz.model.Earthquake;
 public class GeonetFeature implements Earthquake {
 
     // RestKit parses the response JSON out into this object.
+    static class Geometry {
+        double[] coordinates;
+    }
+
     @SuppressWarnings("unused")
     static class Properties {
         double latitude;
@@ -54,6 +58,7 @@ public class GeonetFeature implements Earthquake {
 
     @SuppressWarnings("unused")
     Properties properties;
+    Geometry geometry;
 
     @Override
     public double getMagnitude() {
@@ -156,12 +161,16 @@ public class GeonetFeature implements Earthquake {
 
     @Override
     public double getLatitude() {
-        return properties == null ? 0 : properties.latitude;
+        if (geometry == null) return 0;
+        else if (geometry.coordinates == null || geometry.coordinates.length != 2) return 0;
+        else return geometry.coordinates[1];
     }
 
     @Override
     public double getLongitude() {
-        return properties == null ? 0 : properties.longitude;
+        if (geometry == null) return 0;
+        else if (geometry.coordinates == null || geometry.coordinates.length != 2) return 0;
+        else return geometry.coordinates[0];
     }
     
 }
