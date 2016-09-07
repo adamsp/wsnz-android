@@ -102,6 +102,7 @@ dependencies {
     compile 'com.google.dagger:dagger:2.0.2'
     compile 'com.jakewharton.timber:timber:4.1.0'
     compile 'com.jonathanfinerty.once:once:0.5.0'
+    apt 'com.google.guava:guava:19.0'
     apt 'com.google.dagger:dagger-compiler:2.0.2'
     provided 'org.glassfish:javax.annotation:10.0-b28'
     androidTestCompile('org.mockito:mockito-core:1.10.19') {
