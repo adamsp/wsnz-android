@@ -41,5 +41,5 @@ public class DateTimeFormatters {
     This is discussed here: https://github.com/GeoNet/help/issues/5
      */
     public static final DateTimeFormatter requestQueryUpdateTimeFormatter
-            = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'").withZoneUTC();
+            = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss").withZoneUTC();
 }
