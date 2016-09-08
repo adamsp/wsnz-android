@@ -70,10 +70,11 @@ public class RequestManager {
      * of paging (desirable since we don't want to load a few thousand at once):
      * http://wfs.geonet.org.nz/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json&cql_filter=origintime%3E=%272015-05-31T18:06:16.912Z%27&sortBy=origintime&maxFeatures=1
      */
-    private static final String ENDPOINT = "http://wfs.geonet.org.nz/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json&sortBy=modificationtime&cql_filter=%s&maxFeatures=%d";
-    private static final String FILTER = "modificationtime>%s AND eventtype='earthquake'";
+    private static final String ENDPOINT = "http://wfs.geonet.org.nz/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json&cql_filter=%s&maxFeatures=%d";
+    private static final String FILTER = "modificationtime>%s+AND+eventtype=earthquake";
 
-    public static final int MAX_EVENTS_PER_REQUEST = 50;
+    // 1000 events is ~80kb of JSON.
+    public static final int MAX_EVENTS_PER_REQUEST = 1000;
     public static final int DAYS_BEFORE_TODAY = 7;
 
     private final RequestTimeStore timeStore;
@@ -96,30 +97,33 @@ public class RequestManager {
                 String json = null;
                 try {
                     List<GeonetFeature> features;
-                    do {
-                        request = new Request.Builder().url(getRequestUrl()).build();
-                        response = client.newCall(request).execute();
-                        ResponseBody body = response.body();
-                        try {
-                            json = body.string();
-                        } catch (IOException e) {
-                            // We wrap this IOException so we don't confuse it with a network error
-                            // (which is also an IOException).
-                            throw new ResponseBodyReadException(e);
-                        } finally {
-                            body.close();
+                    request = new Request.Builder().url(getRequestUrl()).build();
+                    response = client.newCall(request).execute();
+                    ResponseBody body = response.body();
+                    try {
+                        json = body.string();
+                    } catch (IOException e) {
+                        // We wrap this IOException so we don't confuse it with a network error
+                        // (which is also an IOException).
+                        throw new ResponseBodyReadException(e);
+                    } finally {
+                        body.close();
+                    }
+                    checkResponseWasSuccessfulOrThrow(response);
+                    GeonetResponse geonetResponse = gson.fromJson(json, GeonetResponse.class);
+                    features = geonetResponse.getFeatures();
+                    // Can no longer depend on server ordering, so rather than sorting locally just keep track of most recent update.
+                    long mostRecent = 0;
+                    for (GeonetFeature feature : features) {
+                        long updateTime = feature.getUpdatedTime();
+                        if (updateTime > mostRecent) {
+                            mostRecent = updateTime;
                         }
-                        checkResponseWasSuccessfulOrThrow(response);
-                        GeonetResponse geonetResponse = gson.fromJson(json, GeonetResponse.class);
-                        features = geonetResponse.getFeatures();
-                        for (GeonetFeature feature : features) {
-                            subscriber.onNext(feature);
-                        }
-                        if (features.size() > 0) {
-                            GeonetFeature lastFeature = features.get(features.size() - 1);
-                            timeStore.saveMostRecentUpdateTime(new DateTime(lastFeature.getUpdatedTime()));
-                        }
-                    } while (features.size() >= MAX_EVENTS_PER_REQUEST);
+                        subscriber.onNext(feature);
+                    }
+                    if (features.size() > 0) {
+                        timeStore.saveMostRecentUpdateTime(new DateTime(mostRecent));
+                    }
                     subscriber.onCompleted();
                 } catch (HttpStatusException e) { // Non-200 status
                     String info = buildLogMessageForFailure(request, response, json);
