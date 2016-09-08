@@ -70,14 +70,10 @@
         <item quantity="other">%d days ago</item>
     </plurals>
 
-    <plurals name="notification_title">
-        <item quantity="one">%.1f earthquake detected</item>
-        <item quantity="other">%d significant earthquakes detected</item>
-    </plurals>
+    <string name="notification_title_single">%.1f earthquake detected</string>
+    <string name="notification_title_multiple">%d significant earthquakes detected</string>
 
-    <plurals name="notification_ticker">
-        <item quantity="one">%.1f earthquake detected</item>
-        <item quantity="other">%d significant earthquakes detected</item>
-    </plurals>
+    <string name="notification_ticker_single">%.1f earthquake detected</string>
+    <string name="notification_ticker_multiple">%d significant earthquakes detected</string>
 
 </resources>

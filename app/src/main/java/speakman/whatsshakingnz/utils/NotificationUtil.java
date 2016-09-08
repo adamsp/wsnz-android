@@ -55,8 +55,8 @@ public class NotificationUtil {
 
     public Notification notificationForSingleEarthquake(@NonNull Earthquake earthquake) {
         String tickerText, titleText, contentText;
-        tickerText = context.getResources().getQuantityString(R.plurals.notification_ticker, 1, earthquake.getMagnitude());
-        titleText = context.getResources().getQuantityString(R.plurals.notification_title, 1, earthquake.getMagnitude());
+        tickerText = context.getString(R.string.notification_ticker_single, earthquake.getMagnitude());
+        titleText = context.getString(R.string.notification_title_single, earthquake.getMagnitude());
 
         LatLng earthquakeLocation = new LatLng(earthquake.getLatitude(), earthquake.getLongitude());
         LocalPlace nearestTown = DistanceUtil.getClosestPlace(earthquakeLocation);
@@ -90,8 +90,8 @@ public class NotificationUtil {
 
     public Notification notificationForMultipleEarthquakes(@NonNull List<? extends Earthquake> earthquakes) {
         String tickerText, titleText, contentText;
-        tickerText = context.getResources().getQuantityString(R.plurals.notification_ticker, earthquakes.size(), earthquakes.size());
-        titleText = context.getResources().getQuantityString(R.plurals.notification_title, earthquakes.size(), earthquakes.size());
+        tickerText = context.getString(R.string.notification_ticker_multiple, earthquakes.size());
+        titleText = context.getString(R.string.notification_title_multiple, earthquakes.size());
         contentText = context.getString(R.string.notification_content_multiple_locations);
 
         Notification.Builder builder = new Notification.Builder(context);
