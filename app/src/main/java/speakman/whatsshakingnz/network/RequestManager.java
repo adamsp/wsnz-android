@@ -25,6 +25,7 @@ import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -156,7 +157,9 @@ public class RequestManager {
             mostRecentUpdateTime = DateTime.now().minusDays(DAYS_BEFORE_TODAY);
         }
         String eventsSince = String.format(FILTER, mostRecentUpdateTime.toString(DateTimeFormatters.requestQueryUpdateTimeFormatter));
-        return String.format(ENDPOINT,
+        return String.format(
+                Locale.US,
+                ENDPOINT,
                 eventsSince,
                 MAX_EVENTS_PER_REQUEST);
     }
