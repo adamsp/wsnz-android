@@ -69,10 +69,16 @@ public class RequestManager {
      *
      * Sample complete request, including ordering for "oldest first" in order to enable our own version
      * of paging (desirable since we don't want to load a few thousand at once):
-     * http://wfs.geonet.org.nz/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json&cql_filter=origintime%3E=%272015-05-31T18:06:16.912Z%27&sortBy=origintime&maxFeatures=1
+     * http://wfs.geonet.org.nz/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json&cql_filter=modificationtime%3E=%272015-05-31T18:06:16.912Z+AND+eventtype=earthquake&maxFeatures=1
      */
-    private static final String ENDPOINT = "http://wfs.geonet.org.nz/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json&cql_filter=%s&maxFeatures=%d";
-    private static final String FILTER = "modificationtime>%s+AND+eventtype=earthquake";
+    private final String endpoint;
+    private static final String FILTER = "?service=WFS"
+            + "&version=1.0.0"
+            + "&request=GetFeature"
+            + "&typeName=geonet:quake_search_v1"
+            + "&outputFormat=json"
+            + "&cql_filter=modificationtime>%s+AND+eventtype=earthquake"
+            + "&maxFeatures=%d";
 
     // 1000 events is ~80kb of JSON.
     public static final int MAX_EVENTS_PER_REQUEST = 1000;
@@ -84,9 +90,14 @@ public class RequestManager {
 
     @Inject
     public RequestManager(OkHttpClient client, Gson gson, RequestTimeStore timeStore) {
+        this(client, gson, timeStore, "http://wfs.geonet.org.nz/geonet/ows");
+    }
+
+    public RequestManager(OkHttpClient client, Gson gson, RequestTimeStore timeStore, String endpoint) {
         this.client = client;
         this.gson = gson;
         this.timeStore = timeStore;
+        this.endpoint = endpoint + FILTER;
     }
 
     public Observable<Earthquake> retrieveNewEarthquakes() {
@@ -156,10 +167,11 @@ public class RequestManager {
         if (mostRecentUpdateTime == null) {
             mostRecentUpdateTime = DateTime.now().minusDays(DAYS_BEFORE_TODAY);
         }
-        String eventsSince = String.format(FILTER, mostRecentUpdateTime.toString(DateTimeFormatters.requestQueryUpdateTimeFormatter));
+        // We want events that have been modified after the most recently seen update time.
+        String eventsSince = mostRecentUpdateTime.toString(DateTimeFormatters.requestQueryUpdateTimeFormatter);
         return String.format(
                 Locale.US,
-                ENDPOINT,
+                endpoint,
                 eventsSince,
                 MAX_EVENTS_PER_REQUEST);
     }
@@ -189,7 +201,7 @@ public class RequestManager {
 
     private void checkResponseWasSuccessfulOrThrow(Response response) throws HttpStatusException {
         if (!response.isSuccessful()) {
-            throw new HttpStatusException(String.format("Non-200 Status received from Geonet (%d)", response.code()), response.code(), response);
+            throw new HttpStatusException(String.format(Locale.US, "Non-200 Status received from Geonet (%d)", response.code()), response.code(), response);
         }
     }
 }
