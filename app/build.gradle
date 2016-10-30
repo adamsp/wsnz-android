@@ -28,6 +28,10 @@ android {
         enabled = true
     }
 
+    lintOptions {
+        checkReleaseBuilds false
+    }
+
     Properties properties = new Properties()
     File releasePropsFile = rootProject.file('.signing/release.properties')
     if (releasePropsFile.exists()) {

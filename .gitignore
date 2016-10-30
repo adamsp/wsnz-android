@@ -67,6 +67,7 @@ Desktop.ini
 .idea/datasources.xml
 .idea/dataSources.ids
 .idea/libraries/
+projectFilesBackup/
 
 # Gradle
 .gradle/
