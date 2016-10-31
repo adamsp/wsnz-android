@@ -46,6 +46,10 @@ import timber.log.Timber;
  */
 public class RequestManager {
 
+    // 200 events is ~16kb of JSON.
+    public static final int MAX_EVENTS_PER_REQUEST = 200;
+    public static final int DAYS_BEFORE_TODAY = 7;
+
     private class HttpStatusException extends Exception {
         final Response response;
         final int statusCode;
@@ -78,11 +82,8 @@ public class RequestManager {
             + "&typeName=geonet:quake_search_v1"
             + "&outputFormat=json"
             + "&cql_filter=modificationtime>%s+AND+eventtype=earthquake"
-            + "&maxFeatures=%d";
-
-    // 1000 events is ~80kb of JSON.
-    public static final int MAX_EVENTS_PER_REQUEST = 1000;
-    public static final int DAYS_BEFORE_TODAY = 7;
+            + "&maxFeatures=" + MAX_EVENTS_PER_REQUEST
+            + "&sortBy=modificationtime";
 
     private final RequestTimeStore timeStore;
     private final OkHttpClient client;
@@ -109,33 +110,45 @@ public class RequestManager {
                 String json = null;
                 try {
                     List<GeonetFeature> features;
-                    request = new Request.Builder().url(getRequestUrl()).build();
-                    response = client.newCall(request).execute();
-                    ResponseBody body = response.body();
-                    try {
-                        json = body.string();
-                    } catch (IOException e) {
-                        // We wrap this IOException so we don't confuse it with a network error
-                        // (which is also an IOException).
-                        throw new ResponseBodyReadException(e);
-                    } finally {
-                        body.close();
-                    }
-                    checkResponseWasSuccessfulOrThrow(response);
-                    GeonetResponse geonetResponse = gson.fromJson(json, GeonetResponse.class);
-                    features = geonetResponse.getFeatures();
-                    // Can no longer depend on server ordering, so rather than sorting locally just keep track of most recent update.
-                    long mostRecent = 0;
-                    for (GeonetFeature feature : features) {
-                        long updateTime = feature.getUpdatedTime();
-                        if (updateTime > mostRecent) {
-                            mostRecent = updateTime;
+                    do {
+                        DateTime mostRecentUpdateTime = timeStore.getMostRecentUpdateTime();
+                        if (mostRecentUpdateTime == null) {
+                            mostRecentUpdateTime = DateTime.now().minusDays(DAYS_BEFORE_TODAY);
                         }
-                        subscriber.onNext(feature);
-                    }
-                    if (features.size() > 0) {
-                        timeStore.saveMostRecentUpdateTime(new DateTime(mostRecent));
-                    }
+
+                        request = new Request.Builder().url(getRequestUrl(mostRecentUpdateTime)).build();
+                        response = client.newCall(request).execute();
+                        ResponseBody body = response.body();
+                        try {
+                            json = body.string();
+                        } catch (IOException e) {
+                            // We wrap this IOException so we don't confuse it with a network error
+                            // (which is also an IOException).
+                            throw new ResponseBodyReadException(e);
+                        } finally {
+                            body.close();
+                        }
+                        checkResponseWasSuccessfulOrThrow(response);
+                        GeonetResponse geonetResponse = gson.fromJson(json, GeonetResponse.class);
+                        features = geonetResponse.getFeatures();
+
+                        long oldMostRecent = mostRecentUpdateTime.getMillis();
+                        if (features.size() == 1 && features.get(0).getUpdatedTime() == oldMostRecent) {
+                            // See https://github.com/GeoNet/help/issues/5 (the fix no longer works)
+                            // The server sent us the last item from the previous page again - do nothing.
+                        } else {
+                            long newMostRecent = 0;
+                            for (GeonetFeature feature : features) {
+                                if (feature.getUpdatedTime() != oldMostRecent) {
+                                    newMostRecent = feature.getUpdatedTime();
+                                    subscriber.onNext(feature);
+                                }
+                            }
+                            if (features.size() > 0 && newMostRecent != oldMostRecent) {
+                                timeStore.saveMostRecentUpdateTime(new DateTime(newMostRecent));
+                            }
+                        }
+                    } while (features.size() >= MAX_EVENTS_PER_REQUEST);
                     subscriber.onCompleted();
                 } catch (HttpStatusException e) { // Non-200 status
                     String info = buildLogMessageForFailure(request, response, json);
@@ -162,18 +175,13 @@ public class RequestManager {
         });
     }
 
-    private String getRequestUrl() {
-        DateTime mostRecentUpdateTime = timeStore.getMostRecentUpdateTime();
-        if (mostRecentUpdateTime == null) {
-            mostRecentUpdateTime = DateTime.now().minusDays(DAYS_BEFORE_TODAY);
-        }
+    private String getRequestUrl(DateTime mostRecentUpdateTime) {
         // We want events that have been modified after the most recently seen update time.
         String eventsSince = mostRecentUpdateTime.toString(DateTimeFormatters.requestQueryUpdateTimeFormatter);
         return String.format(
                 Locale.US,
                 endpoint,
-                eventsSince,
-                MAX_EVENTS_PER_REQUEST);
+                eventsSince);
     }
 
     private String buildLogMessageForFailure(@Nullable Request request, @Nullable Response response, @Nullable String responseBody) {

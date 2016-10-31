@@ -33,13 +33,5 @@ public class DateTimeFormatters {
     public static final DateTimeFormatter networkDateTimeReadFormatter = ISODateTimeFormat.dateTimeParser();
     public static final DateTimeFormatter networkDateTimeWriteFormatter = ISODateTimeFormat.dateTime().withChronology(ISOChronology.getInstanceUTC());
 
-    /*
-    This requires an extra "S" on the end (ie, 4 'milliseconds' values). This 4th place will
-    always be populated with a 0. This is an unfortunate requirement of the API - if we don't
-    supply this extra 0, it treats the 'greater than' as 'greater than or equal to', when
-    requesting events with an updated time greater than the most recently seen event.
-    This is discussed here: https://github.com/GeoNet/help/issues/5
-     */
-    public static final DateTimeFormatter requestQueryUpdateTimeFormatter
-            = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss").withZoneUTC();
+    public static final DateTimeFormatter requestQueryUpdateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZoneUTC();
 }
