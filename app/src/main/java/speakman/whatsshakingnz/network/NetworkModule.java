@@ -29,6 +29,7 @@ import okhttp3.OkHttpClient;
 import speakman.whatsshakingnz.InternalPreferences;
 import speakman.whatsshakingnz.dagger.AppScope;
 import speakman.whatsshakingnz.network.geonet.GeonetDateTimeAdapter;
+import speakman.whatsshakingnz.network.geonet.GeonetService;
 
 /**
  * Created by Adam on 15-06-13.

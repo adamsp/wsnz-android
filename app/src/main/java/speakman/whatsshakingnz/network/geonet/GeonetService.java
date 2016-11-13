@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Adam Speakman
+ * Copyright 2016 Adam Speakman
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package speakman.whatsshakingnz.network;
+package speakman.whatsshakingnz.network.geonet;
 
 import android.support.annotation.Nullable;
 
@@ -36,8 +36,8 @@ import okhttp3.ResponseBody;
 import rx.Observable;
 import rx.Subscriber;
 import speakman.whatsshakingnz.model.Earthquake;
-import speakman.whatsshakingnz.network.geonet.GeonetFeature;
-import speakman.whatsshakingnz.network.geonet.GeonetResponse;
+import speakman.whatsshakingnz.network.EarthquakeService;
+import speakman.whatsshakingnz.network.RequestTimeStore;
 import speakman.whatsshakingnz.utils.DateTimeFormatters;
 import timber.log.Timber;
 

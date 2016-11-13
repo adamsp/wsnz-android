@@ -32,6 +32,7 @@ import okhttp3.mockwebserver.RecordedRequest;
 import rx.Observer;
 import rx.functions.Action1;
 import speakman.whatsshakingnz.model.Earthquake;
+import speakman.whatsshakingnz.network.geonet.GeonetService;
 import speakman.whatsshakingnz.utils.DateTimeFormatters;
 
 import static org.mockito.Matchers.any;
