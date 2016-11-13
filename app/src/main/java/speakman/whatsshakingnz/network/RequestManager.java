@@ -71,7 +71,7 @@ public class RequestManager {
      * Documentation for the Geonet service we're using is available here:
      * http://info.geonet.org.nz/display/appdata/Advanced+Queries
      *
-     * Sample complete request, including ordering for "oldest first" in order to enable our own version
+     * Sample complete request. Add "sortBy=modificationtime" for "oldest first" in order to enable our own version
      * of paging (desirable since we don't want to load a few thousand at once):
      * http://wfs.geonet.org.nz/geonet/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geonet:quake_search_v1&outputFormat=json&cql_filter=modificationtime%3E=%272015-05-31T18:06:16.912Z+AND+eventtype=earthquake&maxFeatures=1
      */
@@ -82,8 +82,10 @@ public class RequestManager {
             + "&typeName=geonet:quake_search_v1"
             + "&outputFormat=json"
             + "&cql_filter=modificationtime>%s+AND+eventtype=earthquake"
-            + "&maxFeatures=" + MAX_EVENTS_PER_REQUEST
-            + "&sortBy=modificationtime";
+            + "&maxFeatures=" + MAX_EVENTS_PER_REQUEST;
+    // One day the Geonet service will work consistently. Until that day comes, we disable paging because it is frequently broken.
+    // Instead we just take the top MAX_EVENTS most recent - users could potentially lose events, if they're offline for more than MAX_EVENTS.
+//            + "&sortBy=modificationtime";
 
     private final RequestTimeStore timeStore;
     private final OkHttpClient client;
@@ -101,6 +103,19 @@ public class RequestManager {
         this.endpoint = endpoint + FILTER;
     }
 
+    /**
+     * Retrieves the latest events since the last-seen timestamp in the timestore supplied in the constructor.
+     * <p>
+     * The Geonet service has been a bit flaky, and potentially will supply the same event twice. There was a period
+     * where we were able to page data, but that no longer works - the service doesn't support the query parameter
+     * anymore. For this reason, it's possible that some events may be missed - specifically, if more than
+     * {@link #MAX_EVENTS_PER_REQUEST} events have occurred since the last request. </p>
+     * <p>
+     * This method makes a best effort to de-duplicate events, but makes no guarantees - if an event is updated
+     * while a request is in progress, it'll show up twice. </p>
+     *
+     * @return An Observable of new Earthquake events.
+     */
     public Observable<Earthquake> retrieveNewEarthquakes() {
         return Observable.create(new Observable.OnSubscribe<Earthquake>() {
             @Override
