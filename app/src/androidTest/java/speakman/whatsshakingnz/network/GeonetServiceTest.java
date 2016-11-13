@@ -44,7 +44,7 @@ import static org.mockito.Mockito.when;
 /**
  * Created by Adam on 15-06-07.
  */
-public class RequestManagerTest extends AndroidTestCase {
+public class GeonetServiceTest extends AndroidTestCase {
 
     private MockWebServer mockedWebServer;
     private RequestTimeStore mockedRequestTimeStore;
