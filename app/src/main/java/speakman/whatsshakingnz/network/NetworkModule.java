@@ -52,4 +52,9 @@ public class NetworkModule {
     NotificationTimeStore provideNotificationTimeStore(Context context) {
         return new InternalPreferences(context);
     }
+
+    @Provides
+    EarthquakeService provideEarthquakeService(OkHttpClient client, Gson gson, RequestTimeStore timeStore) {
+        return new GeonetService(client, gson, timeStore);
+    }
 }

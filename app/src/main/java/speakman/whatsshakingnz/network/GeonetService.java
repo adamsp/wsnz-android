@@ -44,7 +44,7 @@ import timber.log.Timber;
 /**
  * Created by Adam on 15-05-31.
  */
-public class RequestManager {
+public class GeonetService implements EarthquakeService {
 
     // 200 events is ~16kb of JSON.
     public static final int MAX_EVENTS_PER_REQUEST = 200;
@@ -92,11 +92,11 @@ public class RequestManager {
     private Gson gson;
 
     @Inject
-    public RequestManager(OkHttpClient client, Gson gson, RequestTimeStore timeStore) {
+    public GeonetService(OkHttpClient client, Gson gson, RequestTimeStore timeStore) {
         this(client, gson, timeStore, "http://wfs.geonet.org.nz/geonet/ows");
     }
 
-    public RequestManager(OkHttpClient client, Gson gson, RequestTimeStore timeStore, String endpoint) {
+    public GeonetService(OkHttpClient client, Gson gson, RequestTimeStore timeStore, String endpoint) {
         this.client = client;
         this.gson = gson;
         this.timeStore = timeStore;

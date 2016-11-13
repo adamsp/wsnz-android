@@ -72,7 +72,7 @@ public class SyncService extends GcmTaskService {
     }
 
     @Inject
-    RequestManager requestManager;
+    EarthquakeService earthquakeService;
 
     @Inject
     UserSettings userSettings;
@@ -108,7 +108,7 @@ public class SyncService extends GcmTaskService {
     private void requestNewEarthquakes() {
         final double minimumNotificationMagnitude = userSettings.minimumNotificationMagnitude();
         final Realm realm = Realm.getDefaultInstance();
-        requestManager.retrieveNewEarthquakes().map(new Func1<Earthquake, RealmEarthquake>() {
+        earthquakeService.retrieveNewEarthquakes().map(new Func1<Earthquake, RealmEarthquake>() {
             @Override
             public RealmEarthquake call(Earthquake earthquake) {
                 return new RealmEarthquake(earthquake);

@@ -70,7 +70,7 @@ public class RequestManagerTest extends AndroidTestCase {
         mockedWebServer.enqueue(new MockResponse().setBody("{\"features\":[]}"));
         mockedWebServer.start();
 
-        RequestManager mgr = new RequestManager(networkModule.provideOkHttp(), networkModule.provideGson(), mockedRequestTimeStore, mockedWebServer.url("/").toString());
+        GeonetService mgr = new GeonetService(networkModule.provideOkHttp(), networkModule.provideGson(), mockedRequestTimeStore, mockedWebServer.url("/").toString());
         mgr.retrieveNewEarthquakes().subscribe();
 
         RecordedRequest recordedRequest = mockedWebServer.takeRequest();
@@ -85,7 +85,7 @@ public class RequestManagerTest extends AndroidTestCase {
         LocalDate requestedDate = new DateTime(argumentDate).toLocalDate();
 
         // We want to ensure that the request was for DAYS_BEFORE_TODAY days ago.
-        int expected = RequestManager.DAYS_BEFORE_TODAY;
+        int expected = GeonetService.DAYS_BEFORE_TODAY;
         int actual = Days.daysBetween(requestedDate, today).getDays();
         assertEquals(expected, actual);
         // And also that there was only 1 request
@@ -96,7 +96,7 @@ public class RequestManagerTest extends AndroidTestCase {
         mockedWebServer.enqueue(new MockResponse().setBody("{\"features\":[]}"));
         mockedWebServer.start();
 
-        RequestManager mgr = new RequestManager(networkModule.provideOkHttp(), networkModule.provideGson(), mockedRequestTimeStore, mockedWebServer.url("/").toString());
+        GeonetService mgr = new GeonetService(networkModule.provideOkHttp(), networkModule.provideGson(), mockedRequestTimeStore, mockedWebServer.url("/").toString());
 
         // This is our 'most recently seeen event time' and it should match modification time
         DateTime mostRecentUpdateTime = new DateTime();
@@ -131,7 +131,7 @@ public class RequestManagerTest extends AndroidTestCase {
         mockedWebServer.enqueue(new MockResponse().setBody("{\"features\":[" + events + "]}"));
         mockedWebServer.start();
 
-        RequestManager mgr = new RequestManager(networkModule.provideOkHttp(), networkModule.provideGson(), mockedRequestTimeStore, mockedWebServer.url("/").toString());
+        GeonetService mgr = new GeonetService(networkModule.provideOkHttp(), networkModule.provideGson(), mockedRequestTimeStore, mockedWebServer.url("/").toString());
         mgr.retrieveNewEarthquakes().toList().subscribe(new Action1<List<Earthquake>>() {
             @Override
             public void call(List<Earthquake> earthquakes) {
@@ -156,7 +156,7 @@ public class RequestManagerTest extends AndroidTestCase {
             }
         };
 
-        final int eventCount = RequestManager.MAX_EVENTS_PER_REQUEST;
+        final int eventCount = GeonetService.MAX_EVENTS_PER_REQUEST;
         String event1 = "{\"properties\":{\"origintime\":\"2016-10-29T16:43:52.429Z\",\"modificationtime\":\"2016-10-29T19:26:10.183Z\"}}";
         String event2 = "{\"properties\":{\"origintime\":\"2016-10-30T16:43:52.429Z\",\"modificationtime\":\"2016-10-30T19:26:10.183Z\"}}";
         String event3 = "{\"properties\":{\"origintime\":\"2016-10-31T16:43:52.429Z\",\"modificationtime\":\"2016-10-31T19:26:10.183Z\"}}";
@@ -182,7 +182,7 @@ public class RequestManagerTest extends AndroidTestCase {
         DateTime mostRecentRequestTime = new DateTime("2016-10-28T16:43:52.429Z"); // Day before our fake response events
         timeStore.saveMostRecentUpdateTime(mostRecentRequestTime);
 
-        RequestManager mgr = new RequestManager(networkModule.provideOkHttp(), networkModule.provideGson(), timeStore, mockedWebServer.url("/").toString());
+        GeonetService mgr = new GeonetService(networkModule.provideOkHttp(), networkModule.provideGson(), timeStore, mockedWebServer.url("/").toString());
         mgr.retrieveNewEarthquakes().toList().subscribe(new Action1<List<Earthquake>>() {
             @Override
             public void call(List<Earthquake> earthquakes) {
@@ -213,7 +213,7 @@ public class RequestManagerTest extends AndroidTestCase {
             }
         };
 
-        final int eventCount = RequestManager.MAX_EVENTS_PER_REQUEST;
+        final int eventCount = GeonetService.MAX_EVENTS_PER_REQUEST;
         String event = "{\"properties\":{\"origintime\":\"2016-10-29T16:43:52.429Z\",\"modificationtime\":\"2016-10-29T19:26:10.183Z\"}}";
         String events = "";
         for (int i = 0; i < eventCount - 1; i++) {
@@ -227,12 +227,12 @@ public class RequestManagerTest extends AndroidTestCase {
         DateTime mostRecentRequestTime = new DateTime("2016-10-28T16:43:52.429Z"); // Day before our fake response events
         timeStore.saveMostRecentUpdateTime(mostRecentRequestTime);
 
-        RequestManager mgr = new RequestManager(networkModule.provideOkHttp(), networkModule.provideGson(), timeStore, mockedWebServer.url("/").toString());
+        GeonetService mgr = new GeonetService(networkModule.provideOkHttp(), networkModule.provideGson(), timeStore, mockedWebServer.url("/").toString());
         //noinspection unchecked
         Observer<Earthquake> mockedObserver = mock(Observer.class);
         mgr.retrieveNewEarthquakes().subscribe(mockedObserver);
 
-        verify(mockedObserver, times(RequestManager.MAX_EVENTS_PER_REQUEST)).onNext(any(Earthquake.class));
+        verify(mockedObserver, times(GeonetService.MAX_EVENTS_PER_REQUEST)).onNext(any(Earthquake.class));
         verify(mockedObserver).onError(any(Throwable.class));
         assertEquals(2, mockedWebServer.getRequestCount());
 
@@ -256,7 +256,7 @@ public class RequestManagerTest extends AndroidTestCase {
             }
         };
 
-        final int eventCount = RequestManager.MAX_EVENTS_PER_REQUEST;
+        final int eventCount = GeonetService.MAX_EVENTS_PER_REQUEST;
         String event1 = "{\"properties\":{\"origintime\":\"2016-10-29T16:43:52.429Z\",\"modificationtime\":\"2016-10-29T19:26:10.183Z\"}}";
         String event2 = "{\"properties\":{\"origintime\":\"2016-10-30T16:43:52.429Z\",\"modificationtime\":\"2016-10-30T19:26:10.183Z\"}}";
         String events1 = event1;
@@ -277,7 +277,7 @@ public class RequestManagerTest extends AndroidTestCase {
         DateTime mostRecentRequestTime = new DateTime("2016-10-28T16:43:52.429Z"); // Day before our fake response events
         timeStore.saveMostRecentUpdateTime(mostRecentRequestTime);
 
-        RequestManager mgr = new RequestManager(networkModule.provideOkHttp(), networkModule.provideGson(), timeStore, mockedWebServer.url("/").toString());
+        GeonetService mgr = new GeonetService(networkModule.provideOkHttp(), networkModule.provideGson(), timeStore, mockedWebServer.url("/").toString());
         mgr.retrieveNewEarthquakes().toList().subscribe(new Action1<List<Earthquake>>() {
             @Override
             public void call(List<Earthquake> earthquakes) {
@@ -310,7 +310,7 @@ public class RequestManagerTest extends AndroidTestCase {
             }
         };
 
-        final int eventCount = RequestManager.MAX_EVENTS_PER_REQUEST;
+        final int eventCount = GeonetService.MAX_EVENTS_PER_REQUEST;
         String event = "{\"properties\":{\"origintime\":\"2016-10-29T16:43:52.429Z\",\"modificationtime\":\"2016-10-29T19:26:10.183Z\"}}";
         String events = "";
         for (int i = 0; i < eventCount - 1; i++) {
@@ -326,7 +326,7 @@ public class RequestManagerTest extends AndroidTestCase {
         DateTime mostRecentRequestTime = new DateTime("2016-10-28T16:43:52.429Z"); // Day before our fake response events
         timeStore.saveMostRecentUpdateTime(mostRecentRequestTime);
 
-        RequestManager mgr = new RequestManager(networkModule.provideOkHttp(), networkModule.provideGson(), timeStore, mockedWebServer.url("/").toString());
+        GeonetService mgr = new GeonetService(networkModule.provideOkHttp(), networkModule.provideGson(), timeStore, mockedWebServer.url("/").toString());
         mgr.retrieveNewEarthquakes().toList().subscribe(new Action1<List<Earthquake>>() {
             @Override
             public void call(List<Earthquake> earthquakes) {

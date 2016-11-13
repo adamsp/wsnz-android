@@ -40,7 +40,7 @@ public class NetworkRunnerService extends IntentService {
     }
 
     @Inject
-    RequestManager requestManager;
+    EarthquakeService earthquakeService;
 
     public NetworkRunnerService() {
         super("What's Shaking Network Runner");
@@ -50,7 +50,7 @@ public class NetworkRunnerService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         final Realm realm = Realm.getDefaultInstance();
-        requestManager.retrieveNewEarthquakes().map(new Func1<Earthquake, RealmEarthquake>() {
+        earthquakeService.retrieveNewEarthquakes().map(new Func1<Earthquake, RealmEarthquake>() {
             @Override
             public RealmEarthquake call(Earthquake earthquake) {
                 return new RealmEarthquake(earthquake);
