@@ -147,20 +147,21 @@ public class RequestManager {
                         GeonetResponse geonetResponse = gson.fromJson(json, GeonetResponse.class);
                         features = geonetResponse.getFeatures();
 
-                        long oldMostRecent = mostRecentUpdateTime.getMillis();
-                        if (features.size() == 1 && features.get(0).getUpdatedTime() == oldMostRecent) {
+                        long currentMostRecentUpdateTime = mostRecentUpdateTime.getMillis();
+                        if (features.size() == 1 && features.get(0).getUpdatedTime() == currentMostRecentUpdateTime) {
                             // See https://github.com/GeoNet/help/issues/5 (the fix no longer works)
                             // The server sent us the last item from the previous page again - do nothing.
                         } else {
-                            long newMostRecent = 0;
+                            long newMostRecentUpdateTime = currentMostRecentUpdateTime;
                             for (GeonetFeature feature : features) {
-                                if (feature.getUpdatedTime() != oldMostRecent) {
-                                    newMostRecent = feature.getUpdatedTime();
+                                long featureUpdateTime = feature.getUpdatedTime();
+                                if (featureUpdateTime != currentMostRecentUpdateTime) {
+                                    newMostRecentUpdateTime = Math.max(newMostRecentUpdateTime, featureUpdateTime);
                                     subscriber.onNext(feature);
                                 }
                             }
-                            if (features.size() > 0 && newMostRecent != oldMostRecent) {
-                                timeStore.saveMostRecentUpdateTime(new DateTime(newMostRecent));
+                            if (features.size() > 0 && newMostRecentUpdateTime != currentMostRecentUpdateTime) {
+                                timeStore.saveMostRecentUpdateTime(new DateTime(newMostRecentUpdateTime));
                             }
                         }
                     } while (features.size() >= MAX_EVENTS_PER_REQUEST);
