@@ -76,4 +76,11 @@
     <string name="notification_ticker_single">%.1f earthquake detected</string>
     <string name="notification_ticker_multiple">%d significant earthquakes detected</string>
 
+    <string name="header_no_events">No events</string>
+    <string name="header_last_24_hours">Last 24 hours</string>
+    <string name="header_last_7_days">Last 7 days</string>
+    <string name="header_last_30_days">Last 30 days</string>
+    <string name="header_last_year">Last year</string>
+    <string name="header_all_time">All time</string>
+
 </resources>

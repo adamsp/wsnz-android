@@ -60,8 +60,10 @@ import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
 import speakman.whatsshakingnz.network.NotificationTimeStore;
 import speakman.whatsshakingnz.ui.DividerItemDecoration;
+import speakman.whatsshakingnz.ui.EarthquakeHeadersAdapter;
 import speakman.whatsshakingnz.ui.EarthquakeListAdapter;
 import speakman.whatsshakingnz.ui.LicensesFragment;
+import speakman.whatsshakingnz.ui.StickyHeadersDecoration;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 import speakman.whatsshakingnz.utils.NotificationUtil;
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Realm realm;
     private MapView map;
     private EarthquakeListAdapter dataAdapter;
+    private EarthquakeHeadersAdapter headerAdapter;
     private final List<Marker> mapMarkers = new ArrayList<>();
     private View emptyListView;
     private RealmResults<RealmEarthquake> earthquakes;
@@ -116,9 +119,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         assert map != null;
         map.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         dataAdapter = new EarthquakeListAdapter(this);
+        headerAdapter = new EarthquakeHeadersAdapter();
         RecyclerView mainList = (RecyclerView) findViewById(R.id.activity_main_list);
         if (mainList != null) {
             mainList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+            mainList.addItemDecoration(new StickyHeadersDecoration(headerAdapter));
             mainList.setHasFixedSize(true);
             mainList.setLayoutManager(new LinearLayoutManager(this));
             mainList.setAdapter(dataAdapter);
@@ -287,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         earthquakes = realm.where(RealmEarthquake.class).greaterThanOrEqualTo(RealmEarthquake.FIELD_NAME_MAGNITUDE, userSettings.minimumDisplayMagnitude())
                     .findAllSortedAsync(RealmEarthquake.FIELD_NAME_ORIGIN_TIME, Sort.DESCENDING);
         earthquakes.addChangeListener(this);
+        headerAdapter.updateList(earthquakes);
         dataAdapter.updateList(earthquakes);
     }
 
