@@ -19,7 +19,6 @@
     <string name="activity_main_title">@string/app_name</string>
     <string name="menu_action_settings">Settings</string>
     <string name="menu_action_licenses">Open Source Licenses</string>
-    <string name="menu_action_google_licenses">Google Licenses</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="title_activity_map">MapActivity</string>
     <string name="activity_main_list_loading">Loading…</string>
@@ -33,7 +32,6 @@
     <string name="direction_north_west">North West</string>
     <string name="overview_distance_direction_format">%1$.0f km %2$s</string>
     <string name="overview_time_passed_now">now</string>
-    <string name="dialog_title_google_licenses">Google Services licenses</string>
     <string name="dialog_title_open_source_licenses">Open Source licenses</string>
     <string name="dialog_button_close">Close</string>
     <string name="preferences_notifications_title">Notifications enabled</string>

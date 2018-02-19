@@ -26,10 +26,6 @@
         android:title="@string/menu_action_licenses"
         android:orderInCategory="100"
         app:showAsAction="never"/>
-    <item android:id="@+id/menu_action_google_licences"
-        android:title="@string/menu_action_google_licenses"
-        android:orderInCategory="100"
-        app:showAsAction="never"/>
     <item android:id="@+id/menu_action_show_single_notif"
           android:title="@string/menu_action_debug_notification_single"
           android:orderInCategory="100"
