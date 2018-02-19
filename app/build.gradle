@@ -99,12 +99,11 @@ dependencies {
     implementation "net.danlew:android.joda:2.9.9.2"
     implementation "io.realm:realm-android:0.87.4"
     annotationProcessor "io.realm:realm-android:0.87.4"
-    implementation "com.google.dagger:dagger:2.4"
+    def daggerVersion = '2.14.1'
+    implementation "com.google.dagger:dagger:$daggerVersion"
     implementation "com.jakewharton.timber:timber:4.1.2"
     implementation "com.jonathanfinerty.once:once:1.2.2"
-    annotationProcessor "com.google.dagger:dagger-compiler:2.4"
-    // Oh dear https://github.com/google/dagger/issues/356
-    annotationProcessor "com.google.guava:guava:19.0"
+    annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
     androidTestCompile("org.mockito:mockito-core:1.10.19") {
         exclude group: "org.hamcrest"
     }
