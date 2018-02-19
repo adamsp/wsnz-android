@@ -4,8 +4,6 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        // the latest version of the android-apt plugin
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         //noinspection GradleDynamicVersion
         classpath 'io.fabric.tools:gradle:1.+'
     }
@@ -18,15 +16,9 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-apply plugin: 'com.neenbedankt.android-apt'
-
-
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.3'
-    dataBinding {
-        enabled = true
-    }
+    compileSdkVersion 26
+    dataBinding.enabled = true
 
     lintOptions {
         checkReleaseBuilds false
@@ -50,7 +42,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         applicationId "speakman.whatsshakingnz"
         minSdkVersion 15
-        targetSdkVersion 23
+        targetSdkVersion 26
         versionCode 13
         versionName "2.0.3"
         manifestPlaceholders = [ mapsApiKey: properties['mapsApiKey'] ]
@@ -89,38 +81,41 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:recyclerview-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
-    compile 'com.android.support:cardview-v7:23.4.0'
-    compile 'com.android.support:support-vector-drawable:23.4.0'
-    compile 'com.google.android.gms:play-services-maps:8.4.0'
-    compile 'com.google.android.gms:play-services-gcm:8.4.0'
-    compile 'com.squareup.okhttp3:okhttp:3.2.0'
-    androidTestCompile 'com.squareup.okhttp3:mockwebserver:3.2.0'
-    compile 'com.google.code.gson:gson:2.6.2'
-    compile 'io.reactivex:rxjava:1.1.1'
-    compile 'io.reactivex:rxandroid:1.1.0'
-    compile 'net.danlew:android.joda:2.9.2'
-    compile 'io.realm:realm-android:0.87.4'
-    compile 'com.google.dagger:dagger:2.4'
-    compile 'com.jakewharton.timber:timber:4.1.0'
-    compile 'com.jonathanfinerty.once:once:0.5.0'
-    apt 'com.google.dagger:dagger-compiler:2.4'
+    def supportLibVersion = '26.1.0'
+    def playServicesVersion = '11.8.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:recyclerview-v7:$supportLibVersion"
+    implementation "com.android.support:design:$supportLibVersion"
+    implementation "com.android.support:cardview-v7:$supportLibVersion"
+    implementation "com.android.support:support-vector-drawable:$supportLibVersion"
+    implementation "com.google.android.gms:play-services-maps:$playServicesVersion"
+    implementation "com.google.android.gms:play-services-gcm:$playServicesVersion"
+    implementation "com.squareup.okhttp3:okhttp:3.2.0"
+    androidTestImplementation "com.squareup.okhttp3:mockwebserver:3.2.0"
+    implementation "com.google.code.gson:gson:2.6.2"
+    implementation "io.reactivex:rxjava:1.1.1"
+    implementation "io.reactivex:rxandroid:1.1.0"
+    implementation "net.danlew:android.joda:2.9.2"
+    implementation "io.realm:realm-android:0.87.4"
+    annotationProcessor "io.realm:realm-android:0.87.4"
+    implementation "com.google.dagger:dagger:2.4"
+    implementation "com.jakewharton.timber:timber:4.1.0"
+    implementation "com.jonathanfinerty.once:once:0.5.0"
+    annotationProcessor "com.google.dagger:dagger-compiler:2.4"
     // Oh dear https://github.com/google/dagger/issues/356
-    apt 'com.google.guava:guava:19.0'
-    provided 'org.glassfish:javax.annotation:10.0-b28'
-    androidTestCompile('org.mockito:mockito-core:1.10.19') {
-        exclude group: 'org.hamcrest'
+    annotationProcessor "com.google.guava:guava:19.0"
+    provided "org.glassfish:javax.annotation:10.0-b28"
+    androidTestCompile("org.mockito:mockito-core:1.10.19") {
+        exclude group: "org.hamcrest"
     }
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+    androidTestImplementation "com.google.dexmaker:dexmaker:1.2"
+    androidTestImplementation "com.google.dexmaker:dexmaker-mockito:1.2"
+    compile("com.crashlytics.sdk.android:crashlytics:2.5.5@aar") {
         transitive = true;
     }
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
-    debugAnalyticsCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:1.4-beta2"
+    debugAnalyticsImplementation "com.squareup.leakcanary:leakcanary-android:1.4-beta2"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"
+    testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2"
 }
