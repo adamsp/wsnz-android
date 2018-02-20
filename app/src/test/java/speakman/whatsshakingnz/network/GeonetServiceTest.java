@@ -26,29 +26,34 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.List;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-import rx.Observer;
-import rx.functions.Action1;
+import rx.Observable;
+import rx.observers.TestSubscriber;
+import rx.subscriptions.CompositeSubscription;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.network.geonet.GeonetService;
 import speakman.whatsshakingnz.utils.DateTimeFormatters;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
  * Created by Adam on 15-06-07.
  */
 public class GeonetServiceTest {
+
+    private CompositeSubscription subscriptions = new CompositeSubscription();
+
+    private <T> TestSubscriber<T> testSubscribe(Observable<T> observable) {
+        TestSubscriber<T> subscriber = new TestSubscriber<>();
+        subscriptions.add(observable.subscribe(subscriber));
+        return subscriber;
+    }
 
     private MockWebServer mockedWebServer;
     private RequestTimeStore mockedRequestTimeStore;
@@ -64,6 +69,7 @@ public class GeonetServiceTest {
     @After
     public void tearDown() throws Exception {
         mockedWebServer.shutdown();
+        subscriptions.clear();
     }
 
     @Test
@@ -74,7 +80,7 @@ public class GeonetServiceTest {
         mockedWebServer.start();
 
         GeonetService mgr = new GeonetService(networkModule.provideOkHttp(), networkModule.provideGson(), mockedRequestTimeStore, mockedWebServer.url("/").toString());
-        mgr.retrieveNewEarthquakes().subscribe();
+        testSubscribe(mgr.retrieveNewEarthquakes());
 
         RecordedRequest recordedRequest = mockedWebServer.takeRequest();
         String path = recordedRequest.getPath();
@@ -83,7 +89,7 @@ public class GeonetServiceTest {
         LocalDate today = now.toLocalDate();
         String modificationTime = "modificationtime%3E";
         int startIndex = path.indexOf(modificationTime) + modificationTime.length();
-        int endIndex =  startIndex + now.toString(DateTimeFormatters.requestQueryUpdateTimeFormatter).length();
+        int endIndex = startIndex + now.toString(DateTimeFormatters.requestQueryUpdateTimeFormatter).length();
         String argumentDate = path.substring(startIndex, endIndex);
         LocalDate requestedDate = new DateTime(argumentDate).toLocalDate();
 
@@ -106,14 +112,14 @@ public class GeonetServiceTest {
         DateTime mostRecentUpdateTime = new DateTime();
         String expectedRequestTime = mostRecentUpdateTime.toString(DateTimeFormatters.requestQueryUpdateTimeFormatter);
         when(mockedRequestTimeStore.getMostRecentUpdateTime()).thenReturn(mostRecentUpdateTime);
-        mgr.retrieveNewEarthquakes().subscribe();
+        testSubscribe(mgr.retrieveNewEarthquakes());
 
         RecordedRequest recordedRequest = mockedWebServer.takeRequest();
         String path = recordedRequest.getPath();
 
         String modificationTime = "modificationtime%3E";
         int startIndex = path.indexOf(modificationTime) + modificationTime.length();
-        int endIndex =  startIndex + expectedRequestTime.length();
+        int endIndex = startIndex + expectedRequestTime.length();
         String actualRequestTime = path.substring(startIndex, endIndex);
 
         assertEquals(expectedRequestTime, actualRequestTime);
@@ -124,12 +130,13 @@ public class GeonetServiceTest {
     public void testAllEventsAreProvidedToObserver() throws InterruptedException, IOException {
         final int eventCount = 20;
         String events = "";
-        String event = "{\"properties\":{\"origintime\":\"2016-10-29T16:43:52.429Z\",\"modificationtime\":\"2016-10-29T19:26:10.183Z\"}}";
-        for (int i = 0; i < eventCount - 1; i++) {
+        for (int i = 0; i < eventCount; i++) {
+            String event = "{\"properties\":{\"publicid\":\"" + Integer.toString(i) + "\",\"origintime\":\"2016-10-29T16:43:52.429Z\",\"modificationtime\":\"2016-10-29T19:26:10.183Z\"}}";
             events += event;
-            events += ",";
+            if (i < eventCount - 1) { // one without comma
+                events += ",";
+            }
         }
-        events += event; // one without comma
         DateTime mostRecentUpdateTime = new DateTime();
         when(mockedRequestTimeStore.getMostRecentUpdateTime()).thenReturn(mostRecentUpdateTime);
 
@@ -137,12 +144,8 @@ public class GeonetServiceTest {
         mockedWebServer.start();
 
         GeonetService mgr = new GeonetService(networkModule.provideOkHttp(), networkModule.provideGson(), mockedRequestTimeStore, mockedWebServer.url("/").toString());
-        mgr.retrieveNewEarthquakes().toList().subscribe(new Action1<List<Earthquake>>() {
-            @Override
-            public void call(List<Earthquake> earthquakes) {
-                assertEquals(eventCount, earthquakes.size());
-            }
-        });
+        testSubscribe(mgr.retrieveNewEarthquakes())
+                .assertValueCount(eventCount);
     }
 
     @Test
@@ -150,6 +153,7 @@ public class GeonetServiceTest {
         // Easier to just implement this than to mock it in order to allow paging to work.
         RequestTimeStore timeStore = new RequestTimeStore() {
             DateTime time;
+
             @Override
             public void saveMostRecentUpdateTime(DateTime dateTime) {
                 time = dateTime;
@@ -163,9 +167,9 @@ public class GeonetServiceTest {
         };
 
         final int eventCount = GeonetService.MAX_EVENTS_PER_REQUEST;
-        String event1 = "{\"properties\":{\"origintime\":\"2016-10-29T16:43:52.429Z\",\"modificationtime\":\"2016-10-29T19:26:10.183Z\"}}";
-        String event2 = "{\"properties\":{\"origintime\":\"2016-10-30T16:43:52.429Z\",\"modificationtime\":\"2016-10-30T19:26:10.183Z\"}}";
-        String event3 = "{\"properties\":{\"origintime\":\"2016-10-31T16:43:52.429Z\",\"modificationtime\":\"2016-10-31T19:26:10.183Z\"}}";
+        String event1 = "{\"properties\":{\"publicid\":\"0\",\"origintime\":\"2016-10-29T16:43:52.429Z\",\"modificationtime\":\"2016-10-29T19:26:10.183Z\"}}";
+        String event2 = "{\"properties\":{\"publicid\":\"1\",\"origintime\":\"2016-10-30T16:43:52.429Z\",\"modificationtime\":\"2016-10-30T19:26:10.183Z\"}}";
+        String event3 = "{\"properties\":{\"publicid\":\"2\",\"origintime\":\"2016-10-31T16:43:52.429Z\",\"modificationtime\":\"2016-10-31T19:26:10.183Z\"}}";
         String events1 = "";
         String events2 = "";
         String events3 = "";
@@ -189,12 +193,8 @@ public class GeonetServiceTest {
         timeStore.saveMostRecentUpdateTime(mostRecentRequestTime);
 
         GeonetService mgr = new GeonetService(networkModule.provideOkHttp(), networkModule.provideGson(), timeStore, mockedWebServer.url("/").toString());
-        mgr.retrieveNewEarthquakes().toList().subscribe(new Action1<List<Earthquake>>() {
-            @Override
-            public void call(List<Earthquake> earthquakes) {
-                assertEquals(eventCount * 3, earthquakes.size()); // 3 pages of max event count per page.
-            }
-        });
+        testSubscribe(mgr.retrieveNewEarthquakes())
+                .assertValueCount(eventCount * 3); // 3 pages of max event count per page.
 
         assertTrue(mockedWebServer.takeRequest().getPath().contains("modificationtime%3E2016-10-28")); // Most recent previous saved date
         assertTrue(mockedWebServer.takeRequest().getPath().contains("modificationtime%3E2016-10-29"));
@@ -208,6 +208,7 @@ public class GeonetServiceTest {
         // Easier to just implement this than to mock it in order to allow paging to work.
         RequestTimeStore timeStore = new RequestTimeStore() {
             DateTime time;
+
             @Override
             public void saveMostRecentUpdateTime(DateTime dateTime) {
                 time = dateTime;
@@ -221,7 +222,7 @@ public class GeonetServiceTest {
         };
 
         final int eventCount = GeonetService.MAX_EVENTS_PER_REQUEST;
-        String event = "{\"properties\":{\"origintime\":\"2016-10-29T16:43:52.429Z\",\"modificationtime\":\"2016-10-29T19:26:10.183Z\"}}";
+        String event = "{\"properties\":{\"publicid\":\"0\",\"origintime\":\"2016-10-29T16:43:52.429Z\",\"modificationtime\":\"2016-10-29T19:26:10.183Z\"}}";
         String events = "";
         for (int i = 0; i < eventCount - 1; i++) {
             events += event;
@@ -235,12 +236,11 @@ public class GeonetServiceTest {
         timeStore.saveMostRecentUpdateTime(mostRecentRequestTime);
 
         GeonetService mgr = new GeonetService(networkModule.provideOkHttp(), networkModule.provideGson(), timeStore, mockedWebServer.url("/").toString());
-        //noinspection unchecked
-        Observer<Earthquake> mockedObserver = mock(Observer.class);
-        mgr.retrieveNewEarthquakes().subscribe(mockedObserver);
 
-        verify(mockedObserver, times(GeonetService.MAX_EVENTS_PER_REQUEST)).onNext(any(Earthquake.class));
-        verify(mockedObserver).onError(any(Throwable.class));
+        TestSubscriber<Earthquake> testSubscription = testSubscribe(mgr.retrieveNewEarthquakes());
+        testSubscription.assertValueCount(GeonetService.MAX_EVENTS_PER_REQUEST);
+        testSubscription.assertError(Throwable.class);
+
         assertEquals(2, mockedWebServer.getRequestCount());
 
         DateTime lastTimeFirstPage = new DateTime("2016-10-29T19:26:10.183Z");
@@ -252,6 +252,7 @@ public class GeonetServiceTest {
         // Easier to just implement this than to mock it in order to allow paging to work.
         RequestTimeStore timeStore = new RequestTimeStore() {
             DateTime time;
+
             @Override
             public void saveMostRecentUpdateTime(DateTime dateTime) {
                 time = dateTime;
@@ -265,8 +266,8 @@ public class GeonetServiceTest {
         };
 
         final int eventCount = GeonetService.MAX_EVENTS_PER_REQUEST;
-        String event1 = "{\"properties\":{\"origintime\":\"2016-10-29T16:43:52.429Z\",\"modificationtime\":\"2016-10-29T19:26:10.183Z\"}}";
-        String event2 = "{\"properties\":{\"origintime\":\"2016-10-30T16:43:52.429Z\",\"modificationtime\":\"2016-10-30T19:26:10.183Z\"}}";
+        String event1 = "{\"properties\":{\"publicid\":\"0\",\"origintime\":\"2016-10-29T16:43:52.429Z\",\"modificationtime\":\"2016-10-29T19:26:10.183Z\"}}";
+        String event2 = "{\"properties\":{\"publicid\":\"0\",\"origintime\":\"2016-10-30T16:43:52.429Z\",\"modificationtime\":\"2016-10-30T19:26:10.183Z\"}}";
         String events1 = event1;
         String events2 = event1; // Same as first item on previous page!
         for (int i = 0; i < eventCount - 1; i++) {
@@ -286,12 +287,7 @@ public class GeonetServiceTest {
         timeStore.saveMostRecentUpdateTime(mostRecentRequestTime);
 
         GeonetService mgr = new GeonetService(networkModule.provideOkHttp(), networkModule.provideGson(), timeStore, mockedWebServer.url("/").toString());
-        mgr.retrieveNewEarthquakes().toList().subscribe(new Action1<List<Earthquake>>() {
-            @Override
-            public void call(List<Earthquake> earthquakes) {
-                assertEquals((eventCount * 2) - 1, earthquakes.size()); // Subtract 1 for our ignored item from previous page.
-            }
-        });
+        testSubscribe(mgr.retrieveNewEarthquakes()).assertValueCount((eventCount * 2) - 1); // Subtract 1 for our ignored item from previous page.
 
         assertTrue(mockedWebServer.takeRequest().getPath().contains("modificationtime%3E2016-10-28"));
         assertTrue(mockedWebServer.takeRequest().getPath().contains("modificationtime%3E2016-10-29"));
@@ -307,6 +303,7 @@ public class GeonetServiceTest {
         // Easier to just implement this than to mock it in order to allow paging to work.
         RequestTimeStore timeStore = new RequestTimeStore() {
             DateTime time;
+
             @Override
             public void saveMostRecentUpdateTime(DateTime dateTime) {
                 time = dateTime;
@@ -320,28 +317,25 @@ public class GeonetServiceTest {
         };
 
         final int eventCount = GeonetService.MAX_EVENTS_PER_REQUEST;
-        String event = "{\"properties\":{\"origintime\":\"2016-10-29T16:43:52.429Z\",\"modificationtime\":\"2016-10-29T19:26:10.183Z\"}}";
         String events = "";
-        for (int i = 0; i < eventCount - 1; i++) {
+        for (int i = 0; i < eventCount; i++) {
+            String event = "{\"properties\":{\"publicid\":\"" + Integer.toString(i) + "\",\"origintime\":\"2016-10-29T16:43:52.429Z\",\"modificationtime\":\"2016-10-29T19:26:10.183Z\"}}";
             events += event;
-            events += ",";
+            if (i < eventCount - 1) { // one without comma
+                events += ",";
+            }
         }
-        events += event;
         mockedWebServer.enqueue(new MockResponse().setBody("{\"features\":[" + events + "]}"));
         // This second page has one event,  which is the exact same as the last event the on previous page.
         // This test works around this Geonet bug https://github.com/GeoNet/help/issues/5
+        String event = "{\"properties\":{\"publicid\":\"" + Integer.toString(eventCount - 1) + "\",\"origintime\":\"2016-10-29T16:43:52.429Z\",\"modificationtime\":\"2016-10-29T19:26:10.183Z\"}}";
         mockedWebServer.enqueue(new MockResponse().setBody("{\"features\":[" + event + "]}"));
 
         DateTime mostRecentRequestTime = new DateTime("2016-10-28T16:43:52.429Z"); // Day before our fake response events
         timeStore.saveMostRecentUpdateTime(mostRecentRequestTime);
 
         GeonetService mgr = new GeonetService(networkModule.provideOkHttp(), networkModule.provideGson(), timeStore, mockedWebServer.url("/").toString());
-        mgr.retrieveNewEarthquakes().toList().subscribe(new Action1<List<Earthquake>>() {
-            @Override
-            public void call(List<Earthquake> earthquakes) {
-                assertEquals(eventCount, earthquakes.size()); // 1 page only!
-            }
-        });
+        testSubscribe(mgr.retrieveNewEarthquakes()).assertValueCount(eventCount); // 1 page only!
 
         assertTrue(mockedWebServer.takeRequest().getPath().contains("modificationtime%3E2016-10-28"));
         assertTrue(mockedWebServer.takeRequest().getPath().contains("modificationtime%3E2016-10-29"));
