@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Adam Speakman
+ * Copyright 2018 Adam Speakman
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,34 @@
 package speakman.whatsshakingnz.ui.viewmodel;
 
 import android.content.Context;
-import android.test.AndroidTestCase;
 
 import org.joda.time.DateTime;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.TestEarthquake;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Created by Adam on 12/12/2015.
  */
-public class EarthquakeOverviewViewModelTests extends AndroidTestCase {
+@RunWith(MockitoJUnitRunner.class)
+public class EarthquakeOverviewViewModelTests {
 
+    @Mock
+    Context ctx;
+
+    private Context getContext() {
+        return ctx;
+    }
+
+    @Test
     public void testRoundedUpMagnitudeIsReturned() {
         Earthquake roundUpEarthquake = new TestEarthquake() {
             @Override
@@ -42,6 +57,7 @@ public class EarthquakeOverviewViewModelTests extends AndroidTestCase {
         assertEquals("5.4", roundUpViewModel.getMagnitude());
     }
 
+    @Test
     public void testRoundedDownMagnitudeIsReturned() {
         Earthquake roundDownEarthquake = new TestEarthquake() {
             @Override
@@ -54,6 +70,7 @@ public class EarthquakeOverviewViewModelTests extends AndroidTestCase {
         assertEquals("5.3", roundDownViewModel.getMagnitude());
     }
 
+    @Test
     public void testNorthOfAucklandIsReturned() {
         Earthquake northEarthquake = new TestEarthquake() {
             @Override
@@ -72,6 +89,7 @@ public class EarthquakeOverviewViewModelTests extends AndroidTestCase {
         assertTrue(northViewModel.getDistanceAndDirectionFromNearestTown(getContext()).contains("North"));
     }
 
+    @Test
     public void testTimePassedValues() {
         final DateTime now = DateTime.now();
         Earthquake nowEarthquake = new TestEarthquake() {

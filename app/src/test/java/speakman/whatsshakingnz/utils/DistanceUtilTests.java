@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Adam Speakman
+ * Copyright 2018 Adam Speakman
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,20 @@
 
 package speakman.whatsshakingnz.utils;
 
-import android.test.AndroidTestCase;
-
 import com.google.android.gms.maps.model.LatLng;
 
+import org.junit.Test;
+
 import speakman.whatsshakingnz.model.LocalPlace;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Adam on 11/24/2015.
  */
-public class DistanceUtilTests extends AndroidTestCase {
+public class DistanceUtilTests {
 
+    @Test
     public void testClosestPlaceIsCorrect() {
         LocalPlace closestPlace = DistanceUtil.getClosestPlace(new LatLng(-36.806, 174.814));
         assertEquals("Auckland", closestPlace.name);
@@ -38,6 +41,7 @@ public class DistanceUtilTests extends AndroidTestCase {
         assertEquals("Christchurch", closestPlace.name);
     }
 
+    @Test
     public void testDirectionIsCorrect() {
         LatLng center = new LatLng(-37, 170);
         LatLng north = new LatLng(-36, 170);
@@ -59,6 +63,7 @@ public class DistanceUtilTests extends AndroidTestCase {
         assertEquals(DistanceUtil.Direction.NorthWest, DistanceUtil.getDirection(center, northWest));
     }
 
+    @Test
     public void testDirectionIsCorrectForCenterLeftOfAntimeridian() {
         // Center is left of antimeridian, all points to the right of antimeridian (negative longitude)
         LatLng center = new LatLng(-37, 179);
@@ -74,6 +79,7 @@ public class DistanceUtilTests extends AndroidTestCase {
         assertEquals(DistanceUtil.Direction.South, DistanceUtil.getDirection(center, south));
     }
 
+    @Test
     public void testDirectionIsCorrectForCenterRightOfAntimeridian() {
         // Center is right of antimeridian, all points to the left of antimeridian (positive longitude)
         LatLng center = new LatLng(-37, -179); // Center to right of antimeridian

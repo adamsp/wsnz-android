@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Adam Speakman
+ * Copyright 2018 Adam Speakman
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@
 
 package speakman.whatsshakingnz.utils;
 
-import android.test.AndroidTestCase;
-
 import org.joda.time.DateTime;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Adam on 2016-05-08.
  */
-public class DateTimeFormattersTests extends AndroidTestCase {
+public class DateTimeFormattersTests {
 
+    @Test
     public void testRequestQueryUpdateTimeFormatterPrintsCorrectly() {
         DateTime date = new DateTime(1462726536395L); // 2016-05-08 16:55:36.395 UTC
         String expected = "2016-05-08T16:55:36.3950Z";
@@ -32,6 +34,7 @@ public class DateTimeFormattersTests extends AndroidTestCase {
         assertEquals(expected, actual);
     }
 
+    @Test
     public void testNetworkDateTimeIsReadCorrectly() {
         String date = "2016-01-08T18:16:16.549Z";
         DateTime expected = new DateTime(1452276976549L);
@@ -39,6 +42,7 @@ public class DateTimeFormattersTests extends AndroidTestCase {
         assertEquals(expected, actual);
     }
 
+    @Test
     public void testNetworkDateTimeIsWrittenCorrectly() {
         DateTime date = new DateTime(1452276976549L);
         String expected = "2016-01-08T18:16:16.549Z";

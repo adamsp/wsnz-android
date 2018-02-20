@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Adam Speakman
+ * Copyright 2018 Adam Speakman
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,23 @@
 package speakman.whatsshakingnz.ui.viewmodel;
 
 import android.support.annotation.Nullable;
-import android.test.AndroidTestCase;
 
 import org.joda.time.DateTime;
+import org.junit.Test;
 
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.TestEarthquake;
 import speakman.whatsshakingnz.utils.DateTimeFormatters;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Created by Adam on 2/29/2016.
  */
-public class EarthquakeExpandedDetailViewModelTests extends AndroidTestCase {
+public class EarthquakeExpandedDetailViewModelTests {
 
+    @Test
     public void testNullDatesAreNotPrinted() {
         final DateTime now = DateTime.now();
         Earthquake nullDateTestEarthquake = new TestEarthquake() {
@@ -50,6 +54,7 @@ public class EarthquakeExpandedDetailViewModelTests extends AndroidTestCase {
         assertFalse(detail.contains(new DateTime(0).toString()));
     }
 
+    @Test
     public void testNullStringsAreNotPrinted() {
         Earthquake nullStringTestEarthquake = new TestEarthquake() {
             @Nullable
@@ -71,6 +76,7 @@ public class EarthquakeExpandedDetailViewModelTests extends AndroidTestCase {
         assertFalse(detail.contains("Evaluation Mode"));
     }
 
+    @Test
     public void testDatesAreFormattedCorrectly() {
         final DateTime now = DateTime.now();
         Earthquake dateTestEarthquake = new TestEarthquake() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Adam Speakman
+ * Copyright 2018 Adam Speakman
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@
 package speakman.whatsshakingnz.network;
 
 import android.support.annotation.Nullable;
-import android.test.AndroidTestCase;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,6 +37,8 @@ import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.network.geonet.GeonetService;
 import speakman.whatsshakingnz.utils.DateTimeFormatters;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -44,27 +48,25 @@ import static org.mockito.Mockito.when;
 /**
  * Created by Adam on 15-06-07.
  */
-public class GeonetServiceTest extends AndroidTestCase {
+public class GeonetServiceTest {
 
     private MockWebServer mockedWebServer;
     private RequestTimeStore mockedRequestTimeStore;
     private NetworkModule networkModule;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        System.setProperty("dexmaker.dexcache", getContext().getCacheDir().getPath());
+    @Before
+    public void setUp() throws Exception {
         mockedWebServer = new MockWebServer();
         networkModule = new NetworkModule();
         mockedRequestTimeStore = mock(RequestTimeStore.class);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         mockedWebServer.shutdown();
     }
 
+    @Test
     public void testRequestLastNDaysWhenNoMostRecentEventDateIsAvailable() throws InterruptedException, IOException {
         when(mockedRequestTimeStore.getMostRecentUpdateTime()).thenReturn(null);
 
@@ -93,6 +95,7 @@ public class GeonetServiceTest extends AndroidTestCase {
         assertEquals(1, mockedWebServer.getRequestCount());
     }
 
+    @Test
     public void testRequestOnlyEventsSinceLastEventDate() throws InterruptedException, IOException {
         mockedWebServer.enqueue(new MockResponse().setBody("{\"features\":[]}"));
         mockedWebServer.start();
@@ -117,6 +120,7 @@ public class GeonetServiceTest extends AndroidTestCase {
         assertEquals(1, mockedWebServer.getRequestCount());
     }
 
+    @Test
     public void testAllEventsAreProvidedToObserver() throws InterruptedException, IOException {
         final int eventCount = 20;
         String events = "";
@@ -141,6 +145,7 @@ public class GeonetServiceTest extends AndroidTestCase {
         });
     }
 
+    @Test
     public void testAllPagedEventsAreRetrieved() throws InterruptedException {
         // Easier to just implement this than to mock it in order to allow paging to work.
         RequestTimeStore timeStore = new RequestTimeStore() {
@@ -198,6 +203,7 @@ public class GeonetServiceTest extends AndroidTestCase {
         assertEquals(4, mockedWebServer.getRequestCount());
     }
 
+    @Test
     public void testLastEventTimeIsUpdatedWhenFirstPageSucceedsButFollowingPageFails() throws InterruptedException {
         // Easier to just implement this than to mock it in order to allow paging to work.
         RequestTimeStore timeStore = new RequestTimeStore() {
@@ -241,6 +247,7 @@ public class GeonetServiceTest extends AndroidTestCase {
         assertEquals(lastTimeFirstPage, timeStore.getMostRecentUpdateTime());
     }
 
+    @Test
     public void testDuplicatedPreviousPageEventIsNotObservedTwice() throws InterruptedException {
         // Easier to just implement this than to mock it in order to allow paging to work.
         RequestTimeStore timeStore = new RequestTimeStore() {
@@ -295,6 +302,7 @@ public class GeonetServiceTest extends AndroidTestCase {
         assertEquals(lastTimeFirstPage, timeStore.getMostRecentUpdateTime());
     }
 
+    @Test
     public void testDuplicatedFinalPageEventIsNotObservedTwice() throws InterruptedException {
         // Easier to just implement this than to mock it in order to allow paging to work.
         RequestTimeStore timeStore = new RequestTimeStore() {

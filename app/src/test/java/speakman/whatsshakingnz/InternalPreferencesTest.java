@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Adam Speakman
+ * Copyright 2018 Adam Speakman
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,33 +16,31 @@
 
 package speakman.whatsshakingnz;
 
-import android.test.AndroidTestCase;
+import android.content.Context;
 
 import org.joda.time.DateTime;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by Adam on 2016-03-17.
  */
-public class InternalPreferencesTest extends AndroidTestCase {
+@RunWith(MockitoJUnitRunner.class)
+public class InternalPreferencesTest {
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        clearPreferences();
+    @Mock
+    Context ctx;
+
+    private Context getContext() {
+        return ctx;
     }
 
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-        clearPreferences();
-    }
-
-    private void clearPreferences() {
-        InternalPreferences prefs = new InternalPreferences(getContext());
-        prefs.saveMostRecentUpdateTime(null);
-        prefs.saveMostRecentlySeenEventOriginTime(null);
-    }
-
+    @Test
     public void testMostRecentUpdateTimeIsStored() throws Exception {
         InternalPreferences prefs = new InternalPreferences(getContext());
         DateTime time = DateTime.now();
@@ -50,13 +48,15 @@ public class InternalPreferencesTest extends AndroidTestCase {
         assertEquals(time, prefs.getMostRecentUpdateTime());
     }
 
-    public void testMotRecentUpdateTimeIsCleared() throws Exception {
+    @Test
+    public void testMostRecentUpdateTimeIsCleared() throws Exception {
         InternalPreferences prefs = new InternalPreferences(getContext());
         prefs.saveMostRecentUpdateTime(DateTime.now());
         prefs.saveMostRecentUpdateTime(null);
         assertNull(prefs.getMostRecentUpdateTime());
     }
 
+    @Test
     public void testMostRecentlySeenTimeIsStored() throws Exception {
         InternalPreferences prefs = new InternalPreferences(getContext());
         DateTime time = DateTime.now();
@@ -64,6 +64,7 @@ public class InternalPreferencesTest extends AndroidTestCase {
         assertEquals(time, prefs.getMostRecentlySeenEventOriginTime());
     }
 
+    @Test
     public void testMostRecentlySeenTimeIsCleared() throws Exception {
         InternalPreferences prefs = new InternalPreferences(getContext());
         prefs.saveMostRecentlySeenEventOriginTime(DateTime.now());
