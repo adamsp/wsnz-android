@@ -17,15 +17,22 @@
 package speakman.whatsshakingnz;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyFloat;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Adam on 2016-03-17.
@@ -34,41 +41,56 @@ import static org.junit.Assert.assertNull;
 public class InternalPreferencesTest {
 
     @Mock
-    Context ctx;
+    private Context ctx;
 
-    private Context getContext() {
-        return ctx;
+    @Mock
+    private SharedPreferences sharedPrefs;
+
+    @Mock
+    private SharedPreferences.Editor editor;
+
+    private InternalPreferences underTest;
+
+    @Before
+    public void setup() {
+        when(ctx.getSharedPreferences(anyString(), anyInt())).thenReturn(sharedPrefs);
+        when(sharedPrefs.edit()).thenReturn(editor);
+        when(editor.putBoolean(anyString(), anyBoolean())).thenReturn(editor);
+        when(editor.putFloat(anyString(), anyFloat())).thenReturn(editor);
+        when(editor.putInt(anyString(), anyInt())).thenReturn(editor);
+        when(editor.putLong(anyString(), anyLong())).thenReturn(editor);
+        when(editor.putString(anyString(), anyString())).thenReturn(editor);
+        when(editor.remove(anyString())).thenReturn(editor);
+        underTest = new InternalPreferences(ctx);
     }
 
     @Test
     public void testMostRecentUpdateTimeIsStored() throws Exception {
-        InternalPreferences prefs = new InternalPreferences(getContext());
         DateTime time = DateTime.now();
-        prefs.saveMostRecentUpdateTime(time);
-        assertEquals(time, prefs.getMostRecentUpdateTime());
+        underTest.saveMostRecentUpdateTime(time);
+        verify(editor).putLong(InternalPreferences.KEY_MOST_RECENT_REQUEST_TIME, time.getMillis());
+        verify(editor).apply();
     }
 
     @Test
     public void testMostRecentUpdateTimeIsCleared() throws Exception {
-        InternalPreferences prefs = new InternalPreferences(getContext());
-        prefs.saveMostRecentUpdateTime(DateTime.now());
-        prefs.saveMostRecentUpdateTime(null);
-        assertNull(prefs.getMostRecentUpdateTime());
+        underTest.saveMostRecentUpdateTime(null);
+        verify(editor).remove(InternalPreferences.KEY_MOST_RECENT_REQUEST_TIME);
+        verify(editor).apply();
     }
 
     @Test
     public void testMostRecentlySeenTimeIsStored() throws Exception {
-        InternalPreferences prefs = new InternalPreferences(getContext());
         DateTime time = DateTime.now();
-        prefs.saveMostRecentlySeenEventOriginTime(time);
-        assertEquals(time, prefs.getMostRecentlySeenEventOriginTime());
+        underTest.saveMostRecentlySeenEventOriginTime(time);
+        verify(editor).putLong(InternalPreferences.KEY_MOST_RECENTLY_SEEN_TIME, time.getMillis());
+        verify(editor).apply();
     }
 
     @Test
     public void testMostRecentlySeenTimeIsCleared() throws Exception {
-        InternalPreferences prefs = new InternalPreferences(getContext());
-        prefs.saveMostRecentlySeenEventOriginTime(DateTime.now());
-        prefs.saveMostRecentlySeenEventOriginTime(null);
-        assertNull(prefs.getMostRecentlySeenEventOriginTime());
+        underTest.saveMostRecentlySeenEventOriginTime(null);
+        verify(editor).remove(InternalPreferences.KEY_MOST_RECENTLY_SEEN_TIME);
+        verify(editor).apply();
     }
 }

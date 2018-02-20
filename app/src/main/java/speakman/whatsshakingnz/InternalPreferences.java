@@ -30,9 +30,9 @@ import speakman.whatsshakingnz.network.RequestTimeStore;
  */
 public class InternalPreferences implements RequestTimeStore, NotificationTimeStore {
 
-    private static final String PREFERENCES_FILENAME = "speakman.whatsshakingnz.InternalPreferences.PREFERENCES_FILENAME";
-    private static final String KEY_MOST_RECENT_REQUEST_TIME = "speakman.whatsshakingnz.InternalPreferences.KEY_MOST_RECENT_REQUEST_TIME";
-    private static final String KEY_MOST_RECENTLY_SEEN_TIME = "speakman.whatsshakingnz.InternalPreferences.KEY_MOST_RECENTLY_SEEN_TIME";
+    protected static final String PREFERENCES_FILENAME = "speakman.whatsshakingnz.InternalPreferences.PREFERENCES_FILENAME";
+    protected static final String KEY_MOST_RECENT_REQUEST_TIME = "speakman.whatsshakingnz.InternalPreferences.KEY_MOST_RECENT_REQUEST_TIME";
+    protected static final String KEY_MOST_RECENTLY_SEEN_TIME = "speakman.whatsshakingnz.InternalPreferences.KEY_MOST_RECENTLY_SEEN_TIME";
 
     private final SharedPreferences sharedPrefs;
 
