@@ -57,6 +57,7 @@ public class WhatsShakingApplication extends Application {
         Analytics.initialize(this);
         Once.initialise(this);
         JodaTimeAndroid.init(this);
+        Realm.init(this);
         component = DaggerAppComponent.create();
         component.inject(this);
         setupRealm();

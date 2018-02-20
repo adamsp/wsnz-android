@@ -70,7 +70,7 @@ import speakman.whatsshakingnz.utils.NotificationUtil;
 import speakman.whatsshakingnz.utils.UserSettings;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, RealmChangeListener, EarthquakeListViewModel.ViewHolder.OnClickListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, RealmChangeListener<RealmResults<RealmEarthquake>>, EarthquakeListViewModel.ViewHolder.OnClickListener {
 
     public static final String EXTRA_FROM_NOTIFICATION = "speakman.whatsshakingnz.ui.activities.MainActivity.EXTRA_FROM_NOTIFICATION";
     private static final int ACTIVITY_REQUEST_CODE_SETTINGS = 1;
@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onChange() {
+    public void onChange(RealmResults<RealmEarthquake> realmEarthquakes) {
         dataAdapter.notifyDataSetChanged();
         map.getMapAsync(this);
         storeMostRecentEventOriginTime();
@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             earthquakes.removeChangeListener(this);
         }
         earthquakes = realm.where(RealmEarthquake.class).greaterThanOrEqualTo(RealmEarthquake.FIELD_NAME_MAGNITUDE, userSettings.minimumDisplayMagnitude())
-                    .findAllSortedAsync(RealmEarthquake.FIELD_NAME_ORIGIN_TIME, Sort.DESCENDING);
+                    .sort(RealmEarthquake.FIELD_NAME_ORIGIN_TIME, Sort.DESCENDING).findAllAsync();
         earthquakes.addChangeListener(this);
         headerAdapter.updateList(earthquakes);
         dataAdapter.updateList(earthquakes);

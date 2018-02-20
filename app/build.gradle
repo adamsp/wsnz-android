@@ -11,6 +11,7 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'realm-android'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -97,8 +98,6 @@ dependencies {
     implementation "io.reactivex:rxjava:1.1.1"
     implementation "io.reactivex:rxandroid:1.1.0"
     implementation "net.danlew:android.joda:2.9.9.2"
-    implementation "io.realm:realm-android:0.87.4"
-    annotationProcessor "io.realm:realm-android:0.87.4"
     def daggerVersion = '2.14.1'
     implementation "com.google.dagger:dagger:$daggerVersion"
     implementation "com.jakewharton.timber:timber:4.1.2"

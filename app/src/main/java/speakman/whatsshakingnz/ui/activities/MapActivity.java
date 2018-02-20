@@ -56,7 +56,7 @@ import speakman.whatsshakingnz.utils.UserSettings;
 /**
  * Created by Adam on 1/20/2016.
  */
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, RealmChangeListener {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, RealmChangeListener<RealmResults<RealmEarthquake>> {
 
     private static final int MAX_EARTHQUAKES_TO_DISPLAY = 10;
 
@@ -178,8 +178,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         return true;
     }
+
     @Override
-    public void onChange() {
+    public void onChange(RealmResults<RealmEarthquake> realmEarthquakes) {
         refreshUI();
     }
 
@@ -209,7 +210,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             earthquakes.removeChangeListener(this);
         }
         earthquakes = realm.where(RealmEarthquake.class).greaterThanOrEqualTo(RealmEarthquake.FIELD_NAME_MAGNITUDE, userSettings.minimumDisplayMagnitude())
-                .findAllSortedAsync(RealmEarthquake.FIELD_NAME_ORIGIN_TIME, Sort.DESCENDING);
+                .sort(RealmEarthquake.FIELD_NAME_ORIGIN_TIME, Sort.DESCENDING).findAllAsync();
         earthquakes.addChangeListener(this);
     }
 

@@ -20,6 +20,7 @@ import android.support.annotation.Nullable;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 import speakman.whatsshakingnz.model.Earthquake;
 
 /**
@@ -31,7 +32,7 @@ public class RealmEarthquake extends RealmObject implements Earthquake {
     public static final String FIELD_NAME_ORIGIN_TIME = "originTime";
     public static final String FIELD_NAME_MAGNITUDE = "magnitude";
 
-    @PrimaryKey
+    @PrimaryKey @Required
     private String id;
 
     private long originTime;

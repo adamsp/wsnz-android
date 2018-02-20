@@ -154,6 +154,10 @@ public class GeonetService implements EarthquakeService {
                         } else {
                             long newMostRecentUpdateTime = currentMostRecentUpdateTime;
                             for (GeonetFeature feature : features) {
+                                String id = feature.getId();
+                                if (id == null || id.isEmpty()) {
+                                    continue; // TODO The code makes this look possible, but storage requires an ID.
+                                }
                                 long featureUpdateTime = feature.getUpdatedTime();
                                 if (featureUpdateTime != currentMostRecentUpdateTime) {
                                     newMostRecentUpdateTime = Math.max(newMostRecentUpdateTime, featureUpdateTime);

@@ -45,7 +45,7 @@ import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 import speakman.whatsshakingnz.ui.views.ExpandableDetailCard;
 import timber.log.Timber;
 
-public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback, RealmChangeListener {
+public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback, RealmChangeListener<RealmEarthquake> {
 
     static class DetailCardGravityController implements ExpandableDetailCard.OnDetailExpandListener {
         @Override
@@ -185,8 +185,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         mapMarker = googleMap.addMarker(markerOptions);
     }
 
+
     @Override
-    public void onChange() {
+    public void onChange(RealmEarthquake earthquake) {
         refreshUI();
     }
 
