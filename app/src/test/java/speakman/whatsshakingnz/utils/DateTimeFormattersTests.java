@@ -29,7 +29,7 @@ public class DateTimeFormattersTests {
     @Test
     public void testRequestQueryUpdateTimeFormatterPrintsCorrectly() {
         DateTime date = new DateTime(1462726536395L); // 2016-05-08 16:55:36.395 UTC
-        String expected = "2016-05-08T16:55:36.3950Z";
+        String expected = "2016-05-08T16:55:36.395Z";
         String actual = date.toString(DateTimeFormatters.requestQueryUpdateTimeFormatter);
         assertEquals(expected, actual);
     }
