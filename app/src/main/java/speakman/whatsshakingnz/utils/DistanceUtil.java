@@ -17,7 +17,6 @@
 package speakman.whatsshakingnz.utils;
 
 import android.content.Context;
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 
@@ -45,6 +44,7 @@ public class DistanceUtil {
         NorthWest(R.string.direction_north_west);
 
         private final int directionName;
+
         Direction(@StringRes int localisedName) {
             directionName = localisedName;
         }
@@ -53,10 +53,6 @@ public class DistanceUtil {
             return ctx.getString(directionName);
         }
     }
-
-    // For calculating distance
-    private static final double PIx = 3.141592653589793;
-    private static final double RADIO = 6378.16; // Radius of the earth, in km
 
     /**
      * Default places - North to South.
@@ -124,46 +120,36 @@ public class DistanceUtil {
         places.add(Invercargill);
     }
 
-    private static double radians(double x) {
-        return x * PIx / 180;
-    }
-
     /**
      * Returns distance in kilometers between point1 and point2.
-     * As seen here: http://stackoverflow.com/questions/27928/how-do-i-calculate-distance-between-two-latitude-longitude-points
-     * @return The distance from the first point to the second.
+     * Uses the method from the official Android Location class (included in this class).
+     *
+     * @return The distance from the first point to the second, in kilometers.
      */
-    public static double distanceBetweenPlaces(LatLng point1, LatLng point2) {
-        double lon1 = point1.longitude;//getLongitudeE6() / 1E6;
-        double lat1 = point1.latitude;//getLatitudeE6() / 1E6;
-        double lon2 = point2.longitude;//getLongitudeE6() / 1E6;
-        double lat2 = point2.latitude;//getLatitudeE6() / 1E6;
-        double dlon = radians(lon2 - lon1);
-        double dlat = radians(lat2 - lat1);
-
-        double a = (Math.sin(dlat / 2) * Math.sin(dlat / 2))
-                + Math.cos(radians(lat1)) * Math.cos(radians(lat2))
-                * (Math.sin(dlon / 2) * Math.sin(dlon / 2));
-        double angle = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return angle * RADIO;
+    public static float distanceBetweenPlaces(LatLng point1, LatLng point2) {
+        BearingDistanceResult distanceAndBearing = computeDistanceAndBearing(point1.latitude, point1.longitude,
+                point2.latitude, point2.longitude);
+        return distanceAndBearing.mDistance / 1000f;
     }
+
 
     /**
      * Calculates the closest town in New Zealand (in the form of a {@link LocalPlace})
      * to the supplied point.
+     *
      * @param quakeEpicenter The point you'd like a town close to.
      * @return The town closest to the supplied location.
      */
     public static LocalPlace getClosestPlace(LatLng quakeEpicenter) {
         // Find the distance from the closest town
-        double closestTownDistance = -1;
+        float closestTownDistance = -1;
         LocalPlace closestTown = null;
         for (LocalPlace place : places) {
             if (closestTownDistance < 0) {
                 closestTownDistance = distanceBetweenPlaces(quakeEpicenter, place.location);
                 closestTown = place;
             } else {
-                double distance = distanceBetweenPlaces(quakeEpicenter, place.location);
+                float distance = distanceBetweenPlaces(quakeEpicenter, place.location);
                 if (distance < closestTownDistance) {
                     closestTownDistance = distance;
                     closestTown = place;
@@ -176,16 +162,15 @@ public class DistanceUtil {
     /**
      * Calculates the {@link speakman.whatsshakingnz.utils.DistanceUtil.Direction} from the first
      * arg to the second.
-     * @param fromPoint The center point used to calculate bearing from.
-     * @param toPoint The point whose bearing we'd like from the center.
-     * @return The bearing from the first point to the second.
+     *
+     * @param fromPoint The center point used to calculate direction from.
+     * @param toPoint   The point whose direction we'd like from the center.
+     * @return The direction from the first point to the second.
      */
     public static Direction getDirection(LatLng fromPoint, LatLng toPoint) {
-        float[] results = new float[3];
-        Location.distanceBetween(fromPoint.latitude, fromPoint.longitude,
-                toPoint.latitude, toPoint.longitude,
-                results);
-        float bearing = results[2];
+        BearingDistanceResult distanceAndBearing = computeDistanceAndBearing(fromPoint.latitude, fromPoint.longitude,
+                toPoint.latitude, toPoint.longitude);
+        float bearing = distanceAndBearing.mFinalBearing;
 
         // Split our compass into 8 pieces - 22.5 degrees either side of directly north (0 degrees)
         // is considered north, then 45 degree intervals for each other direction.
@@ -214,5 +199,120 @@ public class DistanceUtil {
                 return Direction.South;
             }
         }
+    }
+
+    // Ripped from Android Location class - can't write tests when Location.distanceBetween isn't implemented.
+    // https://android.googlesource.com/platform/frameworks/base/+/b87243cb43753c6f90d54afd3bc0839882742942/location/java/android/location/Location.java
+    private static BearingDistanceResult computeDistanceAndBearing(double lat1, double lon1,
+                                                                   double lat2, double lon2) {
+        // Based on http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf
+        // using the "Inverse Formula" (section 4)
+
+        int MAXITERS = 20;
+        // Convert lat/long to radians
+        lat1 *= Math.PI / 180.0;
+        lat2 *= Math.PI / 180.0;
+        lon1 *= Math.PI / 180.0;
+        lon2 *= Math.PI / 180.0;
+
+        double a = 6378137.0; // WGS84 major axis
+        double b = 6356752.3142; // WGS84 semi-major axis
+        double f = (a - b) / a;
+        double aSqMinusBSqOverBSq = (a * a - b * b) / (b * b);
+
+        double L = lon2 - lon1;
+        double A = 0.0;
+        double U1 = Math.atan((1.0 - f) * Math.tan(lat1));
+        double U2 = Math.atan((1.0 - f) * Math.tan(lat2));
+
+        double cosU1 = Math.cos(U1);
+        double cosU2 = Math.cos(U2);
+        double sinU1 = Math.sin(U1);
+        double sinU2 = Math.sin(U2);
+        double cosU1cosU2 = cosU1 * cosU2;
+        double sinU1sinU2 = sinU1 * sinU2;
+
+        double sigma = 0.0;
+        double deltaSigma = 0.0;
+        double cosSqAlpha = 0.0;
+        double cos2SM = 0.0;
+        double cosSigma = 0.0;
+        double sinSigma = 0.0;
+        double cosLambda = 0.0;
+        double sinLambda = 0.0;
+
+        double lambda = L; // initial guess
+        for (int iter = 0; iter < MAXITERS; iter++) {
+            double lambdaOrig = lambda;
+            cosLambda = Math.cos(lambda);
+            sinLambda = Math.sin(lambda);
+            double t1 = cosU2 * sinLambda;
+            double t2 = cosU1 * sinU2 - sinU1 * cosU2 * cosLambda;
+            double sinSqSigma = t1 * t1 + t2 * t2; // (14)
+            sinSigma = Math.sqrt(sinSqSigma);
+            cosSigma = sinU1sinU2 + cosU1cosU2 * cosLambda; // (15)
+            sigma = Math.atan2(sinSigma, cosSigma); // (16)
+            double sinAlpha = (sinSigma == 0) ? 0.0 :
+                    cosU1cosU2 * sinLambda / sinSigma; // (17)
+            cosSqAlpha = 1.0 - sinAlpha * sinAlpha;
+            cos2SM = (cosSqAlpha == 0) ? 0.0 :
+                    cosSigma - 2.0 * sinU1sinU2 / cosSqAlpha; // (18)
+
+            double uSquared = cosSqAlpha * aSqMinusBSqOverBSq; // defn
+            A = 1 + (uSquared / 16384.0) * // (3)
+                    (4096.0 + uSquared *
+                            (-768 + uSquared * (320.0 - 175.0 * uSquared)));
+            double B = (uSquared / 1024.0) * // (4)
+                    (256.0 + uSquared *
+                            (-128.0 + uSquared * (74.0 - 47.0 * uSquared)));
+            double C = (f / 16.0) *
+                    cosSqAlpha *
+                    (4.0 + f * (4.0 - 3.0 * cosSqAlpha)); // (10)
+            double cos2SMSq = cos2SM * cos2SM;
+            deltaSigma = B * sinSigma * // (6)
+                    (cos2SM + (B / 4.0) *
+                            (cosSigma * (-1.0 + 2.0 * cos2SMSq) -
+                                    (B / 6.0) * cos2SM *
+                                            (-3.0 + 4.0 * sinSigma * sinSigma) *
+                                            (-3.0 + 4.0 * cos2SMSq)));
+
+            lambda = L +
+                    (1.0 - C) * f * sinAlpha *
+                            (sigma + C * sinSigma *
+                                    (cos2SM + C * cosSigma *
+                                            (-1.0 + 2.0 * cos2SM * cos2SM))); // (11)
+
+            double delta = (lambda - lambdaOrig) / lambda;
+            if (Math.abs(delta) < 1.0e-12) {
+                break;
+            }
+        }
+
+        BearingDistanceResult results = new BearingDistanceResult();
+        float distance = (float) (b * A * (sigma - deltaSigma));
+        results.mDistance = distance;
+        float initialBearing = (float) Math.atan2(cosU2 * sinLambda,
+                cosU1 * sinU2 - sinU1 * cosU2 * cosLambda);
+        initialBearing *= 180.0 / Math.PI;
+        results.mInitialBearing = initialBearing;
+        float finalBearing = (float) Math.atan2(cosU1 * sinLambda,
+                -sinU1 * cosU2 + cosU1 * sinU2 * cosLambda);
+        finalBearing *= 180.0 / Math.PI;
+        results.mFinalBearing = finalBearing;
+        results.mLat1 = lat1;
+        results.mLat2 = lat2;
+        results.mLon1 = lon1;
+        results.mLon2 = lon2;
+        return results;
+    }
+
+    private static class BearingDistanceResult {
+        private double mLat1 = 0.0;
+        private double mLon1 = 0.0;
+        private double mLat2 = 0.0;
+        private double mLon2 = 0.0;
+        private float mDistance = 0.0f;
+        private float mInitialBearing = 0.0f;
+        private float mFinalBearing = 0.0f;
     }
 }
