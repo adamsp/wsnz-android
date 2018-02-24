@@ -17,6 +17,7 @@
 package speakman.whatsshakingnz.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 
@@ -49,8 +50,8 @@ public class DistanceUtil {
             directionName = localisedName;
         }
 
-        public String localizedName(@NonNull Context ctx) {
-            return ctx.getString(directionName);
+        public String localizedName(@NonNull Resources resources) {
+            return resources.getString(directionName);
         }
     }
 

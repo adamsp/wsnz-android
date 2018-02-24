@@ -17,6 +17,7 @@
 package speakman.whatsshakingnz.ui.viewmodel;
 
 import android.content.Context;
+import android.content.res.Resources;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -30,6 +31,8 @@ import speakman.whatsshakingnz.model.TestEarthquake;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Adam on 12/12/2015.
@@ -38,11 +41,7 @@ import static org.junit.Assert.assertTrue;
 public class EarthquakeOverviewViewModelTests {
 
     @Mock
-    Context ctx;
-
-    private Context getContext() {
-        return ctx;
-    }
+    Resources resources;
 
     @Test
     public void testRoundedUpMagnitudeIsReturned() {
@@ -80,13 +79,15 @@ public class EarthquakeOverviewViewModelTests {
 
             @Override
             public double getLongitude() {
-                return 174.815451;
+                return 174.763351;
             }
         };
 
         EarthquakeOverviewViewModel northViewModel = new EarthquakeOverviewViewModel(northEarthquake);
         assertTrue(northViewModel.getNearestTownName().equals("Auckland"));
-        assertTrue(northViewModel.getDistanceAndDirectionFromNearestTown(getContext()).contains("North"));
+
+        northViewModel.getDistanceAndDirectionFromNearestTown(resources);
+        verify(resources).getString(R.string.direction_north);
     }
 
     @Test
@@ -127,21 +128,24 @@ public class EarthquakeOverviewViewModelTests {
             }
         };
 
-        Context ctx = getContext();
-
         EarthquakeOverviewViewModel nowViewModel = new EarthquakeOverviewViewModel(nowEarthquake);
-        assertEquals(ctx.getString(R.string.overview_time_passed_now), nowViewModel.getTimePassedSinceOccurrence(ctx));
+        when(resources.getString(R.string.overview_time_passed_now)).thenReturn("now");
+        assertEquals("now", nowViewModel.getTimePassedSinceOccurrence(resources));
 
         EarthquakeOverviewViewModel secondsViewModel = new EarthquakeOverviewViewModel(secondsEarthquake);
-        assertEquals(ctx.getResources().getQuantityString(R.plurals.overview_time_passed_seconds, 1, 1), secondsViewModel.getTimePassedSinceOccurrence(ctx));
+        when(resources.getQuantityString(R.plurals.overview_time_passed_seconds, 1, 1L)).thenReturn("seconds");
+        assertEquals("seconds", secondsViewModel.getTimePassedSinceOccurrence(resources));
 
         EarthquakeOverviewViewModel minutesViewModel = new EarthquakeOverviewViewModel(minutesEarthquake);
-        assertEquals(ctx.getResources().getQuantityString(R.plurals.overview_time_passed_minutes, 1, 1), minutesViewModel.getTimePassedSinceOccurrence(ctx));
+        when(resources.getQuantityString(R.plurals.overview_time_passed_minutes, 1, 1L)).thenReturn("minutes");
+        assertEquals("minutes", minutesViewModel.getTimePassedSinceOccurrence(resources));
 
         EarthquakeOverviewViewModel hoursViewModel = new EarthquakeOverviewViewModel(hoursEarthquake);
-        assertEquals(ctx.getResources().getQuantityString(R.plurals.overview_time_passed_hours, 1, 1), hoursViewModel.getTimePassedSinceOccurrence(ctx));
+        when(resources.getQuantityString(R.plurals.overview_time_passed_hours, 1, 1L)).thenReturn("hours");
+        assertEquals("hours", hoursViewModel.getTimePassedSinceOccurrence(resources));
 
         EarthquakeOverviewViewModel daysViewModel = new EarthquakeOverviewViewModel(daysEarthquake);
-        assertEquals(ctx.getResources().getQuantityString(R.plurals.overview_time_passed_days, 1, 1), daysViewModel.getTimePassedSinceOccurrence(ctx));
+        when(resources.getQuantityString(R.plurals.overview_time_passed_days, 1, 1L)).thenReturn("days");
+        assertEquals("days", daysViewModel.getTimePassedSinceOccurrence(resources));
     }
 }

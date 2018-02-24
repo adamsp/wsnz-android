@@ -55,17 +55,16 @@ public class EarthquakeOverviewViewModel {
         return String.format("%.1f", earthquake.getMagnitude());
     }
 
-    public String getDistanceAndDirectionFromNearestTown(Context context) {
-        return context.getString(R.string.overview_distance_direction_format, distanceToNearestTown,
-                directionToNearestTown.localizedName(context));
+    public String getDistanceAndDirectionFromNearestTown(Resources resources) {
+        return resources.getString(R.string.overview_distance_direction_format, distanceToNearestTown,
+                directionToNearestTown.localizedName(resources));
     }
 
     public String getNearestTownName() {
         return nearestTown.name;
     }
 
-    public String getTimePassedSinceOccurrence(Context context) {
-        final Resources res = context.getResources();
+    public String getTimePassedSinceOccurrence(Resources res) {
         long millisPassed = DateTime.now().getMillis() - earthquake.getOriginTime();
         if (millisPassed < 1000) {
             return res.getString(R.string.overview_time_passed_now);

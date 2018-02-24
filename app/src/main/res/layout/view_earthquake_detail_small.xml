@@ -61,7 +61,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{earthquakeModel.getDistanceAndDirectionFromNearestTown(context)}"
+                    android:text="@{earthquakeModel.getDistanceAndDirectionFromNearestTown(context.getResources())}"
                     android:textSize="16sp"
                     android:textColor="@color/main_theme_primary_text"
                     android:gravity="center_vertical"
@@ -83,7 +83,7 @@
                     android:gravity="center_vertical|left"
                     android:lines="1"
                     android:ellipsize="end"
-                    android:text="@{earthquakeModel.getTimePassedSinceOccurrence(context)}"
+                    android:text="@{earthquakeModel.getTimePassedSinceOccurrence(context.getResources())}"
                     tools:text="35 mins ago"/>
 
             </LinearLayout>
