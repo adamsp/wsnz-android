@@ -17,9 +17,11 @@
 package speakman.whatsshakingnz.ui.viewmodel;
 
 import android.support.annotation.Nullable;
+import android.support.test.runner.AndroidJUnit4;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.TestEarthquake;
@@ -31,6 +33,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Adam on 2/29/2016.
  */
+@RunWith(AndroidJUnit4.class)
 public class EarthquakeExpandedDetailViewModelTests {
 
     @Test
@@ -77,7 +80,7 @@ public class EarthquakeExpandedDetailViewModelTests {
     }
 
     @Test
-    public void testDatesAreFormattedCorrectly() {
+    public void testDatesAreFormattedUsingMediumLength() {
         final DateTime now = DateTime.now();
         Earthquake dateTestEarthquake = new TestEarthquake() {
             @Override
