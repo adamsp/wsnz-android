@@ -10,11 +10,14 @@ buildscript {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 apply plugin: 'realm-android'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    mavenCentral()
 }
 
 android {
@@ -85,6 +88,9 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    kapt "com.android.databinding:compiler:$gradle_version"
+
     def supportLibVersion = '26.1.0'
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:recyclerview-v7:$supportLibVersion"
@@ -98,7 +104,7 @@ dependencies {
 
     def daggerVersion = '2.14.1'
     implementation "com.google.dagger:dagger:$daggerVersion"
-    annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     def leakCanaryVersion = '1.5.4'
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
