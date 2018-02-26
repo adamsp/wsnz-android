@@ -19,6 +19,7 @@ package speakman.whatsshakingnz.network;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.os.PowerManager;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
@@ -53,11 +54,13 @@ import timber.log.Timber;
 /**
  * Created by Adam on 2016-03-05.
  */
+// TODO When we switch to minSdk 21 we can drop this for a JobService (which handles wakelocks for us!).
 public class SyncService extends GcmTaskService {
 
     public static final long SYNC_PERIOD_SECONDS = TimeUnit.HOURS.toSeconds(1);
 
     private static final String PERIODIC_SYNC_TAG = "speakman.whatsshakingnz.network.SyncService.PERIODIC_SYNC";
+    private static final String WAKELOCK_TAG = "speakman.whatsshakingnz.network.SyncService.PERIODIC_SYNC_WAKELOCK";
 
     public static void scheduleSync(Context ctx) {
         Timber.d("Scheduling periodic sync.");
@@ -103,6 +106,9 @@ public class SyncService extends GcmTaskService {
 
     private void requestNewEarthquakes() {
         final Realm realm = Realm.getDefaultInstance();
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        final PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                WAKELOCK_TAG);
         earthquakeService.retrieveNewEarthquakes().map(new Func1<Earthquake, RealmEarthquake>() {
             @Override
             public RealmEarthquake call(Earthquake earthquake) {
@@ -112,6 +118,7 @@ public class SyncService extends GcmTaskService {
             @Override
             public void call() {
                 realm.beginTransaction();
+                wakeLock.acquire(TimeUnit.SECONDS.toMillis(30));
             }
         }).subscribe(new Subscriber<RealmEarthquake>() {
             List<Earthquake> newEvents = new ArrayList<>();
@@ -120,12 +127,14 @@ public class SyncService extends GcmTaskService {
                 realm.commitTransaction();
                 realm.close();
                 earthquakeNotifier.get().notifyForNewEarthquakes(newEvents);
+                wakeLock.release();
             }
             @Override
             public void onError(Throwable e) {
                 realm.commitTransaction(); // We need to save everything that came through, even on error.
                 realm.close();
                 earthquakeNotifier.get().notifyForNewEarthquakes(newEvents);
+                wakeLock.release();
             }
             @Override
             public void onNext(RealmEarthquake realmEarthquake) {
