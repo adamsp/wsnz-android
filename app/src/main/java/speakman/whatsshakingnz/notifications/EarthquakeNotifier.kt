@@ -21,7 +21,6 @@ import android.app.NotificationManager
 import speakman.whatsshakingnz.analytics.Analytics
 import speakman.whatsshakingnz.model.Earthquake
 import speakman.whatsshakingnz.network.NotificationTimeStore
-import speakman.whatsshakingnz.utils.NotificationUtil
 import speakman.whatsshakingnz.utils.UserSettings
 import timber.log.Timber
 import javax.inject.Inject

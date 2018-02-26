@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Adam Speakman
+ * Copyright 2018 Adam Speakman
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package speakman.whatsshakingnz.utils;
+package speakman.whatsshakingnz.notifications;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -37,6 +37,8 @@ import speakman.whatsshakingnz.model.LocalPlace;
 import speakman.whatsshakingnz.notifications.NotificationFactory;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;
+import speakman.whatsshakingnz.utils.DistanceUtil;
+import speakman.whatsshakingnz.utils.UserSettings;
 
 /**
  * Created by Adam on 2016-03-14.

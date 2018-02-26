@@ -16,18 +16,13 @@
 
 package speakman.whatsshakingnz.network;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.os.PowerManager;
-import android.support.annotation.NonNull;
 
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.google.android.gms.gcm.TaskParams;
-
-import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,18 +32,13 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import io.realm.Realm;
-import io.realm.RealmResults;
-import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action0;
 import rx.functions.Func1;
 import speakman.whatsshakingnz.WhatsShakingApplication;
-import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.notifications.EarthquakeNotifier;
-import speakman.whatsshakingnz.utils.NotificationUtil;
-import speakman.whatsshakingnz.utils.UserSettings;
 import timber.log.Timber;
 
 /**

@@ -66,7 +66,7 @@ import speakman.whatsshakingnz.ui.LicensesFragment;
 import speakman.whatsshakingnz.ui.StickyHeadersDecoration;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
-import speakman.whatsshakingnz.utils.NotificationUtil;
+import speakman.whatsshakingnz.notifications.NotificationUtil;
 import speakman.whatsshakingnz.utils.UserSettings;
 import timber.log.Timber;
 

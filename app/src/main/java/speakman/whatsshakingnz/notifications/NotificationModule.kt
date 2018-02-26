@@ -22,7 +22,6 @@ import dagger.Module
 import dagger.Provides
 import speakman.whatsshakingnz.InternalPreferences
 import speakman.whatsshakingnz.network.NotificationTimeStore
-import speakman.whatsshakingnz.utils.NotificationUtil
 import speakman.whatsshakingnz.utils.UserSettings
 
 @Module

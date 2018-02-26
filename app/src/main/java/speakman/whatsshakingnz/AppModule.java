@@ -21,7 +21,6 @@ import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
 import speakman.whatsshakingnz.network.RequestTimeStore;
-import speakman.whatsshakingnz.utils.NotificationUtil;
 import speakman.whatsshakingnz.utils.UserSettings;
 
 /**
