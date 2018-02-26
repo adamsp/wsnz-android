@@ -43,9 +43,4 @@ public class AppModule {
     UserSettings provideUserSettings(Context ctx) {
         return new UserSettings.UserSettingsImpl(ctx);
     }
-
-    @Provides
-    NotificationUtil provideNotificationUtil(Context ctx, UserSettings settings) {
-        return new NotificationUtil(ctx, settings);
-    }
 }

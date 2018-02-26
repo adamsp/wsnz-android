@@ -34,13 +34,14 @@ import javax.inject.Inject;
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.LocalPlace;
+import speakman.whatsshakingnz.notifications.NotificationFactory;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;
 
 /**
  * Created by Adam on 2016-03-14.
  */
-public class NotificationUtil {
+public class NotificationUtil implements NotificationFactory {
 
     public static final int NOTIFICATION_ID = 0;
 
@@ -53,6 +54,7 @@ public class NotificationUtil {
         this.userSettings = settings;
     }
 
+    @NonNull
     public Notification notificationForSingleEarthquake(@NonNull Earthquake earthquake) {
         String tickerText, titleText, contentText;
         tickerText = context.getString(R.string.notification_ticker_single, earthquake.getMagnitude());
@@ -88,6 +90,7 @@ public class NotificationUtil {
         }
     }
 
+    @NonNull
     public Notification notificationForMultipleEarthquakes(@NonNull List<? extends Earthquake> earthquakes) {
         String tickerText, titleText, contentText;
         tickerText = context.getString(R.string.notification_ticker_multiple, earthquakes.size());
