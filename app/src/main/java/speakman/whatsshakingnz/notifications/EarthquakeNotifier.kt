@@ -27,6 +27,9 @@ import javax.inject.Inject
 
 class EarthquakeNotifier @Inject constructor(val factory: NotificationFactory, val timeStore: NotificationTimeStore,
                          val userSettings: UserSettings, val notificationManager: NotificationManager) {
+
+    val NOTIFICATION_ID = 0
+
     fun notifyForNewEarthquakes(earthquakes: List<Earthquake>) {
         if (!userSettings.notificationsEnabled() || earthquakes.isEmpty()) {
             return
@@ -48,7 +51,7 @@ class EarthquakeNotifier @Inject constructor(val factory: NotificationFactory, v
             notification = factory.notificationForMultipleEarthquakes(earthquakes)
             Analytics.logNotificationShownForEarthquakes(earthquakes)
         }
-        notificationManager.notify(NotificationUtil.NOTIFICATION_ID, notification)
+        notificationManager.notify(NOTIFICATION_ID, notification)
         Timber.d("Showing notification for %d earthquakes", earthquakes.size)
     }
 }

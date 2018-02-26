@@ -59,6 +59,9 @@ import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
 import speakman.whatsshakingnz.network.NotificationTimeStore;
+import speakman.whatsshakingnz.notifications.AndroidNotificationFactory;
+import speakman.whatsshakingnz.notifications.EarthquakeNotifier;
+import speakman.whatsshakingnz.notifications.NotificationFactory;
 import speakman.whatsshakingnz.ui.DividerItemDecoration;
 import speakman.whatsshakingnz.ui.EarthquakeHeadersAdapter;
 import speakman.whatsshakingnz.ui.EarthquakeListAdapter;
@@ -66,7 +69,6 @@ import speakman.whatsshakingnz.ui.LicensesFragment;
 import speakman.whatsshakingnz.ui.StickyHeadersDecoration;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
-import speakman.whatsshakingnz.notifications.NotificationUtil;
 import speakman.whatsshakingnz.utils.UserSettings;
 import timber.log.Timber;
 
@@ -96,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     MapMarkerOptionsFactory mapMarkerOptionsFactory;
 
     @Inject
-    Lazy<NotificationUtil> notiticationUtil;
+    Lazy<NotificationFactory> notiticationUtil;
 
     @Inject
     NotificationTimeStore notificationTimeStore;
@@ -321,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (earthquakes != null && earthquakes.size() > 0) {
             Notification notification = notiticationUtil.get().notificationForSingleEarthquake(earthquakes.get(0));
             NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            mgr.notify(NotificationUtil.NOTIFICATION_ID, notification);
+            mgr.notify(0, notification);
         }
     }
 
@@ -332,7 +334,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (earthquakes != null && earthquakes.size() > 0) {
             Notification notification = notiticationUtil.get().notificationForMultipleEarthquakes(earthquakes);
             NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            mgr.notify(NotificationUtil.NOTIFICATION_ID, notification);
+            mgr.notify(0, notification);
         }
     }
 

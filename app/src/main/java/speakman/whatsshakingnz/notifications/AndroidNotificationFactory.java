@@ -43,15 +43,13 @@ import speakman.whatsshakingnz.utils.UserSettings;
 /**
  * Created by Adam on 2016-03-14.
  */
-public class NotificationUtil implements NotificationFactory {
-
-    public static final int NOTIFICATION_ID = 0;
+public class AndroidNotificationFactory implements NotificationFactory {
 
     private final Context context;
     private final UserSettings userSettings;
 
     @Inject
-    public NotificationUtil(Context ctx, UserSettings settings) {
+    public AndroidNotificationFactory(Context ctx, UserSettings settings) {
         this.context = ctx;
         this.userSettings = settings;
     }

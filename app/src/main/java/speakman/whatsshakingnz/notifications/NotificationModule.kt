@@ -39,6 +39,6 @@ class NotificationModule {
 
     @Provides
     fun provideNotificationFactory(context: Context, settings: UserSettings): NotificationFactory {
-        return NotificationUtil(context, settings)
+        return AndroidNotificationFactory(context, settings)
     }
 }
