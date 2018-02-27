@@ -25,8 +25,8 @@ import speakman.whatsshakingnz.utils.UserSettings
 import timber.log.Timber
 import javax.inject.Inject
 
-class EarthquakeNotifier @Inject constructor(val factory: NotificationFactory, val timeStore: NotificationTimeStore,
-                         val userSettings: UserSettings, val notificationManager: NotificationManager) {
+class EarthquakeNotifier @Inject constructor(val notificationFactory: NotificationFactory, val timeStore: NotificationTimeStore,
+                                             val userSettings: UserSettings, val notificationManager: NotificationManager) {
 
     val NOTIFICATION_ID = 0
 
@@ -38,17 +38,23 @@ class EarthquakeNotifier @Inject constructor(val factory: NotificationFactory, v
         val minimumNotificationMagnitude = userSettings.minimumNotificationMagnitude() // TODO Getters
         val filtered = earthquakes.filter { it.originTime > mostRecentlySeenEventOriginTime }
                 .filter { it.magnitude >= minimumNotificationMagnitude }
+        if (filtered.isEmpty()) {
+            return
+        }
         notifyUserAboutEarthquakes(filtered)
     }
 
     private fun notifyUserAboutEarthquakes(earthquakes: List<Earthquake>) {
+        if (earthquakes.isEmpty()) {
+            throw IllegalArgumentException("Empty list of earthquakes passed")
+        }
         val notification: Notification
         if (earthquakes.size == 1) {
             val earthquake = earthquakes[0]
-            notification = factory.notificationForSingleEarthquake(earthquake)
+            notification = notificationFactory.notificationForSingleEarthquake(earthquake)
             Analytics.logNotificationShownForEarthquake(earthquake)
         } else {
-            notification = factory.notificationForMultipleEarthquakes(earthquakes)
+            notification = notificationFactory.notificationForMultipleEarthquakes(earthquakes)
             Analytics.logNotificationShownForEarthquakes(earthquakes)
         }
         notificationManager.notify(NOTIFICATION_ID, notification)
