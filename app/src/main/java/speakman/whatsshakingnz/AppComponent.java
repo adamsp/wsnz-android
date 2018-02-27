@@ -17,11 +17,11 @@
 package speakman.whatsshakingnz;
 
 import dagger.Component;
+import speakman.whatsshakingnz.backgroundsync.BackgroundSyncService;
 import speakman.whatsshakingnz.dagger.AppScope;
 import speakman.whatsshakingnz.model.ModelModule;
 import speakman.whatsshakingnz.network.NetworkModule;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
-import speakman.whatsshakingnz.network.SyncService;
 import speakman.whatsshakingnz.notifications.NotificationModule;
 import speakman.whatsshakingnz.ui.UIModule;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
@@ -35,7 +35,7 @@ import speakman.whatsshakingnz.ui.activities.MapActivity;
 @Component(modules = { NetworkModule.class, ModelModule.class, NotificationModule.class, AppModule.class, UIModule.class })
 public interface AppComponent {
     void inject(NetworkRunnerService service);
-    void inject(SyncService service);
+    void inject(BackgroundSyncService service);
     void inject(WhatsShakingApplication application);
     void inject(MainActivity activity);
     void inject(MapActivity activity);

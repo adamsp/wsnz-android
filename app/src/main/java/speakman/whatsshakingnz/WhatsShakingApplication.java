@@ -29,8 +29,8 @@ import io.realm.RealmConfiguration;
 import jonathanfinerty.once.Once;
 import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.analytics.Forest;
+import speakman.whatsshakingnz.backgroundsync.BackgroundSyncService;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
-import speakman.whatsshakingnz.network.SyncService;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;
 import speakman.whatsshakingnz.ui.activities.MapActivity;
@@ -42,6 +42,7 @@ import timber.log.Timber;
 public class WhatsShakingApplication extends Application {
 
     private static final String INIT_SYNC_ON_INSTALL = "speakman.whatsshakingnz.INIT_SYNC_ON_INSTALL";
+    private static final String INIT_SYNC_ON_UPGRADE = "speakman.whatsshakingnz.INIT_SYNC_ON_UPGRADE";
     private static WhatsShakingApplication instance;
     private AppComponent component;
 
@@ -69,7 +70,7 @@ public class WhatsShakingApplication extends Application {
         component.inject(service);
     }
 
-    public void inject(SyncService service) {
+    public void inject(BackgroundSyncService service) {
         logInjection(service);
         component.inject(service);
     }
@@ -104,8 +105,14 @@ public class WhatsShakingApplication extends Application {
     private void scheduleSync() {
         if (!Once.beenDone(Once.THIS_APP_INSTALL, INIT_SYNC_ON_INSTALL)) {
             Timber.i("Scheduling background sync on first-install.");
-            SyncService.scheduleSync(this);
+            BackgroundSyncService.scheduleSync(this);
             Once.markDone(INIT_SYNC_ON_INSTALL);
+        } else if (!Once.beenDone(Once.THIS_APP_VERSION, INIT_SYNC_ON_UPGRADE)) {
+            // Firebase is *supposed* to ensure jobs get rescheduled on upgrade. There may be bugs, though:
+            // https://github.com/firebase/firebase-jobdispatcher-android/issues/6
+            Timber.i("Scheduling background sync on app upgrade.");
+            BackgroundSyncService.scheduleSync(this);
+            Once.markDone(INIT_SYNC_ON_UPGRADE);
         }
     }
 }

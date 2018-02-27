@@ -101,6 +101,7 @@ dependencies {
     def playServicesVersion = '11.8.0'
     implementation "com.google.android.gms:play-services-maps:$playServicesVersion"
     implementation "com.google.android.gms:play-services-gcm:$playServicesVersion"
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
 
     def daggerVersion = '2.14.1'
     implementation "com.google.dagger:dagger:$daggerVersion"
