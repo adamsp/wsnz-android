@@ -129,9 +129,7 @@ dependencies {
     // For Tests
     testImplementation 'joda-time:joda-time:2.9.9'
     testImplementation 'junit:junit:4.12'
-    testImplementation("org.mockito:mockito-core:1.10.19") {
-        exclude group: "org.hamcrest"
-    }
+    testImplementation "com.nhaarman:mockito-kotlin:1.5.0"
     androidTestImplementation "com.android.support:support-annotations:$supportLibVersion"
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test:rules:1.0.1'

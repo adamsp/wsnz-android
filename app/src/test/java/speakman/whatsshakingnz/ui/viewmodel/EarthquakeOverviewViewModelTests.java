@@ -16,14 +16,13 @@
 
 package speakman.whatsshakingnz.ui.viewmodel;
 
-import android.content.Context;
 import android.content.res.Resources;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.model.Earthquake;

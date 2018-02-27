@@ -24,10 +24,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
@@ -55,11 +53,7 @@ public class InternalPreferencesTest {
     public void setup() {
         when(ctx.getSharedPreferences(anyString(), anyInt())).thenReturn(sharedPrefs);
         when(sharedPrefs.edit()).thenReturn(editor);
-        when(editor.putBoolean(anyString(), anyBoolean())).thenReturn(editor);
-        when(editor.putFloat(anyString(), anyFloat())).thenReturn(editor);
-        when(editor.putInt(anyString(), anyInt())).thenReturn(editor);
         when(editor.putLong(anyString(), anyLong())).thenReturn(editor);
-        when(editor.putString(anyString(), anyString())).thenReturn(editor);
         when(editor.remove(anyString())).thenReturn(editor);
         underTest = new InternalPreferences(ctx);
     }
