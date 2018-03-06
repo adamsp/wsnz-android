@@ -21,7 +21,6 @@ import rx.Completable
 import rx.Observable
 import speakman.whatsshakingnz.model.realm.RealmEarthquake
 import speakman.whatsshakingnz.network.EarthquakeService
-import timber.log.Timber
 import javax.inject.Provider
 
 class SyncCoordinator(private val realmProvider: Provider<Realm>, private val earthquakeService: EarthquakeService) {
@@ -35,12 +34,8 @@ class SyncCoordinator(private val realmProvider: Provider<Realm>, private val ea
             if (currentSync == null) {
                 currentSync = earthquakeService.retrieveNewEarthquakes()
                         .map { RealmEarthquake(it) }
-                        .onErrorResumeNext({ e ->
-                            Timber.e(e, "Error mapping earthquake to RealmEarthquake")
-                            Observable.empty() // Swallow it
-                        })
                         // buffer(500) vs toList() should mean we don't hammer storage, but we also shouldn't fill our memory space.
-                        .buffer(500)
+                        .buffer(500) // TODO Docs used to say (incorrectly) that this would emit the buffer on error
                         .doOnEach { earthquakes ->
                             if (earthquakes.hasValue()) {
                                 val realm = realmProvider.get()
