@@ -29,7 +29,7 @@ import io.realm.RealmConfiguration;
 import jonathanfinerty.once.Once;
 import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.analytics.Forest;
-import speakman.whatsshakingnz.backgroundsync.BackgroundSyncService;
+import speakman.whatsshakingnz.sync.background.BackgroundSyncService;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;

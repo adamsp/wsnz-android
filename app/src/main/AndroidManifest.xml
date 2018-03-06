@@ -15,13 +15,13 @@
   ~ limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="UnusedAttribute"
-    package="speakman.whatsshakingnz" >
+          xmlns:tools="http://schemas.android.com/tools"
+          tools:ignore="UnusedAttribute"
+          package="speakman.whatsshakingnz">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
@@ -40,14 +40,14 @@
             android:name="speakman.whatsshakingnz.activities.MainActivity"
             android:targetActivity=".ui.activities.MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity-alias>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${mapsApiKey}" />
+            android:value="${mapsApiKey}"/>
 
         <activity
             android:name=".ui.activities.DetailActivity"
@@ -55,7 +55,7 @@
             android:parentActivityName=".ui.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="speakman.whatsshakingnz.ui.activities.MainActivity" />
+                android:value="speakman.whatsshakingnz.ui.activities.MainActivity"/>
         </activity>
 
         <activity
@@ -64,30 +64,30 @@
             android:parentActivityName="speakman.whatsshakingnz.ui.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="speakman.whatsshakingnz.ui.activities.MainActivity" />
+                android:value="speakman.whatsshakingnz.ui.activities.MainActivity"/>
         </activity>
 
         <activity
             android:name=".ui.activities.SettingsActivity"
             android:label="@string/title_activity_map"
-            android:theme="@style/AppTheme.SettingsActivity" />
+            android:theme="@style/AppTheme.SettingsActivity"/>
 
         <service
             android:name=".network.NetworkRunnerService"
-            android:exported="false" />
+            android:exported="false"/>
 
         <service
             android:name=".network.SyncService"
             android:exported="true"
             android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
             <intent-filter>
-                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY"/>
             </intent-filter>
         </service>
 
         <service
             android:exported="false"
-            android:name=".backgroundsync.BackgroundSyncService">
+            android:name=".sync.background.BackgroundSyncService">
             <intent-filter>
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
             </intent-filter>

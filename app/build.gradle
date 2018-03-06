@@ -49,7 +49,7 @@ android {
         targetSdkVersion 26
         versionCode 13
         versionName "2.0.3"
-        manifestPlaceholders = [ mapsApiKey: properties['mapsApiKey'] ]
+        manifestPlaceholders = [mapsApiKey: properties['mapsApiKey']]
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -120,6 +120,8 @@ dependencies {
     implementation "com.google.code.gson:gson:2.8.2"
     implementation "io.reactivex:rxjava:1.1.1"
     implementation "io.reactivex:rxandroid:1.1.0"
+    // TODO Need this for PowerMock+Realm right now, upgrade to actually use it!
+    testImplementation "io.reactivex.rxjava2:rxjava:2.1.10"
     implementation "net.danlew:android.joda:2.9.9.2"
     implementation "com.jakewharton.timber:timber:4.1.2"
     implementation "com.jonathanfinerty.once:once:1.2.2"
@@ -131,6 +133,10 @@ dependencies {
     testImplementation 'joda-time:joda-time:2.9.9'
     testImplementation 'junit:junit:4.12'
     testImplementation "com.nhaarman:mockito-kotlin:1.5.0"
+    testImplementation 'org.powermock:powermock-module-junit4:1.7.3'
+    testImplementation 'org.powermock:powermock-api-mockito2:1.7.3'
+
+    // Android Tests
     androidTestImplementation "com.android.support:support-annotations:$supportLibVersion"
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test:rules:1.0.1'

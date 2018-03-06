@@ -32,7 +32,8 @@ public class RealmEarthquake extends RealmObject implements Earthquake {
     public static final String FIELD_NAME_ORIGIN_TIME = "originTime";
     public static final String FIELD_NAME_MAGNITUDE = "magnitude";
 
-    @PrimaryKey @Required
+    @PrimaryKey
+    @Required
     private String id;
 
     private long originTime;
@@ -41,22 +42,29 @@ public class RealmEarthquake extends RealmObject implements Earthquake {
     private double longitude;
     private double depth;
     private double magnitude;
-    @Nullable private String evaluationMethod;
-    @Nullable private String evaluationStatus;
-    @Nullable private String evaluationMode;
-    @Nullable private String earthModel;
-    @Nullable private String depthType;
+    @Nullable
+    private String evaluationMethod;
+    @Nullable
+    private String evaluationStatus;
+    @Nullable
+    private String evaluationMode;
+    @Nullable
+    private String earthModel;
+    @Nullable
+    private String depthType;
     private double originError;
     private int usedPhaseCount;
     private int usedStationCount;
     private double minimumDistance;
     private double azimuthalGap;
-    @Nullable private String magnitudeType;
+    @Nullable
+    private String magnitudeType;
     private double magnitudeUncertainty;
     private int magnitudeStationCount;
 
     // For Realm support
-    public RealmEarthquake() { }
+    public RealmEarthquake() {
+    }
 
     public RealmEarthquake(Earthquake other) {
         this.id = other.getId();
@@ -265,5 +273,74 @@ public class RealmEarthquake extends RealmObject implements Earthquake {
 
     public void setMagnitudeStationCount(int magnitudeStationCount) {
         this.magnitudeStationCount = magnitudeStationCount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RealmEarthquake that = (RealmEarthquake) o;
+
+        if (originTime != that.originTime) return false;
+        if (updatedTime != that.updatedTime) return false;
+        if (Double.compare(that.latitude, latitude) != 0) return false;
+        if (Double.compare(that.longitude, longitude) != 0) return false;
+        if (Double.compare(that.depth, depth) != 0) return false;
+        if (Double.compare(that.magnitude, magnitude) != 0) return false;
+        if (Double.compare(that.originError, originError) != 0) return false;
+        if (usedPhaseCount != that.usedPhaseCount) return false;
+        if (usedStationCount != that.usedStationCount) return false;
+        if (Double.compare(that.minimumDistance, minimumDistance) != 0) return false;
+        if (Double.compare(that.azimuthalGap, azimuthalGap) != 0) return false;
+        if (Double.compare(that.magnitudeUncertainty, magnitudeUncertainty) != 0) return false;
+        if (magnitudeStationCount != that.magnitudeStationCount) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (evaluationMethod != null ? !evaluationMethod.equals(that.evaluationMethod) : that.evaluationMethod != null)
+            return false;
+        if (evaluationStatus != null ? !evaluationStatus.equals(that.evaluationStatus) : that.evaluationStatus != null)
+            return false;
+        if (evaluationMode != null ? !evaluationMode.equals(that.evaluationMode) : that.evaluationMode != null)
+            return false;
+        if (earthModel != null ? !earthModel.equals(that.earthModel) : that.earthModel != null)
+            return false;
+        if (depthType != null ? !depthType.equals(that.depthType) : that.depthType != null)
+            return false;
+        return magnitudeType != null ? magnitudeType.equals(that.magnitudeType) : that.magnitudeType == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (int) (originTime ^ (originTime >>> 32));
+        result = 31 * result + (int) (updatedTime ^ (updatedTime >>> 32));
+        temp = Double.doubleToLongBits(latitude);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(longitude);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(depth);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(magnitude);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (evaluationMethod != null ? evaluationMethod.hashCode() : 0);
+        result = 31 * result + (evaluationStatus != null ? evaluationStatus.hashCode() : 0);
+        result = 31 * result + (evaluationMode != null ? evaluationMode.hashCode() : 0);
+        result = 31 * result + (earthModel != null ? earthModel.hashCode() : 0);
+        result = 31 * result + (depthType != null ? depthType.hashCode() : 0);
+        temp = Double.doubleToLongBits(originError);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + usedPhaseCount;
+        result = 31 * result + usedStationCount;
+        temp = Double.doubleToLongBits(minimumDistance);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(azimuthalGap);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (magnitudeType != null ? magnitudeType.hashCode() : 0);
+        temp = Double.doubleToLongBits(magnitudeUncertainty);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + magnitudeStationCount;
+        return result;
     }
 }

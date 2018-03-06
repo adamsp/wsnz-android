@@ -17,12 +17,13 @@
 package speakman.whatsshakingnz;
 
 import dagger.Component;
-import speakman.whatsshakingnz.backgroundsync.BackgroundSyncService;
 import speakman.whatsshakingnz.dagger.AppScope;
 import speakman.whatsshakingnz.model.ModelModule;
 import speakman.whatsshakingnz.network.NetworkModule;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
 import speakman.whatsshakingnz.notifications.NotificationModule;
+import speakman.whatsshakingnz.sync.SyncModule;
+import speakman.whatsshakingnz.sync.background.BackgroundSyncService;
 import speakman.whatsshakingnz.ui.UIModule;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;
@@ -32,12 +33,17 @@ import speakman.whatsshakingnz.ui.activities.MapActivity;
  * Created by Adam on 15-06-13.
  */
 @AppScope
-@Component(modules = { NetworkModule.class, ModelModule.class, NotificationModule.class, AppModule.class, UIModule.class })
+@Component(modules = {NetworkModule.class, ModelModule.class, NotificationModule.class, AppModule.class, UIModule.class, SyncModule.class})
 public interface AppComponent {
     void inject(NetworkRunnerService service);
+
     void inject(BackgroundSyncService service);
+
     void inject(WhatsShakingApplication application);
+
     void inject(MainActivity activity);
+
     void inject(MapActivity activity);
+
     void inject(DetailActivity activity);
 }

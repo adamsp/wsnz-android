@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package speakman.whatsshakingnz.backgroundsync
+package speakman.whatsshakingnz.sync.background
 
 import android.content.Context
 import com.firebase.jobdispatcher.*
-import io.realm.Realm
-import rx.Observable
+import rx.Subscription
 import speakman.whatsshakingnz.WhatsShakingApplication
-import speakman.whatsshakingnz.model.realm.RealmEarthquake
-import speakman.whatsshakingnz.network.EarthquakeService
+import speakman.whatsshakingnz.sync.SyncCoordinator
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -30,46 +28,50 @@ import javax.inject.Inject
 class BackgroundSyncService : JobService() {
 
     @Inject
-    lateinit var earthquakeService: EarthquakeService
+    lateinit var syncCoordinator: SyncCoordinator
+
+    private var subscription: Subscription? = null
 
     init {
         WhatsShakingApplication.getInstance().inject(this)
     }
 
     override fun onStartJob(job: JobParameters?): Boolean {
-        if (job?.tag != PERIODIC_SYNC_TAG) {
-            return false
-        }
-        startSync()
-        return true
+        return job?.let {
+            if (it.tag != PERIODIC_SYNC_TAG) {
+                return false
+            }
+            startSync(it)
+            return subscription != null // Non-null subscription --> still working
+        } ?: false
     }
 
     override fun onStopJob(job: JobParameters?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return subscription?.let {
+            if (it.isUnsubscribed) {
+                return false // Unsubscribed - don't retry
+            } else {
+                it.unsubscribe()
+                return true // Still subscribed  - please retry
+            }
+        } ?: false // No sync in progress - don't retry
     }
 
-    private fun startSync() {
-        // TODO This should delegate retrieval + storage to some other, testable class
-        // TODO That class should expose an API which enables retrieval with success/failure/cancel options (or maybe return downloaded results?...).
-        // TODO This is important because we retrieve + store here _and_ from the UI - duplicating risky work, untested!
-        // TODO Can Architecture Components help with accessing it at the UI level? A ViewModel so we don't re-query it every time, and exposing LiveData rather than RealmResults?
-        earthquakeService.retrieveNewEarthquakes() // TODO This isn't async wtf...
-                .map { RealmEarthquake(it) }
-                .onErrorResumeNext(Observable.empty()) // Swallow it
-                .toList()
-                .subscribe({ earthquakes ->
-                    val realm = Realm.getDefaultInstance()
-                    realm.beginTransaction()
-                    realm.copyToRealmOrUpdate(earthquakes)
-                    realm.commitTransaction()
-                    realm.close()
+    private fun startSync(job: JobParameters) {
+        subscription?.unsubscribe()
+        subscription = syncCoordinator.performSync()
+                .doOnTerminate { subscription = null }
+                .subscribe({ error ->
+                    jobFinished(job, true)
+                }, {
+                    // onComplete
+                    jobFinished(job, false)
                 })
-
     }
 
     companion object {
         val SYNC_PERIOD_SECONDS = TimeUnit.HOURS.toSeconds(1).toInt()
-        private val PERIODIC_SYNC_TAG = "speakman.whatsshakingnz.backgroundsync.BackgroundSyncService.PERIODIC_SYNC"
+        private val PERIODIC_SYNC_TAG = "speakman.whatsshakingnz.sync.background.BackgroundSyncService.PERIODIC_SYNC"
 
         @JvmStatic
         fun cancelSync(ctx: Context) {

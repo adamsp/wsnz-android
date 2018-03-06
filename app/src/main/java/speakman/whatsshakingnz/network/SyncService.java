@@ -20,7 +20,7 @@ import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.TaskParams;
 
-import speakman.whatsshakingnz.backgroundsync.BackgroundSyncService;
+import speakman.whatsshakingnz.sync.background.BackgroundSyncService;
 import timber.log.Timber;
 
 /**

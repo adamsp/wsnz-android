@@ -30,9 +30,8 @@ import java.io.IOException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-import rx.Observable;
 import rx.observers.TestSubscriber;
-import rx.subscriptions.CompositeSubscription;
+import speakman.whatsshakingnz.ObservableTest;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.network.geonet.GeonetService;
 import speakman.whatsshakingnz.utils.DateTimeFormatters;
@@ -45,15 +44,8 @@ import static org.mockito.Mockito.when;
 /**
  * Created by Adam on 15-06-07.
  */
-public class GeonetServiceTest {
+public class GeonetServiceTest extends ObservableTest {
 
-    private CompositeSubscription subscriptions = new CompositeSubscription();
-
-    private <T> TestSubscriber<T> testSubscribe(Observable<T> observable) {
-        TestSubscriber<T> subscriber = new TestSubscriber<>();
-        subscriptions.add(observable.subscribe(subscriber));
-        return subscriber;
-    }
 
     private MockWebServer mockedWebServer;
     private RequestTimeStore mockedRequestTimeStore;
@@ -67,9 +59,8 @@ public class GeonetServiceTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() throws IOException {
         mockedWebServer.shutdown();
-        subscriptions.clear();
     }
 
     @Test
