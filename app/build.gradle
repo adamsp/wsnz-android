@@ -118,8 +118,8 @@ dependencies {
     testImplementation "com.squareup.okhttp3:mockwebserver:$okHttpVersion"
 
     implementation "com.google.code.gson:gson:2.8.2"
-    implementation "io.reactivex:rxjava:1.1.1"
-    implementation "io.reactivex:rxandroid:1.1.0"
+    implementation "io.reactivex:rxjava:1.3.6"
+    implementation "io.reactivex:rxandroid:1.2.1"
     // TODO Need this for PowerMock+Realm right now, upgrade to actually use it!
     testImplementation "io.reactivex.rxjava2:rxjava:2.1.10"
     implementation "net.danlew:android.joda:2.9.9.2"

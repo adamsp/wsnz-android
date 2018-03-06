@@ -61,11 +61,11 @@ class BackgroundSyncService : JobService() {
         subscription?.unsubscribe()
         subscription = syncCoordinator.performSync()
                 .doOnTerminate { subscription = null }
-                .subscribe({ error ->
-                    jobFinished(job, true)
-                }, {
+                .subscribe({
                     // onComplete
                     jobFinished(job, false)
+                }, { error ->
+                    jobFinished(job, true)
                 })
     }
 
