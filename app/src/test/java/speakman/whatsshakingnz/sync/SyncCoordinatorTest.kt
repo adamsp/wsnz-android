@@ -110,10 +110,11 @@ class SyncCoordinatorTest : ObservableTest() {
         val testObservable = PublishSubject.create<Earthquake>()
 
         whenever(service.retrieveNewEarthquakes()).thenReturn(testObservable)
+        testSubscribe(underTest.performSync())
+
         testObservable.onNext(earthquake)
         testObservable.onError(expectedError)
 
-        testSubscribe(underTest.performSync())
         val expectedEarthquakes: Iterable<RealmEarthquake> = listOf(RealmEarthquake(earthquake))
         verify(realm).copyToRealmOrUpdate(eq(expectedEarthquakes))
         verify(realm).close()
