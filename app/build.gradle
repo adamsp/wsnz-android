@@ -21,7 +21,7 @@ repositories {
 }
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     dataBinding.enabled = true
 
     lintOptions {
@@ -46,7 +46,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         applicationId "speakman.whatsshakingnz"
         minSdkVersion 15
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 13
         versionName "2.0.3"
         manifestPlaceholders = [mapsApiKey: properties['mapsApiKey']]
