@@ -91,14 +91,14 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     kapt "com.android.databinding:compiler:$gradle_version"
 
-    def supportLibVersion = '26.1.0'
+    def supportLibVersion = '27.1.1'
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:recyclerview-v7:$supportLibVersion"
     implementation "com.android.support:design:$supportLibVersion"
     implementation "com.android.support:cardview-v7:$supportLibVersion"
     implementation "com.android.support:support-vector-drawable:$supportLibVersion"
 
-    def playServicesVersion = '11.8.0'
+    def playServicesVersion = '15.0.0'
     implementation "com.google.android.gms:play-services-maps:$playServicesVersion"
     implementation "com.google.android.gms:play-services-gcm:$playServicesVersion"
     implementation 'com.firebase:firebase-jobdispatcher:0.8.5'
