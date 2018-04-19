@@ -27,7 +27,7 @@ abstract class ObservableTest {
     private val subscriptions = CompositeSubscription()
 
     /**
-     * Subscribes to the supplied Observable using a [TestSubscriber] which you can query for completion,
+     * Subscribes to the supplied Completable using a [TestSubscriber] which you can query for completion,
      * errors, etc. This is also automatically unsubscribed from when your test has finished.
      */
     protected fun testSubscribe(completable: Completable): TestSubscriber<Void> {
