@@ -24,7 +24,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -34,7 +33,6 @@ import android.view.View;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -47,21 +45,16 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.Lazy;
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
-import io.realm.Sort;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import speakman.whatsshakingnz.BuildConfig;
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.model.Earthquake;
-import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
 import speakman.whatsshakingnz.network.NotificationTimeStore;
-import speakman.whatsshakingnz.notifications.AndroidNotificationFactory;
-import speakman.whatsshakingnz.notifications.EarthquakeNotifier;
 import speakman.whatsshakingnz.notifications.NotificationFactory;
+import speakman.whatsshakingnz.repository.EarthquakeRepository;
 import speakman.whatsshakingnz.ui.DividerItemDecoration;
 import speakman.whatsshakingnz.ui.EarthquakeHeadersAdapter;
 import speakman.whatsshakingnz.ui.EarthquakeListAdapter;
@@ -72,7 +65,8 @@ import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 import speakman.whatsshakingnz.utils.UserSettings;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerClickListener, RealmChangeListener<RealmResults<RealmEarthquake>>, EarthquakeListViewModel.ViewHolder.OnClickListener {
+public class MainActivity extends WhatsShakingActivity implements GoogleMap.OnMapClickListener,
+        GoogleMap.OnMarkerClickListener, EarthquakeListViewModel.ViewHolder.OnClickListener {
 
     public static final String EXTRA_FROM_NOTIFICATION = "speakman.whatsshakingnz.ui.activities.MainActivity.EXTRA_FROM_NOTIFICATION";
     private static final int ACTIVITY_REQUEST_CODE_SETTINGS = 1;
@@ -86,13 +80,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return intent;
     }
 
-    private Realm realm;
+    @Deprecated
+    private List<Earthquake> debugEarthquakes;
     private MapView map;
     private EarthquakeListAdapter dataAdapter;
     private EarthquakeHeadersAdapter headerAdapter;
     private final List<Marker> mapMarkers = new ArrayList<>();
     private View emptyListView;
-    private RealmResults<RealmEarthquake> earthquakes;
+
+    @Inject
+    EarthquakeRepository repository;
 
     @Inject
     MapMarkerOptionsFactory mapMarkerOptionsFactory;
@@ -116,8 +113,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (bar != null) {
             bar.setTitle(R.string.activity_main_title);
         }
-        realm = Realm.getDefaultInstance();
-        map = ((MapView)findViewById(R.id.activity_main_map));
+        map = findViewById(R.id.activity_main_map);
         assert map != null;
         map.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         dataAdapter = new EarthquakeListAdapter(this);
@@ -155,10 +151,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onDestroy() {
         super.onDestroy();
         map.onDestroy();
-        if (earthquakes != null) {
-            earthquakes.removeChangeListener(this);
-        }
-        realm.close();
     }
 
     @Override
@@ -177,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.menu_action_licences:
                 LicensesFragment.displayLicensesFragment(getFragmentManager(), true);
                 return true;
@@ -213,24 +205,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        googleMap.getUiSettings().setMapToolbarEnabled(false);
-        googleMap.setOnMapClickListener(this);
-        googleMap.setOnMarkerClickListener(this);
-        for (Marker marker : mapMarkers) {
-            marker.remove();
-        }
-        if (earthquakes != null && earthquakes.size() > 0) {
-            int count = Math.min(10, earthquakes.size());
-            for (int i = 0; i < count; i++) {
-                MarkerOptions markerOptions = mapMarkerOptionsFactory.getMarkerOptions(earthquakes.get(i));
-                Marker marker = googleMap.addMarker(markerOptions);
-                mapMarkers.add(marker);
-            }
-        }
-    }
-
-    @Override
     public void onMapClick(LatLng latLng) {
         Analytics.logMainPageMapClicked();
         navigateToMapActivity();
@@ -241,16 +215,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Analytics.logMainPageMapMarkerClicked();
         navigateToMapActivity();
         return true;
-    }
-
-    @Override
-    public void onChange(RealmResults<RealmEarthquake> realmEarthquakes) {
-        dataAdapter.notifyDataSetChanged();
-        map.getMapAsync(this);
-        storeMostRecentEventOriginTime();
-        if (this.earthquakes != null && this.earthquakes.size() > 0) {
-            emptyListView.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -285,24 +249,42 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void getEarthquakesAsync() {
-        if (earthquakes != null) {
-            earthquakes.removeChangeListener(this);
+        safeSubscribe(
+                repository.earthquakesWithMagnitudeGreaterThan(userSettings.minimumDisplayMagnitude())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(earthquakes -> {
+                            debugEarthquakes = earthquakes;
+                            map.getMapAsync(googleMap -> updateMapMarkers(googleMap, earthquakes));
+                            headerAdapter.updateList(earthquakes);
+                            dataAdapter.updateList(earthquakes);
+                            if (earthquakes.size() > 0) {
+                                notificationTimeStore.saveMostRecentlySeenEventOriginTime(new DateTime(earthquakes.get(0).getOriginTime()));
+                                emptyListView.setVisibility(View.GONE);
+                            } else {
+                                emptyListView.setVisibility(View.VISIBLE);
+                            }
+                        }));
+    }
+
+    private void updateMapMarkers(GoogleMap googleMap, List<Earthquake> earthquakes) {
+        googleMap.getUiSettings().setMapToolbarEnabled(false);
+        googleMap.setOnMapClickListener(this);
+        googleMap.setOnMarkerClickListener(this);
+        for (Marker marker : mapMarkers) {
+            marker.remove();
         }
-        earthquakes = realm.where(RealmEarthquake.class).greaterThanOrEqualTo(RealmEarthquake.FIELD_NAME_MAGNITUDE, userSettings.minimumDisplayMagnitude())
-                    .sort(RealmEarthquake.FIELD_NAME_ORIGIN_TIME, Sort.DESCENDING).findAllAsync();
-        earthquakes.addChangeListener(this);
-        headerAdapter.updateList(earthquakes);
-        dataAdapter.updateList(earthquakes);
+        if (earthquakes.size() > 0) {
+            int count = Math.min(10, earthquakes.size());
+            for (int i = 0; i < count; i++) {
+                MarkerOptions markerOptions = mapMarkerOptionsFactory.getMarkerOptions(earthquakes.get(i));
+                Marker marker = googleMap.addMarker(markerOptions);
+                mapMarkers.add(marker);
+            }
+        }
     }
 
     private void requestForegroundSync() {
         NetworkRunnerService.requestLatest(this);
-    }
-
-    private void storeMostRecentEventOriginTime() {
-        if (earthquakes != null && earthquakes.size() > 0) {
-            notificationTimeStore.saveMostRecentlySeenEventOriginTime(new DateTime(earthquakes.first().getOriginTime()));
-        }
     }
 
     private void logNotificationClick() {
@@ -315,24 +297,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mgr.cancelAll();
     }
 
-//region Debug Features
+    //region Debug Features
     private void showSingleNotif() {
-        if(!BuildConfig.DEBUG) {
+        if (!BuildConfig.DEBUG) {
             return;
         }
-        if (earthquakes != null && earthquakes.size() > 0) {
-            Notification notification = notiticationUtil.get().notificationForSingleEarthquake(earthquakes.get(0));
+        if (debugEarthquakes != null && debugEarthquakes.size() > 0) {
+            Notification notification = notiticationUtil.get().notificationForSingleEarthquake(debugEarthquakes.get(0));
             NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             mgr.notify(0, notification);
         }
     }
 
     private void showMultiNotif() {
-        if(!BuildConfig.DEBUG) {
+        if (!BuildConfig.DEBUG) {
             return;
         }
-        if (earthquakes != null && earthquakes.size() > 0) {
-            Notification notification = notiticationUtil.get().notificationForMultipleEarthquakes(earthquakes);
+        if (debugEarthquakes != null && debugEarthquakes.size() > 0) {
+            Notification notification = notiticationUtil.get().notificationForMultipleEarthquakes(debugEarthquakes);
             NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             mgr.notify(0, notification);
         }

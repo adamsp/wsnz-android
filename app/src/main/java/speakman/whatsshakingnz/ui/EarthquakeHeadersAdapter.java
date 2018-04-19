@@ -28,7 +28,7 @@ import org.joda.time.DateTime;
 import java.util.List;
 
 import speakman.whatsshakingnz.R;
-import speakman.whatsshakingnz.model.realm.RealmEarthquake;
+import speakman.whatsshakingnz.model.Earthquake;
 
 /**
  * Created by Adam on 2016-11-26.
@@ -37,20 +37,20 @@ import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 public class EarthquakeHeadersAdapter implements StickyHeadersDecoration.StickyHeadersAdapter {
 
     private static final long POSITION_NO_EVENTS = -1;
-    private static final long POSITION_LAST_24_HOURS= 0;
-    private static final long POSITION_LAST_7_DAYS= 1;
+    private static final long POSITION_LAST_24_HOURS = 0;
+    private static final long POSITION_LAST_7_DAYS = 1;
     private static final long POSITION_LAST_MONTH = 2;
     private static final long POSITION_LAST_YEAR = 3;
     private static final long POSITION_ALL_TIME = 4;
 
-    private List<RealmEarthquake> earthquakes;
+    private List<Earthquake> earthquakes;
 
     @Override
     public long getSectionId(int position) {
         if (earthquakes == null || earthquakes.size() == 0) {
             return POSITION_NO_EVENTS;
         }
-        RealmEarthquake earthquake = earthquakes.get(position);
+        Earthquake earthquake = earthquakes.get(position);
         long millisPassed = DateTime.now().getMillis() - earthquake.getOriginTime();
 
         long secondsPassed = millisPassed / 1000;
@@ -96,7 +96,7 @@ public class EarthquakeHeadersAdapter implements StickyHeadersDecoration.StickyH
         return view;
     }
 
-    public void updateList(List<RealmEarthquake> earthquakes) {
+    public void updateList(List<Earthquake> earthquakes) {
         this.earthquakes = earthquakes;
     }
 }

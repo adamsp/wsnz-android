@@ -27,7 +27,6 @@ import java.util.List;
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.databinding.RowEarthquakeBinding;
 import speakman.whatsshakingnz.model.Earthquake;
-import speakman.whatsshakingnz.model.realm.RealmEarthquake;
 import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
 
 /**
@@ -35,7 +34,7 @@ import speakman.whatsshakingnz.ui.viewmodel.EarthquakeListViewModel;
  */
 public class EarthquakeListAdapter extends RecyclerView.Adapter<EarthquakeListViewModel.ViewHolder> {
 
-    private List<RealmEarthquake> earthquakes;
+    private List<Earthquake> earthquakes;
     private final EarthquakeListViewModel.ViewHolder.OnClickListener earthquakeClickListener;
 
     public EarthquakeListAdapter(@NonNull EarthquakeListViewModel.ViewHolder.OnClickListener clickListener) {
@@ -60,7 +59,7 @@ public class EarthquakeListAdapter extends RecyclerView.Adapter<EarthquakeListVi
         return earthquakes == null ? 0 : earthquakes.size();
     }
 
-    public void updateList(List<RealmEarthquake> earthquakes) {
+    public void updateList(List<Earthquake> earthquakes) {
         this.earthquakes = earthquakes;
         notifyDataSetChanged();
     }
