@@ -16,7 +16,7 @@
 
 package speakman.whatsshakingnz;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 import com.squareup.leakcanary.LeakCanary;
 
@@ -29,8 +29,8 @@ import io.realm.RealmConfiguration;
 import jonathanfinerty.once.Once;
 import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.analytics.Forest;
-import speakman.whatsshakingnz.sync.background.BackgroundSyncService;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
+import speakman.whatsshakingnz.sync.background.BackgroundSyncService;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;
 import speakman.whatsshakingnz.ui.activities.MapActivity;
@@ -39,7 +39,7 @@ import timber.log.Timber;
 /**
  * Created by Adam on 15-06-07.
  */
-public class WhatsShakingApplication extends Application {
+public class WhatsShakingApplication extends MultiDexApplication {
 
     private static final String INIT_SYNC_ON_INSTALL = "speakman.whatsshakingnz.INIT_SYNC_ON_INSTALL";
     private static final String INIT_SYNC_ON_UPGRADE = "speakman.whatsshakingnz.INIT_SYNC_ON_UPGRADE";
