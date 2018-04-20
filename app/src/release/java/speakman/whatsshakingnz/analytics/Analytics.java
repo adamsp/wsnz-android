@@ -60,12 +60,12 @@ public class Analytics {
                 .putCustomAttribute("source", "main-map-marker"));
     }
 
-    public static void logEarthquakeViewFromNotification(@NonNull Earthquake earthquake) {
+    public static void logEarthquakeViewFromNotification(@NonNull String id) {
         Answers.getInstance().logContentView(new ContentViewEvent()
                 .putContentName("Earthquake viewed from Notification")
                 .putContentType("earthquake-view")
                 .putCustomAttribute("source", "notification")
-                .putContentId(earthquake.getId()));
+                .putContentId(id));
     }
 
     public static void logEarthquakeSelectedOnMap(@NonNull Earthquake earthquake) {

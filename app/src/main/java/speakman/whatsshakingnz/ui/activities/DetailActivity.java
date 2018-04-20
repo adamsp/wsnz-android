@@ -20,32 +20,29 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import javax.inject.Inject;
 
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.model.Earthquake;
-import speakman.whatsshakingnz.model.realm.RealmEarthquake;
+import speakman.whatsshakingnz.repository.EarthquakeRepository;
 import speakman.whatsshakingnz.ui.maps.IgnoreClicksMapMarkerClickListener;
 import speakman.whatsshakingnz.ui.maps.MapMarkerOptionsFactory;
 import speakman.whatsshakingnz.ui.views.ExpandableDetailCard;
+import speakman.whatsshakingnz.utils.Strings;
 import timber.log.Timber;
 
-public class DetailActivity extends AppCompatActivity implements OnMapReadyCallback, RealmChangeListener<RealmEarthquake> {
+public class DetailActivity extends WhatsShakingActivity {
 
     static class DetailCardGravityController implements ExpandableDetailCard.OnDetailExpandListener {
         @Override
@@ -84,14 +81,15 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         return intent;
     }
 
-    private Realm realm;
-    private RealmEarthquake earthquake;
     private MapView mapView;
     private Marker mapMarker;
     private ExpandableDetailCard expandableDetailCard;
 
     @Inject
     MapMarkerOptionsFactory mapMarkerOptionsFactory;
+
+    @Inject
+    EarthquakeRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,10 +100,9 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         ((WhatsShakingApplication) getApplication()).inject(this);
         setContentView(R.layout.activity_detail);
         mapMarkerOptionsFactory = new MapMarkerOptionsFactory(this);
-        realm = Realm.getDefaultInstance();
-        expandableDetailCard = (ExpandableDetailCard) findViewById(R.id.activity_detail_detail_card);
+        expandableDetailCard = findViewById(R.id.activity_detail_detail_card);
         expandableDetailCard.setOnDetailExpandListener(new DetailCardGravityController());
-        mapView = (MapView) findViewById(R.id.activity_detail_map);
+        mapView = findViewById(R.id.activity_detail_map);
         assert mapView != null;
         mapView.onCreate(savedInstanceState == null ? null : savedInstanceState.getBundle("mapState"));
         if (savedInstanceState == null && getIntent().getBooleanExtra(EXTRA_FROM_NOTIFICATION, false)) {
@@ -122,10 +119,6 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
             getWindow().setSharedElementReturnTransition(null);
         }
         logNotificationClick();
-        if (earthquake != null) {
-            earthquake.removeChangeListener(this);
-        }
-        earthquake = null;
         refreshUI();
     }
 
@@ -146,10 +139,6 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
-        if (earthquake != null) {
-            earthquake.removeChangeListener(this);
-        }
-        realm.close();
     }
 
     @Override
@@ -159,7 +148,7 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         mapView.onSaveInstanceState(mapState);
         outState.putBundle("mapState", mapState);
     }
-    
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();
@@ -174,40 +163,31 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         super.onBackPressed();
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
+    private void updateMapMarker(GoogleMap googleMap, Earthquake earthquake) {
         googleMap.getUiSettings().setMapToolbarEnabled(false);
         googleMap.setOnMarkerClickListener(new IgnoreClicksMapMarkerClickListener());
         if (mapMarker != null) {
             mapMarker.remove();
         }
-        MarkerOptions markerOptions = mapMarkerOptionsFactory.getMarkerOptions(getEarthquake());
+        MarkerOptions markerOptions = mapMarkerOptionsFactory.getMarkerOptions(earthquake);
         mapMarker = googleMap.addMarker(markerOptions);
     }
 
-
-    @Override
-    public void onChange(RealmEarthquake earthquake) {
-        refreshUI();
-    }
-
-    private Earthquake getEarthquake() {
-        if (earthquake == null) {
-            earthquake = realm.where(RealmEarthquake.class).equalTo("id", getIntent().getStringExtra(EXTRA_EARTHQUAKE)).findFirst();
-            earthquake.addChangeListener(this);
-        }
-        return earthquake;
-    }
-
     private void refreshUI() {
-        Earthquake earthquake = getEarthquake();
-        expandableDetailCard.bindEarthquake(earthquake);
-        expandableDetailCard.setForegroundGravity(Gravity.CENTER_VERTICAL);
-        mapView.getMapAsync(this);
+        safeSubscribe(repository.earthquakeForId(getEarthquakeId())
+                .subscribe(earthquake -> {
+                    expandableDetailCard.bindEarthquake(earthquake);
+                    expandableDetailCard.setForegroundGravity(Gravity.CENTER_VERTICAL);
+                    mapView.getMapAsync(map -> updateMapMarker(map, earthquake));
+                }));
     }
 
     private void logNotificationClick() {
         Timber.i("User clicked single-earthquake detail notification.");
-        Analytics.logEarthquakeViewFromNotification(getEarthquake());
+        Analytics.logEarthquakeViewFromNotification(getEarthquakeId());
+    }
+
+    private String getEarthquakeId() {
+        return Strings.nullToEmpty(getIntent().getStringExtra(EXTRA_EARTHQUAKE));
     }
 }
