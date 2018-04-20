@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import javax.inject.Inject;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.WhatsShakingApplication;
 import speakman.whatsshakingnz.analytics.Analytics;
@@ -175,6 +176,7 @@ public class DetailActivity extends WhatsShakingActivity {
 
     private void refreshUI() {
         safeSubscribe(repository.earthquakeForId(getEarthquakeId())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(earthquake -> {
                     expandableDetailCard.bindEarthquake(earthquake);
                     expandableDetailCard.setForegroundGravity(Gravity.CENTER_VERTICAL);
