@@ -30,6 +30,7 @@ import jonathanfinerty.once.Once;
 import speakman.whatsshakingnz.analytics.Analytics;
 import speakman.whatsshakingnz.analytics.Forest;
 import speakman.whatsshakingnz.network.NetworkRunnerService;
+import speakman.whatsshakingnz.notifications.Notifications;
 import speakman.whatsshakingnz.sync.background.BackgroundSyncService;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;
@@ -61,6 +62,7 @@ public class WhatsShakingApplication extends MultiDexApplication {
         Realm.init(this);
         component = DaggerAppComponent.create();
         component.inject(this);
+        createNotificationChannels();
         setupRealm();
         scheduleSync();
     }
@@ -96,6 +98,10 @@ public class WhatsShakingApplication extends MultiDexApplication {
 
     private void logInjection(Object object) {
         Timber.d("Injecting %s inside Application class", object == null ? "null" : object.getClass().getSimpleName());
+    }
+
+    private void createNotificationChannels() {
+        Notifications.createNotificationChannels(this);
     }
 
     private void setupRealm() {

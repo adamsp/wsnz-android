@@ -42,6 +42,8 @@
     <string name="preferences_display_minimum_magnitude">Minimum magnitude to display</string>
     <string name="notification_content_single_location">%1$.0f km %2$s of %3$s</string>
     <string name="notification_content_multiple_locations">Multiple locations</string>
+    <string name="notification_channel_name">Latest Earthquakes</string>
+    <string name="notification_channel_description">Notifications about earthquakes that have happened since you last opened the app</string>
 
     <!-- Accessibility -->
     <string name="acc_detail_card_detail_indicator">There is more detail available about this earthquake</string>

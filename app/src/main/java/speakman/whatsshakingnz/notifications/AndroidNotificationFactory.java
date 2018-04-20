@@ -34,7 +34,6 @@ import javax.inject.Inject;
 import speakman.whatsshakingnz.R;
 import speakman.whatsshakingnz.model.Earthquake;
 import speakman.whatsshakingnz.model.LocalPlace;
-import speakman.whatsshakingnz.notifications.NotificationFactory;
 import speakman.whatsshakingnz.ui.activities.DetailActivity;
 import speakman.whatsshakingnz.ui.activities.MainActivity;
 import speakman.whatsshakingnz.utils.DistanceUtil;
@@ -80,7 +79,7 @@ public class AndroidNotificationFactory implements NotificationFactory {
         Intent notificationIntent = DetailActivity.createIntentFromNotification(context, earthquake);
         Intent backIntent = new Intent(context, MainActivity.class);
         final PendingIntent pendingIntent = PendingIntent.getActivities(context, 0,
-                new Intent[] {backIntent, notificationIntent}, PendingIntent.FLAG_ONE_SHOT);
+                new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_ONE_SHOT);
         builder.setContentIntent(pendingIntent);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             return builder.build();
@@ -122,6 +121,9 @@ public class AndroidNotificationFactory implements NotificationFactory {
             builder.setColor(ContextCompat.getColor(context, R.color.notification_accent));
             builder.setVisibility(Notification.VISIBILITY_PUBLIC);
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder.setChannelId(Notifications.getEARTHQUAKES_CHANNEL_ID());
+        }
         if (userSettings.notificationLEDEnabled()) {
             builder.setLights(ContextCompat.getColor(context, R.color.notification_light), 300, 1000);
         }
@@ -129,7 +131,7 @@ public class AndroidNotificationFactory implements NotificationFactory {
             builder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
         }
         if (userSettings.notificationVibrationEnabled()) {
-            builder.setVibrate(new long[]{ 0, 500, 500, 750 });
+            builder.setVibrate(new long[]{0, 500, 500, 750});
         }
     }
 
